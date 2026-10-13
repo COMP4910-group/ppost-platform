@@ -1,0 +1,9 @@
+{
+  "name": "ppost-platform",
+  "private": true,
+  "workspaces": ["packages/*"],
+  "scripts": {
+    "dev": "docker-compose up",
+    "db:migrate": "node db/migrate.js"
+  }
+}
