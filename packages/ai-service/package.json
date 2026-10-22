@@ -1,0 +1,31 @@
+{
+  "name": "@ppost/ai-service",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI proposal generation for the PPOST platform. Pure functions: context in, validated proposals out. No database or HTTP.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test \"test/**/*.test.ts\""
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.135.0",
+    "zod": "^4.6.7"
+  }
+}
