@@ -1,0 +1,368 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ClassDEstimator — scoped stylesheet
+   Uses CSS custom properties so host apps can theme it.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Design tokens (overridable by host app) ─────────────────────────────── */
+.class-d-estimator {
+  --c-bg: #ffffff;
+  --c-bg-alt: #f9fafb;
+  --c-border: #e5e7eb;
+  --c-border-strong: #d1d5db;
+  --c-text: #111827;
+  --c-text-muted: #6b7280;
+  --c-accent: #1d4ed8;
+  --c-accent-light: #eff6ff;
+  --c-danger: #dc2626;
+  --c-category-bg: #f3f4f6;
+  --c-total-bg: #fefce8;
+  --c-total-text: #713f12;
+  --radius: 6px;
+  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", monospace;
+
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: var(--c-text);
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+  .class-d-estimator {
+    --c-bg: #111827;
+    --c-bg-alt: #1f2937;
+    --c-border: #374151;
+    --c-border-strong: #4b5563;
+    --c-text: #f9fafb;
+    --c-text-muted: #9ca3af;
+    --c-accent: #60a5fa;
+    --c-accent-light: #1e3a5f;
+    --c-category-bg: #1f2937;
+    --c-total-bg: #292524;
+    --c-total-text: #fde68a;
+  }
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.estimator-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+}
+
+.estimator-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--c-text);
+}
+
+.estimator-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--c-accent-light);
+  color: var(--c-accent);
+  border: 1px solid currentColor;
+}
+
+/* ── Body layout ─────────────────────────────────────────────────────────── */
+.estimator-body {
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 0;
+}
+
+@media (max-width: 860px) {
+  .estimator-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Table wrapper ───────────────────────────────────────────────────────── */
+.cost-table-wrapper {
+  overflow-x: auto;
+  border-right: 1px solid var(--c-border);
+}
+
+/* ── Table ───────────────────────────────────────────────────────────────── */
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+/* Header row */
+.cost-th {
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--c-text-muted);
+  background: var(--c-bg-alt);
+  border-bottom: 1px solid var(--c-border-strong);
+  white-space: nowrap;
+}
+
+.cost-th--number,
+.cost-th--total {
+  text-align: right;
+}
+
+.cost-th--action {
+  width: 36px;
+}
+
+/* Category sub-header */
+.cost-category-header {
+  background: var(--c-category-bg);
+}
+
+.cost-category-label {
+  padding: 4px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-text-muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+.cost-category-subtotal {
+  font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono);
+}
+
+/* Data rows */
+.cost-line-row {
+  border-bottom: 1px solid var(--c-border);
+  transition: background 80ms;
+}
+
+.cost-line-row:hover {
+  background: var(--c-accent-light);
+}
+
+.cost-cell {
+  padding: 5px 6px;
+  vertical-align: middle;
+}
+
+.cost-cell--number,
+.cost-cell--total {
+  text-align: right;
+}
+
+.cost-cell--total {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.cost-total {
+  color: var(--c-text);
+}
+
+/* Empty state */
+.cost-empty {
+  padding: 32px;
+  text-align: center;
+  color: var(--c-text-muted);
+  font-style: italic;
+}
+
+/* ── Inputs ──────────────────────────────────────────────────────────────── */
+.cost-input {
+  background: var(--c-bg);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 13px;
+  font-family: inherit;
+  line-height: 1.4;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 100ms, box-shadow 100ms;
+}
+
+.cost-input:focus {
+  outline: none;
+  border-color: var(--c-accent);
+  box-shadow: 0 0 0 2px var(--c-accent-light);
+}
+
+.cost-input--number {
+  font-family: var(--font-mono);
+  text-align: right;
+  min-width: 72px;
+}
+
+.cost-input--text {
+  min-width: 120px;
+}
+
+.cost-input--short {
+  min-width: 52px;
+  max-width: 80px;
+}
+
+.cost-input--select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%236b7280'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 6px center;
+  padding-right: 22px;
+  cursor: pointer;
+}
+
+/* Duration group (number + unit select side by side) */
+.duration-group {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.cost-btn {
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: inherit;
+  transition: background 100ms, color 100ms;
+}
+
+.cost-btn--add {
+  background: var(--c-accent);
+  color: #fff;
+  padding: 6px 14px;
+  font-weight: 500;
+}
+
+.cost-btn--add:hover {
+  filter: brightness(1.1);
+}
+
+.cost-btn--quick {
+  background: var(--c-bg-alt);
+  color: var(--c-text);
+  border: 1px solid var(--c-border);
+  padding: 4px 10px;
+  font-size: 12px;
+}
+
+.cost-btn--quick:hover {
+  background: var(--c-accent-light);
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+
+.cost-btn--delete {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  line-height: 1;
+  background: transparent;
+  color: var(--c-text-muted);
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cost-btn--delete:hover {
+  background: #fee2e2;
+  color: var(--c-danger);
+}
+
+/* ── Add line bar ────────────────────────────────────────────────────────── */
+.add-line-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px;
+  border-top: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+}
+
+.add-line-bar__quick-label {
+  font-size: 11px;
+  color: var(--c-text-muted);
+  margin-left: 4px;
+}
+
+/* ── Summary panel ───────────────────────────────────────────────────────── */
+.summary-panel {
+  padding: 16px;
+  background: var(--c-bg);
+}
+
+.summary-panel__title {
+  margin: 0 0 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--c-text-muted);
+}
+
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summary-row td {
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.summary-row__label {
+  color: var(--c-text);
+}
+
+.summary-row__amount {
+  text-align: right;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.summary-row--total td {
+  padding-top: 10px;
+  border-top: 2px solid var(--c-border-strong);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.summary-row__amount--grand {
+  font-size: 15px;
+  color: var(--c-total-text);
+}
+
+.summary-row--accuracy td {
+  padding-top: 4px;
+}
+
+.summary-row__accuracy-note {
+  font-size: 11px;
+  color: var(--c-text-muted);
+  font-style: italic;
+  text-align: center;
+}
+
+.summary-row__empty {
+  color: var(--c-text-muted);
+  font-style: italic;
+  padding: 8px 0;
+}
