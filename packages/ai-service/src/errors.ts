@@ -1,6 +1,7 @@
 export type ProposalGenerationErrorCode =
   | "INVALID_CONTEXT"
   | "INVALID_MODEL_OUTPUT"
+  | "UNKNOWN_SOURCE_IDS"
   | "MODEL_REFUSED"
   | "MODEL_TRUNCATED";
 
