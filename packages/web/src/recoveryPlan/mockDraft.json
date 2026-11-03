@@ -1,0 +1,1832 @@
+{
+  "kind": "INITIAL_RECOVERY_PLAN_DRAFT",
+  "structure": {
+    "id": "provisional-v1",
+    "provisional": true,
+    "note": "Provisional structure pending the client's Initial Recovery Plan template."
+  },
+  "title": "Initial Recovery Plan: Clearwater Ridge Wildfire",
+  "disasterId": "EV-2026-014",
+  "snapshotCapturedAt": "2026-11-02T00:00:00.000Z",
+  "isSynthetic": true,
+  "aiNotice": "Sections marked as AI recommendations were drafted by an AI model from the supplied planning data. Cited source record IDs show which records a recommendation refers to; they do not confirm that the recommendation is accurate or supported. All other content is reproduced from the supplied data.",
+  "sections": [
+    {
+      "key": "DOCUMENT_CONTROL",
+      "title": "Document control",
+      "origin": "SOURCE_DATA",
+      "items": [
+        {
+          "type": "FIELD",
+          "label": "Plan title",
+          "value": "Initial Recovery Plan: Clearwater Ridge Wildfire",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Disaster ID",
+          "value": "EV-2026-014",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Source data captured at",
+          "value": "2026-11-02T00:00:00.000Z",
+          "status": "PROVIDED",
+          "sourceRecordIds": []
+        },
+        {
+          "type": "FIELD",
+          "label": "Data classification",
+          "value": "SYNTHETIC: demonstration data, not real client data",
+          "status": "PROVIDED",
+          "sourceRecordIds": []
+        },
+        {
+          "type": "FIELD",
+          "label": "Document structure",
+          "value": "Provisional structure pending the client's Initial Recovery Plan template.",
+          "status": "PROVIDED",
+          "sourceRecordIds": []
+        },
+        {
+          "type": "FIELD",
+          "label": "AI involvement",
+          "value": "Sections marked as AI recommendations were drafted by an AI model from the supplied planning data. Cited source record IDs show which records a recommendation refers to; they do not confirm that the recommendation is accurate or supported. All other content is reproduced from the supplied data.",
+          "status": "PROVIDED",
+          "sourceRecordIds": []
+        }
+      ]
+    },
+    {
+      "key": "EXECUTIVE_SUMMARY",
+      "title": "Executive summary",
+      "origin": "AI_RECOMMENDATION",
+      "items": [
+        {
+          "type": "AI_RECOMMENDATION",
+          "label": "AI recommendation: not verified; requires human review",
+          "text": "Recovery planning for the Clearwater Ridge Wildfire has one complete housing chain under Protect Property. Four high-severity problems have no objective yet, and the water system's condition is unresolved because the related assessment answer is UNKNOWN.",
+          "sourceRecordIds": [
+            "EV-2026-014",
+            "P-02",
+            "O-04",
+            "T-014",
+            "P-04",
+            "P-Q-H07",
+            "P-Q-H07a",
+            "P-Q-W03-U",
+            "Q-W03"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "EVENT_OVERVIEW",
+      "title": "Event overview",
+      "origin": "SOURCE_DATA",
+      "items": [
+        {
+          "type": "FIELD",
+          "label": "Event name",
+          "value": "Clearwater Ridge Wildfire",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Hazard types",
+          "value": "Wildfire",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Location",
+          "value": "Interior British Columbia, Canada",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Declared",
+          "value": "2026-08-14",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Active recovery sectors",
+          "value": "HUMAN_WELLNESS, HOUSING, ENVIRONMENT, ECONOMY, CRITICAL_INFRASTRUCTURE",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "IMPACT_ASSESSMENT",
+      "title": "Impact assessment summary",
+      "origin": "SOURCE_DATA",
+      "items": [
+        {
+          "type": "RECORD",
+          "recordType": "ASSESSMENT_QUESTION",
+          "recordId": "Q-W03",
+          "level": 0,
+          "title": "Has the municipal water intake or distribution line experienced pressure loss or power loss?",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "CRITICAL_INFRASTRUCTURE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-W03"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answer",
+              "value": "UNKNOWN",
+              "status": "REQUIRES_CONFIRMATION",
+              "sourceRecordIds": [
+                "Q-W03"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answered by",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "Q-W03"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answered at",
+              "value": "2026-10-20T00:00:00.000Z",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-W03"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "ASSESSMENT_QUESTION",
+          "recordId": "Q-H07",
+          "level": 0,
+          "title": "Are residential areas downslope of severe burn scars at risk of debris flow?",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "HOUSING",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answer",
+              "value": "YES",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answered by",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answered at",
+              "value": "2026-10-20T00:00:00.000Z",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "ASSESSMENT_QUESTION",
+          "recordId": "Q-H07a",
+          "level": 0,
+          "title": "Is the evacuation route open?",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "HOUSING",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answer",
+              "value": "NO",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answered by",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answered at",
+              "value": "2026-10-20T00:00:00.000Z",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-H07a"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "ASSESSMENT_QUESTION",
+          "recordId": "Q-F02",
+          "level": 0,
+          "title": "Has a funding application already been submitted?",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "ECONOMY",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "Q-F02"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Answer",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "Q-F02"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "VERIFICATION_TASK",
+          "recordId": "VT-Q-W03",
+          "level": 0,
+          "title": "Field-verify water intake and distribution",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Verifies question",
+              "value": "Q-W03",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "VT-Q-W03",
+                "Q-W03"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Assigned role",
+              "value": "Infrastructure Lead",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "VT-Q-W03"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Due within",
+              "value": "48 hours",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "VT-Q-W03"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "OPEN",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "VT-Q-W03"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "RECOVERY_PRIORITIES",
+      "title": "Recovery priorities",
+      "origin": "SOURCE_DATA",
+      "items": [
+        {
+          "type": "FIELD",
+          "label": "1. Responder Safety & Health",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-1"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "2. Save Lives",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-2"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "3. Reduce Suffering",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-3"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "4. Protect Public Health",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-4"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "5. Protect Government Infrastructure",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-5"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "6. Protect Property",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-6"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "7. Protect the Environment",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-7"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "8. Reduce Economic & Social Losses",
+          "value": "Active",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-8"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "PPOST_CHAINS",
+      "title": "Problems, objectives, strategies and tactics",
+      "origin": "SOURCE_DATA",
+      "items": [
+        {
+          "type": "RECORD",
+          "recordType": "PRIORITY",
+          "recordId": "PR-2",
+          "level": 0,
+          "title": "Save Lives",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Rank",
+              "value": "2",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "PR-2"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "PROBLEM",
+          "recordId": "P-Q-H07",
+          "level": 1,
+          "title": "Debris-flow risk to downslope homes",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "HOUSING",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Severity",
+              "value": "HIGH",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "DRAFT",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "RULE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Description",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Objectives",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "PROBLEM",
+          "recordId": "P-Q-H07a",
+          "level": 1,
+          "title": "Evacuation route blocked",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "HOUSING",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Severity",
+              "value": "CRITICAL",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "DRAFT",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "RULE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Description",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07a"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Objectives",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-H07a"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "PRIORITY",
+          "recordId": "PR-4",
+          "level": 0,
+          "title": "Protect Public Health",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Rank",
+              "value": "4",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "PR-4"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "PROBLEM",
+          "recordId": "P-Q-W03-U",
+          "level": 1,
+          "title": "Unverified: Water system integrity compromised",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "CRITICAL_INFRASTRUCTURE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-W03-U"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Severity",
+              "value": "CRITICAL",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-W03-U"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "DRAFT",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-W03-U"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "RULE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-W03-U"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-W03-U"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Description",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-W03-U"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Derived from UNKNOWN assessment answer",
+              "value": "Q-W03",
+              "status": "REQUIRES_CONFIRMATION",
+              "sourceRecordIds": [
+                "P-Q-W03-U",
+                "Q-W03"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Objectives",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-Q-W03-U"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "PRIORITY",
+          "recordId": "PR-6",
+          "level": 0,
+          "title": "Protect Property",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Rank",
+              "value": "6",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "PR-6"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "PROBLEM",
+          "recordId": "P-02",
+          "level": 1,
+          "title": "42 homes destroyed; households cannot return",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "HOUSING",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-02"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Severity",
+              "value": "CRITICAL",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-02"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "APPROVED",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-02"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "SOURCE_FACT",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-02"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-02"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Description",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-02"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "OBJECTIVE",
+          "recordId": "O-04",
+          "level": 2,
+          "title": "Provide safe interim housing within 60 days",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Time horizon",
+              "value": "IMMEDIATE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "O-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "APPROVED",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "O-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "HUMAN_DECISION",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "O-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "O-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Description",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "O-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Addresses problems",
+              "value": "P-02",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "O-04",
+                "P-02"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "STRATEGY",
+          "recordId": "S-07",
+          "level": 3,
+          "title": "Deploy prefabricated modular units",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "APPROVED",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "S-07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "HUMAN_DECISION",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "S-07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "S-07"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Description",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "S-07"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "TACTIC",
+          "recordId": "T-014",
+          "level": 4,
+          "title": "Install interim modular housing on 42 destroyed lots",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "HOUSING",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "IN_REVIEW",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "HUMAN_DECISION",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Primary priority",
+              "value": "PR-6",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014",
+                "PR-6"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Secondary priorities",
+              "value": "PR-3",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014",
+                "PR-3"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": "L. Tremblay",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Accountable person",
+              "value": "L. Tremblay",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Team",
+              "value": "Regional Housing Taskforce",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Action",
+              "value": "Prepare pads, connect utilities, set modular units",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Deliverable",
+              "value": "42 serviced, occupied units",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Start",
+              "value": "2026-10-12",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "End",
+              "value": "2026-11-02",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Time horizon",
+              "value": "IMMEDIATE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Location",
+              "value": "Clearwater Ridge subdivision",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Rationale",
+              "value": "Displaced households need safe interim housing",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Approach",
+              "value": "Contracted site works and modular delivery via highway corridor",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Success measure",
+              "value": "42 units occupied by Nov 30",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "PROBLEM",
+          "recordId": "P-04",
+          "level": 1,
+          "title": "Damage to remaining homes not yet assessed",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "HOUSING",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Severity",
+              "value": "HIGH",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "DRAFT",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "RULE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "P-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Description",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-04"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Derived from UNKNOWN assessment answer",
+              "value": "Q-H02",
+              "status": "REQUIRES_CONFIRMATION",
+              "sourceRecordIds": [
+                "P-04",
+                "Q-H02"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Objectives",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "P-04"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Unlinked records",
+          "value": "The following records reference records that are not in the supplied data.",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": []
+        },
+        {
+          "type": "RECORD",
+          "recordType": "TACTIC",
+          "recordId": "T-Q-W03-SAFE",
+          "level": 1,
+          "title": "Issue precautionary boil-water advisory review",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Linked strategy",
+              "value": "S-PRECAUTION (not in the supplied data)",
+              "status": "REQUIRES_CONFIRMATION",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Sector",
+              "value": "CRITICAL_INFRASTRUCTURE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Status",
+              "value": "DRAFT",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Source",
+              "value": "RULE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Primary priority",
+              "value": "PR-4",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE",
+                "PR-4"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Accountable person",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Team",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Action",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Deliverable",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Start",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "End",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Time horizon",
+              "value": "IMMEDIATE",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Location",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Rationale",
+              "value": "Precaution: Q-W03 answered UNKNOWN",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Approach",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Success measure",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Safety precaution",
+              "value": "Yes",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "RESOURCES_AND_BUDGET",
+      "title": "Resources and budget",
+      "origin": "SOURCE_DATA",
+      "items": [
+        {
+          "type": "FIELD",
+          "label": "Currency",
+          "value": null,
+          "status": "NOT_PROVIDED",
+          "sourceRecordIds": []
+        },
+        {
+          "type": "FIELD",
+          "label": "Tactics with a supplied Class D estimate",
+          "value": "1 of 2",
+          "status": "PROVIDED",
+          "sourceRecordIds": []
+        },
+        {
+          "type": "FIELD",
+          "label": "Sum of supplied tactic estimates (tactics without an estimate are excluded)",
+          "value": "2,122,900 (currency not provided)",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "T-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Funding sources and funding gap",
+          "value": null,
+          "status": "NOT_PROVIDED",
+          "sourceRecordIds": []
+        },
+        {
+          "type": "RECORD",
+          "recordType": "TACTIC",
+          "recordId": "T-014",
+          "level": 0,
+          "title": "Install interim modular housing on 42 destroyed lots",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Class D estimate",
+              "value": "2,122,900 (currency not provided)",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": "L. Tremblay",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Team",
+              "value": "Regional Housing Taskforce",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Supporting roles",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Delivery method",
+              "value": "CONTRACTOR",
+              "status": "PROVIDED",
+              "sourceRecordIds": [
+                "T-014"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "RECORD",
+          "recordType": "TACTIC",
+          "recordId": "T-Q-W03-SAFE",
+          "level": 0,
+          "title": "Issue precautionary boil-water advisory review",
+          "fields": [
+            {
+              "type": "FIELD",
+              "label": "Class D estimate",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Owner",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Team",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Supporting roles",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            },
+            {
+              "type": "FIELD",
+              "label": "Delivery method",
+              "value": null,
+              "status": "NOT_PROVIDED",
+              "sourceRecordIds": [
+                "T-Q-W03-SAFE"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "GAPS_AND_CONFIRMATIONS",
+      "title": "Gaps and items requiring confirmation",
+      "origin": "MIXED",
+      "items": [
+        {
+          "type": "FIELD",
+          "label": "Known gap (ppost-engine matrix)",
+          "value": "High-severity problem with no objective",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "P-Q-H07"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Known gap (ppost-engine matrix)",
+          "value": "High-severity problem with no objective",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "P-Q-H07a"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Known gap (ppost-engine matrix)",
+          "value": "Unresolved UNKNOWN on a safety item",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "P-Q-W03-U"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Known gap (ppost-engine matrix)",
+          "value": "High-severity problem with no objective",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "P-Q-W03-U"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Known gap (ppost-engine matrix)",
+          "value": "High-severity problem with no objective",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "P-04"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Known gap (ppost-engine validateTactic)",
+          "value": "5W1H incomplete: who, what, when, where, why (objective link), how; success measure missing",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "T-Q-W03-SAFE"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Unresolved UNKNOWN answer",
+          "value": "Q-W03: Has the municipal water intake or distribution line experienced pressure loss or power loss?",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "Q-W03"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Unanswered assessment question",
+          "value": "Q-F02: Has a funding application already been submitted?",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "Q-F02"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Open verification task",
+          "value": "VT-Q-W03: Field-verify water intake and distribution",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "VT-Q-W03"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Unresolved reference",
+          "value": "P-04 references UNKNOWN assessment question Q-H02, which is not in the supplied data",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "P-04"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Unresolved reference",
+          "value": "T-Q-W03-SAFE references strategy S-PRECAUTION, which is not in the supplied data",
+          "status": "REQUIRES_CONFIRMATION",
+          "sourceRecordIds": [
+            "T-Q-W03-SAFE"
+          ]
+        },
+        {
+          "type": "AI_RECOMMENDATION",
+          "label": "AI recommendation: not verified; requires human review",
+          "text": "Confirm whether a funding application has been submitted; the assessment question is unanswered.",
+          "sourceRecordIds": [
+            "Q-F02"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "RECOMMENDED_NEXT_STEPS",
+      "title": "Recommended next steps",
+      "origin": "AI_RECOMMENDATION",
+      "items": [
+        {
+          "type": "AI_RECOMMENDATION",
+          "label": "AI recommendation: not verified; requires human review",
+          "title": "Resolve the water system UNKNOWN",
+          "text": "Prioritise the open field verification of the water intake and distribution before relying on any water-system assumptions.",
+          "sourceRecordIds": [
+            "Q-W03",
+            "VT-Q-W03",
+            "P-Q-W03-U"
+          ]
+        },
+        {
+          "type": "AI_RECOMMENDATION",
+          "label": "AI recommendation: not verified; requires human review",
+          "title": "Define objectives for high-severity problems",
+          "text": "Consider drafting objectives for the debris-flow risk, the blocked evacuation route and the unassessed home damage.",
+          "sourceRecordIds": [
+            "P-Q-H07",
+            "P-Q-H07a",
+            "P-04"
+          ]
+        },
+        {
+          "type": "AI_RECOMMENDATION",
+          "label": "AI recommendation: not verified; requires human review",
+          "title": "Complete the precautionary tactic",
+          "text": "Assign an accountable person and complete the 5W1H details for the boil-water advisory review, and link it to a strategy.",
+          "sourceRecordIds": [
+            "T-Q-W03-SAFE"
+          ]
+        }
+      ]
+    },
+    {
+      "key": "SOURCE_RECORD_INDEX",
+      "title": "Source record index",
+      "origin": "SOURCE_DATA",
+      "items": [
+        {
+          "type": "FIELD",
+          "label": "EV-2026-014",
+          "value": "Disaster: Clearwater Ridge Wildfire",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "EV-2026-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-1",
+          "value": "Priority: Responder Safety & Health",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-1"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-2",
+          "value": "Priority: Save Lives",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-2"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-3",
+          "value": "Priority: Reduce Suffering",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-3"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-4",
+          "value": "Priority: Protect Public Health",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-4"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-5",
+          "value": "Priority: Protect Government Infrastructure",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-5"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-6",
+          "value": "Priority: Protect Property",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-6"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-7",
+          "value": "Priority: Protect the Environment",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-7"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "PR-8",
+          "value": "Priority: Reduce Economic & Social Losses",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "PR-8"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Q-W03",
+          "value": "Assessment question: Has the municipal water intake or distribution line experienced pressure loss or power loss?",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "Q-W03"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Q-H07",
+          "value": "Assessment question: Are residential areas downslope of severe burn scars at risk of debris flow?",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "Q-H07"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Q-H07a",
+          "value": "Assessment question: Is the evacuation route open?",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "Q-H07a"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "Q-F02",
+          "value": "Assessment question: Has a funding application already been submitted?",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "Q-F02"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "VT-Q-W03",
+          "value": "Verification task: Field-verify water intake and distribution",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "VT-Q-W03"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "P-02",
+          "value": "Problem: 42 homes destroyed; households cannot return",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "P-02"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "P-04",
+          "value": "Problem: Damage to remaining homes not yet assessed",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "P-04"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "P-Q-W03-U",
+          "value": "Problem: Unverified: Water system integrity compromised",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "P-Q-W03-U"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "P-Q-H07",
+          "value": "Problem: Debris-flow risk to downslope homes",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "P-Q-H07"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "P-Q-H07a",
+          "value": "Problem: Evacuation route blocked",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "P-Q-H07a"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "O-04",
+          "value": "Objective: Provide safe interim housing within 60 days",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "O-04"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "S-07",
+          "value": "Strategy: Deploy prefabricated modular units",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "S-07"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "T-014",
+          "value": "Tactic: Install interim modular housing on 42 destroyed lots",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "T-014"
+          ]
+        },
+        {
+          "type": "FIELD",
+          "label": "T-Q-W03-SAFE",
+          "value": "Tactic: Issue precautionary boil-water advisory review",
+          "status": "PROVIDED",
+          "sourceRecordIds": [
+            "T-Q-W03-SAFE"
+          ]
+        }
+      ]
+    }
+  ]
+}
