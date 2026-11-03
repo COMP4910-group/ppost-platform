@@ -1,0 +1,19 @@
+{
+  // Emitted .d.ts files must stay readable by packages/web, which react-scripts
+  // pins to TypeScript 4.9: export only plain types (no TS 5-only syntax).
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["ES2020", "DOM"],
+    "types": [],
+    "strict": true,
+    "declaration": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src"]
+}

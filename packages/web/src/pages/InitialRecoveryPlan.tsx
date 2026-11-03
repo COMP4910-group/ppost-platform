@@ -1,26 +1,39 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { renderPlanDocument } from '../recoveryPlan/document';
+import type { RenderPlanDocument } from '../recoveryPlan/document';
 import { MOCK_DISASTER_ID, createMockRecoveryPlanApi } from '../recoveryPlan/mockApi';
 import { PlanPreview, PreviewLegend } from '../recoveryPlan/PlanPreview';
 import type { GenerateDraftResult, RecoveryPlanApi } from '../recoveryPlan/types';
 
 /**
- * Initial Recovery Plan review. The draft lives only in this component's
- * state: no browser storage, no backend. Approval and rejection are simulated.
+ * Initial Recovery Plan review. The draft and its DOCX live only in this
+ * component's memory: no browser storage, no backend. Approval is simulated.
  */
+type DocumentState =
+  | { status: 'rendering' }
+  | { status: 'ready'; url: string; filename: string; size: number }
+  | { status: 'error'; message: string };
+
 type DemoState =
   | { status: 'idle'; notice?: string }
   | { status: 'loading' }
   | { status: 'error'; message: string }
   | { status: 'review'; result: GenerateDraftResult }
-  | { status: 'approved'; result: GenerateDraftResult };
+  | { status: 'approved'; result: GenerateDraftResult; approvedAt: string; document: DocumentState };
 
 export interface InitialRecoveryPlanProps {
   /** Injected in tests; defaults to the demo mock adapter. */
   api?: RecoveryPlanApi;
+  /** Injected in tests; defaults to the in-browser DOCX renderer. */
+  renderDocument?: RenderPlanDocument;
   disasterId?: string;
 }
 
-const InitialRecoveryPlan = ({ api, disasterId = MOCK_DISASTER_ID }: InitialRecoveryPlanProps) => {
+const InitialRecoveryPlan = ({
+  api,
+  renderDocument = renderPlanDocument,
+  disasterId = MOCK_DISASTER_ID,
+}: InitialRecoveryPlanProps) => {
   const [state, setState] = useState<DemoState>({ status: 'idle' });
   const [simulateFailure, setSimulateFailure] = useState(false);
   const simulateFailureRef = useRef(simulateFailure);
@@ -36,9 +49,29 @@ const InitialRecoveryPlan = ({ api, disasterId = MOCK_DISASTER_ID }: InitialReco
   // from an aborted generation is ignored. (A plain "mounted" flag breaks
   // under StrictMode, which runs this cleanup once and then re-mounts.)
   const inFlight = useRef<AbortController | null>(null);
-  useEffect(() => () => inFlight.current?.abort(), []);
+
+  // The downloadable document belongs to one approval of one draft. Bumping the
+  // token invalidates it: a render still in progress is discarded on arrival.
+  const approvalToken = useRef(0);
+  const documentUrl = useRef<string | null>(null);
+  const releaseDocument = () => {
+    approvalToken.current += 1;
+    if (documentUrl.current) URL.revokeObjectURL(documentUrl.current);
+    documentUrl.current = null;
+  };
+
+  useEffect(
+    () => () => {
+      inFlight.current?.abort();
+      approvalToken.current += 1;
+      if (documentUrl.current) URL.revokeObjectURL(documentUrl.current);
+      documentUrl.current = null;
+    },
+    [],
+  );
 
   const generate = async () => {
+    releaseDocument();
     inFlight.current?.abort();
     const controller = new AbortController();
     inFlight.current = controller;
@@ -54,9 +87,47 @@ const InitialRecoveryPlan = ({ api, disasterId = MOCK_DISASTER_ID }: InitialReco
     }
   };
 
-  const reject = () => setState({ status: 'idle', notice: 'Draft rejected and discarded. Nothing was saved.' });
-  const approve = () => state.status === 'review' && setState({ status: 'approved', result: state.result });
-  const startOver = () => setState({ status: 'idle' });
+  /** Renders the exact draft under review, in memory, for this approval only. */
+  const prepareDocument = async (result: GenerateDraftResult, approvedAt: string) => {
+    releaseDocument();
+    const token = approvalToken.current;
+    setState({ status: 'approved', result, approvedAt, document: { status: 'rendering' } });
+    try {
+      const doc = await renderDocument(result.draft, {
+        draftId: result.draftId,
+        approval: { kind: 'SIMULATED', approvedAt },
+      });
+      if (token !== approvalToken.current) return;
+      const url = URL.createObjectURL(doc.blob);
+      documentUrl.current = url;
+      setState({
+        status: 'approved',
+        result,
+        approvedAt,
+        document: { status: 'ready', url, filename: doc.filename, size: doc.blob.size },
+      });
+    } catch (error) {
+      if (token !== approvalToken.current) return;
+      setState({
+        status: 'approved',
+        result,
+        approvedAt,
+        document: { status: 'error', message: error instanceof Error ? error.message : 'The document could not be created.' },
+      });
+    }
+  };
+
+  const reject = () => {
+    releaseDocument();
+    setState({ status: 'idle', notice: 'Draft rejected and discarded. Nothing was saved.' });
+  };
+  const approve = () => {
+    if (state.status === 'review') prepareDocument(state.result, new Date().toISOString());
+  };
+  const startOver = () => {
+    releaseDocument();
+    setState({ status: 'idle' });
+  };
 
   return (
     <div className="p-6 bg-gray-950 min-h-full space-y-4">
@@ -162,13 +233,22 @@ const InitialRecoveryPlan = ({ api, disasterId = MOCK_DISASTER_ID }: InitialReco
                   </span>
                 </div>
                 <div className="flex gap-2 flex-shrink-0">
-                  <button
-                    disabled
-                    title="Not available yet"
-                    className="border border-gray-800 text-sm px-4 py-2 rounded text-gray-600 cursor-not-allowed"
-                  >
-                    Download DOCX
-                  </button>
+                  {state.document.status === 'ready' ? (
+                    <a
+                      href={state.document.url}
+                      download={state.document.filename}
+                      className="bg-green-600 hover:bg-green-500 text-sm px-4 py-2 rounded text-white"
+                    >
+                      Download DOCX
+                    </a>
+                  ) : (
+                    <button
+                      disabled
+                      className="border border-gray-800 text-sm px-4 py-2 rounded text-gray-600 cursor-not-allowed"
+                    >
+                      {state.document.status === 'rendering' ? 'Preparing DOCX…' : 'Download DOCX'}
+                    </button>
+                  )}
                   <button
                     onClick={startOver}
                     className="border border-gray-700 text-sm px-4 py-2 rounded hover:bg-gray-800 text-gray-300"
@@ -178,11 +258,23 @@ const InitialRecoveryPlan = ({ api, disasterId = MOCK_DISASTER_ID }: InitialReco
                 </div>
               </div>
             )}
-            {state.status === 'approved' && (
+            {state.status === 'approved' && state.document.status === 'ready' && (
               <p className="text-xs text-gray-500">
-                DOCX download is not available yet. It is the next implementation stage: the backend will generate the
-                document from the saved, approved plan.
+                {state.document.filename} ({Math.ceil(state.document.size / 1024)} KB) was created in this browser from
+                the draft below and is marked SYNTHETIC DEMO with simulated approval. It is not stored anywhere:
+                rejecting, starting over, generating a new draft or leaving the page discards it.
               </p>
+            )}
+            {state.status === 'approved' && state.document.status === 'error' && (
+              <div role="alert" className="text-xs text-red-300 flex items-center gap-3">
+                <span>The DOCX could not be created: {state.document.message}</span>
+                <button
+                  onClick={() => prepareDocument(state.result, state.approvedAt)}
+                  className="border border-red-700 text-red-200 px-2 py-1 rounded hover:bg-red-900/40"
+                >
+                  Try again
+                </button>
+              </div>
             )}
             <PreviewLegend />
           </div>

@@ -1,0 +1,11 @@
+{
+  // ES module build for bundlers (the package.json "module" field). Bundlers then
+  // resolve docx's ESM build; react-scripts 5 would otherwise emit docx's
+  // CommonJS build (index.cjs) as a static file instead of bundling it.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "ES2020",
+    "outDir": "dist/esm",
+    "declaration": false
+  }
+}

@@ -119,8 +119,9 @@ describe('InitialRecoveryPlan demo', () => {
     }
   });
 
-  it('approve only changes the in-memory demo status and offers no working download', async () => {
-    render(<InitialRecoveryPlan api={createMockRecoveryPlanApi({ delayMs: 0 })} />);
+  it('approve only changes the in-memory demo status', async () => {
+    const renderDocument = jest.fn(() => new Promise<never>(() => {}));
+    render(<InitialRecoveryPlan api={createMockRecoveryPlanApi({ delayMs: 0 })} renderDocument={renderDocument} />);
     await generateDraft();
 
     userEvent.click(screen.getByRole('button', { name: 'Approve draft' }));
@@ -129,8 +130,7 @@ describe('InitialRecoveryPlan demo', () => {
     expect(screen.getByRole('status')).toHaveTextContent('Nothing was saved');
     expect(screen.queryByRole('button', { name: 'Approve draft' })).not.toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Reject draft' })).not.toBeInTheDocument();
-    expect(screen.getByRole('button', { name: 'Download DOCX' })).toBeDisabled();
-    expect(screen.getByText(/DOCX download is not available yet/)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Preparing DOCX…' })).toBeDisabled();
     // The approved draft stays visible for reference.
     expect(screen.getByRole('article', { name: 'Initial Recovery Plan draft preview' })).toBeInTheDocument();
 
