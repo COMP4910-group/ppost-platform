@@ -1,4 +1,5 @@
 import React from 'react';
+import { supabase } from '../supabase'
 
 const StatCard = ({ value, label, sub, color, unknown }: { value: string; label: string; sub: string; color?: string; unknown?: boolean }) => (
   <div className={`bg-gray-900 rounded-lg p-3 border ${unknown ? 'border-yellow-600 border-dashed' : 'border-gray-800'}`}>
@@ -56,6 +57,14 @@ const DeadlineItem = ({ day: date, month, title, sub, urgent }: { day: string; m
 );
 
 const Dashboard = () => {
+  React.useEffect(() => {
+    const fetchDisasters = async () => {
+      const { data, error } = await supabase.from('disasters').select('*')
+      console.log('Disasters:', data, error)
+    }
+    fetchDisasters()
+  }, [])
+
   return (
     <div className="p-6 bg-gray-950 min-h-full">
 
