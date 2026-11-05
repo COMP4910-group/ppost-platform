@@ -1,7 +1,8 @@
 import React, { useCallback } from 'react';
-import type { CostLine, CostCategory } from '../../types';
+import type { CostLine, CostCategory, RateEntry } from '../../types';
 import { COST_CATEGORY_LABELS } from '../../types';
 import { computeLineCost, formatCurrency } from '../../utils/calculations';
+import { applyRateToLine, effectiveRate } from '../../utils/rates';
 
 interface CostLineRowProps {
   line: CostLine;
@@ -9,7 +10,12 @@ interface CostLineRowProps {
   onDelete: (id: string) => void;
   /** When true the row shows a delete button */
   editable?: boolean;
+  /** Rate table entries the user can fill this line from */
+  rates?: RateEntry[];
 }
+
+// Fields that, when edited by hand, mean the line no longer matches its rate
+const UNLINK_FIELDS: ReadonlyArray<keyof CostLine> = ['unitRate', 'unit', 'category'];
 
 const DURATION_UNITS: Array<{ value: CostLine['durationUnit']; label: string }> =
   [
@@ -28,11 +34,13 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
   onChange,
   onDelete,
   editable = true,
+  rates = [],
 }) => {
   // Generic field updater: recalculates totalCost whenever qty/rate/duration changes
   const update = useCallback(
     <K extends keyof CostLine>(field: K, rawValue: CostLine[K]) => {
-      const next = { ...line, [field]: rawValue };
+      const next: CostLine = { ...line, [field]: rawValue };
+      if (UNLINK_FIELDS.includes(field)) next.rateId = undefined;
       next.totalCost = computeLineCost(next.quantity, next.unitRate, next.duration);
       onChange(next);
     },
@@ -56,6 +64,9 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
     [update],
   );
 
+  const categoryRates = rates.filter((r) => r.category === line.category);
+  const linked = !!line.rateId && categoryRates.some((r) => r.id === line.rateId);
+
   return (
     <tr className="cost-line-row">
       {/* Description */}
@@ -72,6 +83,26 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
         ) : (
           <span>{line.description}</span>
         )}
+          {editable && categoryRates.length > 0 && (
+            <select
+              className={`cost-input cost-input--select rate-picker${linked ? ' rate-picker--linked' : ''}`}
+              value={linked ? line.rateId : ''}
+              onChange={(e) => {
+                const rate = rates.find((r) => r.id === e.target.value);
+                if (rate) onChange(applyRateToLine(line, rate));
+              }}
+              aria-label="Fill from rate table"
+            >
+              <option value="">
+                {line.rateId && !linked ? 'Custom rate' : 'Fill from rate table…'}
+              </option>
+              {categoryRates.map((r) => (
+                <option key={r.id} value={r.id}>
+                  {r.resource || 'Unnamed'} – {formatCurrency(effectiveRate(r))}/{r.unit}
+                </option>
+              ))}
+            </select>
+          )}
       </td>
 
       {/* Category */}

@@ -49,6 +49,8 @@ export interface CostLine {
   totalCost: number;
   /** Notes / justification for this line */
   notes?: string;
+  /** Rate table entry this line was filled from (for traceability) */
+  rateId?: string;
 }
 
 // ─── Rate Table Entry ─────────────────────────────────────────────────────────

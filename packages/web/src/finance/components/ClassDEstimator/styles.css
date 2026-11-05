@@ -366,3 +366,21 @@
   font-style: italic;
   padding: 8px 0;
 }
+
+/* ── Rate table pickers ─────────────────────────────────────────────────── */
+/* Rate picker used inside the Class D Estimator */
+.rate-picker {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--c-text-muted);
+}
+
+.rate-picker--linked {
+  color: var(--c-accent);
+}
+
+.add-line-bar__rate-picker {
+  width: auto;
+  min-width: 200px;
+  margin-left: auto;
+}

@@ -14,7 +14,7 @@
  */
 
 import React, { useCallback, useMemo, useState } from 'react';
-import type { CostCategory, CostLine } from '../../types';
+import type { CostCategory, CostLine, RateEntry } from '../../types';
 import { COST_CATEGORY_LABELS } from '../../types';
 import {
   computeGrandTotal,
@@ -23,6 +23,8 @@ import {
   formatCurrency,
   newId,
 } from '../../utils/calculations';
+import { applyRateToLine, effectiveRate } from '../../utils/rates';
+import { useRates } from '../../store/rateStore';
 import { CostLineRow } from './CostLineRow';
 import { SummaryPanel } from './SummaryPanel';
 import './styles.css';
@@ -51,6 +53,8 @@ export interface ClassDEstimatorProps {
   editable?: boolean;
   /** Title shown in the table header */
   title?: string;
+  /** Override the rate table (defaults to the shared rate store) */
+  rates?: RateEntry[];
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -60,7 +64,11 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
   onChange,
   editable = true,
   title = 'Class D Cost Estimate',
+  rates,
 }) => {
+  const storeRates = useRates();
+  const rateList = rates ?? storeRates;
+
   const [lines, setLines] = useState<CostLine[]>(() =>
     initialLines.map((l) => ({
       ...l,
@@ -99,6 +107,24 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
       applyLines([...lines, makeBlankLine(category)]);
     },
     [lines, applyLines],
+  );
+
+  const handleAddFromRate = useCallback(
+    (rateId: string) => {
+      const rate = rateList.find((r) => r.id === rateId);
+      if (!rate) return;
+      applyLines([...lines, applyRateToLine(makeBlankLine(rate.category), rate)]);
+    },
+    [lines, applyLines, rateList],
+  );
+
+  // Rates grouped by category for the "Add from rate table" picker
+  const ratesByCategory = useMemo(
+    () =>
+      (Object.keys(COST_CATEGORY_LABELS) as CostCategory[])
+        .map((cat) => ({ cat, items: rateList.filter((r) => r.category === cat) }))
+        .filter((g) => g.items.length > 0),
+    [rateList],
   );
 
   // ── Derived totals ───────────────────────────────────────────────────────
@@ -178,6 +204,7 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
                           onChange={handleChange}
                           onDelete={handleDelete}
                           editable={editable}
+                          rates={rateList}
                         />
                       ))}
                     </React.Fragment>
@@ -212,6 +239,26 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
                     {COST_CATEGORY_LABELS[cat]}
                   </button>
                 ),
+              )}
+
+              {ratesByCategory.length > 0 && (
+                <select
+                  className="cost-input cost-input--select add-line-bar__rate-picker"
+                  value=""
+                  onChange={(e) => handleAddFromRate(e.target.value)}
+                  aria-label="Add a line from the rate table"
+                >
+                  <option value="">+ Add from rate table…</option>
+                  {ratesByCategory.map((g) => (
+                    <optgroup key={g.cat} label={COST_CATEGORY_LABELS[g.cat]}>
+                      {g.items.map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.resource || 'Unnamed'} – {formatCurrency(effectiveRate(r))}/{r.unit}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
               )}
             </div>
           )}
