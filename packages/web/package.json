@@ -21,16 +21,17 @@
     "tailwindcss": "^3.4.19",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4",
-    "@ppost/plan-document": "*"
+    "@ppost/plan-document": "*",
+    "ppost-engine": "*"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "prestart": "npm run build --prefix ../plan-document",
-    "prebuild": "npm run build --prefix ../plan-document",
-    "pretest": "npm run build --prefix ../plan-document",
+    "prestart": "npm run build --prefix ../plan-document && npm run build --prefix ../ppost-engine",
+    "prebuild": "npm run build --prefix ../plan-document && npm run build --prefix ../ppost-engine",
+    "pretest": "npm run build --prefix ../plan-document && npm run build --prefix ../ppost-engine",
     "postbuild": "node -e \"const fs=require('fs'),d='build/static/media',bad=fs.existsSync(d)?fs.readdirSync(d).filter(f=>f.endsWith('.cjs')):[];if(bad.length){console.error('CommonJS module emitted as a static file instead of bundled: '+bad.join(', '));process.exit(1)}\""
   },
   "eslintConfig": {
