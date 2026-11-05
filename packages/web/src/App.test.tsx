@@ -2,8 +2,9 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders the app shell and dashboard', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getByText('PPOST RecoveryOS')).toBeInTheDocument();
+  expect(screen.getByRole('heading', { name: 'Clearwater Ridge Wildfire' })).toBeInTheDocument();
+  expect(screen.getByText('Initial Recovery Plan')).toBeInTheDocument();
 });
