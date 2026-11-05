@@ -42,6 +42,7 @@ const ZERO_SUBTOTALS: CategorySubtotals = {
   equipment: 0,
   materials: 0,
   subcontractors: 0,
+  facility_rental: 0,
   overhead: 0,
   escalation: 0,
   engineering_allowance: 0,

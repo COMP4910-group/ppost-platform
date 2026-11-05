@@ -5,6 +5,7 @@ export type CostCategory =
   | 'equipment'
   | 'materials'
   | 'subcontractors'
+  | 'facility_rental'
   | 'overhead'
   | 'escalation'
   | 'engineering_allowance'
@@ -15,6 +16,7 @@ export const COST_CATEGORY_LABELS: Record<CostCategory, string> = {
   equipment: 'Equipment',
   materials: 'Materials',
   subcontractors: 'Subcontractors',
+  facility_rental: 'Facility Rental',
   overhead: 'Overhead',
   escalation: 'Escalation',
   engineering_allowance: 'Engineering Allowance',
