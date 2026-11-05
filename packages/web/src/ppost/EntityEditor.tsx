@@ -1,13 +1,19 @@
 /**
  * One drawer that edits any PPOST record: Problem, Objective, Strategy or Tactic.
- * Tactics get the full 5W1H form plus engine validation before "Submit for review".
+ *
+ * - Everything typed is kept automatically as an unsaved draft (closing with ×, Esc or
+ *   clicking outside keeps it). Only "Cancel" throws the changes away.
+ * - Tactics get the full 5W1H form; "Submit for review" runs the engine's validation.
+ * - Errors are shown at the top AND next to the buttons, so they're never off-screen.
  */
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   FiveW1H, Objective, Problem, RecordStatus, SECTORS, SectorId, Severity, Strategy, Tactic, TimeHorizon, validateTactic,
 } from 'ppost-engine';
-import { archive, EntityKind, upsert, usePpost } from './store';
-import { PpostState } from './seedData';
+import { archive, discardDraft, EntityKind, getState, saveDraft, StoreState, upsert, usePpost } from './store';
+import { blankObjective, blankStrategy, blankTactic } from './records';
+import { AiSuggestionsPanel } from './AiSuggestionsPanel';
+import { PpostSuggestion, SuggestionRequest } from './aiSuggestions';
 import { Button, Drawer, Field, HORIZON_LABEL, IdChip, inputCls, StatusBadge } from './ui';
 
 export type EditorTarget =
@@ -21,9 +27,14 @@ const STATUSES: RecordStatus[] = ['DRAFT', 'IN_REVIEW', 'APPROVED'];
 const SEVERITIES: Severity[] = ['CRITICAL', 'HIGH', 'MEDIUM', 'LOW'];
 const HORIZONS: TimeHorizon[] = ['IMMEDIATE', 'MID_TERM', 'LONG_TERM'];
 const PEOPLE = ['J. Miller', 'A. Singh', 'R. Okafor', 'L. Tremblay', 'M. Chen'];
+const FIELD_LABEL: Record<string, string> = {
+  title: 'Title', who: 'WHO', what: 'WHAT', when: 'WHEN', where: 'WHERE', why: 'WHY', how: 'HOW', successMeasure: 'Success measure',
+};
 
-/** Priority › Problem › Objective › Strategy › Tactic for any record. */
-export function lineage(target: EditorTarget, s: PpostState): string[] {
+type Issue = { field: string; message: string };
+
+/** Priority › Problem › Objective › Strategy for any record. */
+export function lineage(target: EditorTarget, s: StoreState): string[] {
   const prio = (id?: string) => s.priorities.find((p) => p.id === id);
   const prob = (id?: string) => s.problems.find((p) => p.id === id);
   const obj = (id?: string) => s.objectives.find((o) => o.id === id);
@@ -46,79 +57,196 @@ export function lineage(target: EditorTarget, s: PpostState): string[] {
   }
 }
 
-export function EntityEditor({ target, onClose }: { target: EditorTarget; onClose: () => void }) {
+/** Tactic's WHY always points at its strategy's objective. */
+function normalize(target: EditorTarget, s: StoreState): any {
+  if (target.kind !== 'tactic') return target.record;
+  const objectiveId = s.strategies.find((x) => x.id === target.record.strategyId)?.objectiveId;
+  const w = target.record.fiveW1H ?? {};
+  return { ...target.record, fiveW1H: { ...w, why: { ...w.why, objectiveId: w.why?.objectiveId ?? objectiveId } } };
+}
+
+/** Missing 5W1H fields for a tactic (used for the "Incomplete" badge too). */
+export const tacticIssues = (t: Tactic): Issue[] => validateTactic(t);
+
+/**
+ * @param onOpen  open another record (used by "Use as draft" on AI suggestions).
+ *                The current form is kept as a draft, so nothing is lost.
+ */
+export function EntityEditor({ target, onClose, onOpen }: {
+  target: EditorTarget; onClose: () => void; onOpen?: (t: EditorTarget) => void;
+}) {
   const s = usePpost();
-  const [draft, setDraft] = useState<any>(() => {
-    if (target.kind !== 'tactic') return target.record;
-    // WHY is always the strategy's objective — fill it in so validation sees it
-    const objectiveId = s.strategies.find((x) => x.id === target.record.strategyId)?.objectiveId;
-    const w = target.record.fiveW1H ?? {};
-    return { ...target.record, fiveW1H: { ...w, why: { ...w.why, objectiveId: w.why?.objectiveId ?? objectiveId } } };
-  });
-  const [titleError, setTitleError] = useState('');
-  const [submitAttempted, setSubmitAttempted] = useState(false);
   const kind = target.kind;
+  const isNew = !!target.isNew;
+
+  const stored = getState().drafts[target.record.id];
+  const baseline = useMemo(() => stored?.baseline ?? normalize(target, getState()), [target]); // eslint-disable-line react-hooks/exhaustive-deps
+  const [draft, setDraft] = useState<any>(() => stored?.record ?? baseline);
+  const [restoredAt, setRestoredAt] = useState<string | undefined>(stored?.savedAt);
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [triedSubmit, setTriedSubmit] = useState(false);
+  const alertRef = useRef<HTMLDivElement>(null);
+  const titleRef = useRef<HTMLInputElement>(null);
+
   const patch = (p: Record<string, unknown>) => setDraft((d: any) => ({ ...d, ...p }));
+  const dirty = JSON.stringify(draft) !== JSON.stringify(baseline);
 
-  const tacticIssues = useMemo(
-    () => (kind === 'tactic' ? validateTactic(draft as Tactic) : []),
-    [kind, draft],
-  );
-  const issueFor = (field: string) =>
-    submitAttempted ? tacticIssues.find((i) => i.field === field)?.message : undefined;
+  /* ---- keep unsaved work as a draft (debounced, flushed when the drawer closes) ---- */
+  const done = useRef(false);
+  const persist = useRef(() => {});
+  persist.current = () => {
+    if (done.current) return;
+    if (JSON.stringify(draft) === JSON.stringify(baseline)) discardDraft(draft.id);
+    else saveDraft(kind, draft, baseline, isNew);
+  };
+  useEffect(() => {
+    const t = setTimeout(() => persist.current(), 400);
+    return () => clearTimeout(t);
+  }, [draft]);
+  useEffect(() => {
+    const flush = persist;
+    return () => flush.current(); // flush on close
+  }, []);
 
-  const save = (status?: RecordStatus) => {
-    if (!draft.title?.trim()) { setTitleError('Title is required'); return; }
-    if (status === 'IN_REVIEW' && kind === 'tactic') {
-      setSubmitAttempted(true);
-      if (tacticIssues.length) return; // show errors, don't submit
-    }
-    upsert(kind, { ...draft, title: draft.title.trim(), status: status ?? draft.status });
+  // live re-check after a failed submit, so errors disappear as fields are filled
+  const liveIssues = useMemo(() => collectIssues(kind, draft, true), [kind, draft]);
+  const shownIssues = triedSubmit ? liveIssues : issues;
+
+  const showErrors = (list: Issue[]) => {
+    setIssues(list);
+    // bring the error list into view (the buttons are at the bottom of a long form)
+    requestAnimationFrame(() => {
+      alertRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (list.some((i) => i.field === 'title')) titleRef.current?.focus();
+    });
+  };
+
+  const saveDraftRecord = () => {
+    const list = collectIssues(kind, draft, false);
+    if (list.length) { showErrors(list); return; }
+    done.current = true;
+    upsert(kind, { ...draft, title: draft.title.trim() });
+    onClose();
+  };
+
+  const submit = () => {
+    setTriedSubmit(true);
+    const list = collectIssues(kind, draft, true);
+    if (list.length) { showErrors(list); return; }
+    done.current = true;
+    upsert(kind, { ...draft, title: draft.title.trim(), status: 'IN_REVIEW' });
+    onClose();
+  };
+
+  const cancel = () => {
+    if (dirty && !window.confirm('Discard your unsaved changes?')) return;
+    done.current = true;
+    discardDraft(draft.id);
     onClose();
   };
 
   const doArchive = () => {
     if (window.confirm(`Archive ${draft.id}? It will be hidden but kept in the record.`)) {
+      done.current = true;
       archive(kind, draft.id);
       onClose();
     }
   };
 
+  const discardRestored = () => {
+    discardDraft(draft.id);
+    setDraft(baseline);
+    setRestoredAt(undefined);
+  };
+
+  /* ---- AI suggestions for the next level down (only for saved records) ---- */
+  const aiRequest = useMemo((): SuggestionRequest | null => {
+    if (isNew) return null;
+    if (kind === 'problem') return { want: 'objective', problem: draft };
+    if (kind === 'objective') return { want: 'strategy', objective: draft, problems: s.problems.filter((p) => draft.problemIds.includes(p.id)) };
+    if (kind === 'strategy') {
+      const objective = s.objectives.find((o) => o.id === draft.objectiveId);
+      return { want: 'tactic', strategy: draft, objective, problem: s.problems.find((p) => p.id === objective?.problemIds[0]) };
+    }
+    return null;
+  }, [isNew, kind, draft, s]);
+
+  const applySuggestion = (sug: PpostSuggestion, isSample: boolean) => {
+    if (!onOpen) return;
+    const src = isSample ? 'HUMAN_DECISION' : 'AI_SUGGESTION';
+    const extra = { title: sug.title, description: sug.rationale, source: src as any };
+    if (kind === 'problem') onOpen({ kind: 'objective', isNew: true, record: blankObjective(draft.id, { ...extra, horizon: sug.horizon ?? 'IMMEDIATE' }) });
+    if (kind === 'objective') onOpen({ kind: 'strategy', isNew: true, record: blankStrategy(draft.id, extra) });
+    if (kind === 'strategy') {
+      const objective = s.objectives.find((o) => o.id === draft.objectiveId);
+      const problem = s.problems.find((p) => p.id === objective?.problemIds[0]);
+      onOpen({ kind: 'tactic', isNew: true, record: blankTactic(draft, problem, extra) });
+    }
+  };
+
+  const issueFor = (field: string) => shownIssues.find((i) => i.field === field)?.message;
   const crumbs = lineage({ kind, record: draft } as EditorTarget, s);
+  const errorLine =
+    shownIssues.length === 0 ? null
+      : shownIssues.length === 1 ? shownIssues[0].message
+        : `${shownIssues.length} fields need attention${triedSubmit && kind === 'tactic' ? ' before submitting — you can still Save draft' : ''}`;
 
   return (
     <Drawer
       width={kind === 'tactic' ? 'w-[640px]' : 'w-[480px]'}
       onClose={onClose}
-      footer={<>
-        {!target.isNew && <Button variant="danger" onClick={doArchive}>Archive</Button>}
-        <div className="flex-1" />
-        <Button variant="ghost" onClick={onClose}>Cancel</Button>
-        <Button onClick={() => save()}>{target.isNew ? 'Create' : 'Save'}</Button>
-        {kind === 'tactic' && <Button variant="primary" onClick={() => save('IN_REVIEW')}>Save &amp; submit for review</Button>}
-      </>}
+      closeLabel="Close — your unsaved changes are kept as a draft"
+      footer={
+        <div className="w-full">
+          {errorLine && (
+            <button type="button" onClick={() => alertRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="w-full text-left text-xs text-red-300 mb-2" role="status">
+              ⚠ {errorLine} <span className="underline">Show</span>
+            </button>
+          )}
+          <div className="flex items-center gap-2">
+            {!isNew && <Button variant="danger" onClick={doArchive}>Archive</Button>}
+            <span className="text-[11px] text-gray-500 flex-1 truncate">
+              {dirty ? 'Unsaved changes are kept automatically' : ''}
+            </span>
+            <Button variant="ghost" onClick={cancel}>Cancel</Button>
+            <Button onClick={saveDraftRecord}>{kind === 'tactic' ? 'Save draft' : isNew ? 'Create' : 'Save'}</Button>
+            {kind === 'tactic' && <Button variant="primary" onClick={submit}>Submit for review</Button>}
+          </div>
+        </div>
+      }
       title={
         <div>
           <div className="text-[11px] text-gray-500 mb-1 truncate">{crumbs.join(' › ')}</div>
           <div className="flex items-center gap-2">
             <IdChip id={draft.id} />
-            <span className="font-semibold text-white">{target.isNew ? `New ${KIND_LABEL[kind].toLowerCase()}` : KIND_LABEL[kind]}</span>
+            <span className="font-semibold text-white">{isNew ? `New ${KIND_LABEL[kind].toLowerCase()}` : KIND_LABEL[kind]}</span>
             <StatusBadge status={draft.status} />
           </div>
         </div>
       }
     >
-      {kind === 'tactic' && submitAttempted && tacticIssues.length > 0 && (
-        <div role="alert" className="mb-4 rounded border border-red-800 bg-red-950 p-3 text-xs text-red-200">
-          <div className="font-semibold mb-1">{tacticIssues.length} issue(s) before this can be submitted:</div>
-          <ul className="list-disc ml-4">{tacticIssues.map((i) => <li key={i.field}>{i.field === 'successMeasure' ? 'Success measure' : i.field.toUpperCase()}: {i.message}</li>)}</ul>
-        </div>
-      )}
+      <div ref={alertRef} className="scroll-mt-4">
+        {restoredAt && (
+          <div className="mb-3 rounded border border-blue-800 bg-blue-950 px-3 py-2 text-xs text-blue-200 flex items-center justify-between gap-2">
+            <span>Restored your unsaved changes from {new Date(restoredAt).toLocaleString()}.</span>
+            <button onClick={discardRestored} className="underline whitespace-nowrap">Discard them</button>
+          </div>
+        )}
+        {shownIssues.length > 0 && (
+          <div role="alert" className="mb-4 rounded border border-red-800 bg-red-950 p-3 text-xs text-red-200">
+            <div className="font-semibold mb-1">
+              {triedSubmit && kind === 'tactic' ? 'Before this can be submitted for review:' : 'Please fix:'}
+            </div>
+            <ul className="list-disc ml-4">{shownIssues.map((i) => <li key={i.field}>{FIELD_LABEL[i.field] ?? i.field}: {i.message}</li>)}</ul>
+          </div>
+        )}
+      </div>
 
       {/* ----- common fields ----- */}
-      <Field label="Title" required error={titleError}>
-        <input className={inputCls} value={draft.title ?? ''} autoFocus
-          onChange={(e) => { patch({ title: e.target.value }); setTitleError(''); }} />
+      <Field label="Title" required error={issueFor('title')}>
+        <input ref={titleRef} className={inputCls} value={draft.title ?? ''} autoFocus
+          onChange={(e) => patch({ title: e.target.value })} />
       </Field>
       <Field label="Description">
         <textarea className={inputCls} rows={2} value={draft.description ?? ''} onChange={(e) => patch({ description: e.target.value })} />
@@ -145,14 +273,25 @@ export function EntityEditor({ target, onClose }: { target: EditorTarget; onClos
         </Field>
       </div>
       <div className="text-[11px] text-gray-500 mb-4">
-        Source: {draft.source?.replace('_', ' ').toLowerCase()} · Last updated {new Date(draft.updatedAt).toLocaleString()}
+        Source: {draft.source?.replace('_', ' ').toLowerCase()} · Last saved {new Date(draft.updatedAt).toLocaleString()}
       </div>
 
+      {aiRequest && onOpen && (
+        <AiSuggestionsPanel request={aiRequest} onUse={applySuggestion} />
+      )}
     </Drawer>
   );
 }
 
-type FieldProps = { draft: any; patch: (p: Record<string, unknown>) => void; s: PpostState };
+/** Title is always required; tactics also need full 5W1H to be submitted. */
+function collectIssues(kind: EntityKind, draft: any, forSubmit: boolean): Issue[] {
+  const list: Issue[] = [];
+  if (!draft.title?.trim()) list.push({ field: 'title', message: 'Title is required' });
+  if (kind === 'tactic' && forSubmit) list.push(...tacticIssues(draft as Tactic));
+  return list;
+}
+
+type FieldProps = { draft: any; patch: (p: Record<string, unknown>) => void; s: StoreState };
 
 function ProblemFields({ draft, patch, s }: FieldProps) {
   return (
@@ -178,7 +317,6 @@ function ProblemFields({ draft, patch, s }: FieldProps) {
 }
 
 function ObjectiveFields({ draft, patch, s }: FieldProps) {
-  // Offer problems from the same priority as the first linked problem.
   const firstProb = s.problems.find((p) => p.id === draft.problemIds[0]);
   const candidates = s.problems.filter((p) => p.status !== 'ARCHIVED' && (!firstProb || p.priorityId === firstProb.priorityId));
   const toggle = (id: string) => {
@@ -236,7 +374,6 @@ function TacticFields({ draft, patch, s, issueFor }: FieldProps & { issueFor: (f
     patch({ fiveW1H: { ...w, [k]: { ...(w[k] as object), ...v } } });
   const changeStrategy = (id: string) => {
     const st = s.strategies.find((x) => x.id === id);
-    // WHY is auto-linked to the strategy's objective
     patch({ strategyId: id, fiveW1H: { ...w, why: { ...w.why, objectiveId: st?.objectiveId } } });
   };
   const days = daysBetween(w.when?.start, w.when?.end);
@@ -276,7 +413,8 @@ function TacticFields({ draft, patch, s, issueFor }: FieldProps & { issueFor: (f
         </Field>
       </div>
 
-      <h3 className="text-sm font-semibold text-white mt-2 mb-2">5W1H action definition</h3>
+      <h3 className="text-sm font-semibold text-white mt-2 mb-1">5W1H action definition</h3>
+      <p className="text-[11px] text-gray-500 mb-2">Fields marked * are needed to submit for review. You can save a draft any time.</p>
       <div className="grid grid-cols-2 gap-3">
         <Block letter="WHO" error={issueFor('who')}>
           <Field label="Accountable person" required>
@@ -366,6 +504,7 @@ function TacticFields({ draft, patch, s, issueFor }: FieldProps & { issueFor: (f
 const Block = ({ letter, error, children }: { letter: string; error?: string; children: React.ReactNode }) => (
   <fieldset className={`rounded border p-3 ${error ? 'border-red-700' : 'border-gray-800'}`}>
     <legend className="px-1 text-[11px] font-bold tracking-wide text-green-400">{letter}</legend>
+    {error && <div className="text-[11px] text-red-400 mb-2">{error}</div>}
     {children}
   </fieldset>
 );

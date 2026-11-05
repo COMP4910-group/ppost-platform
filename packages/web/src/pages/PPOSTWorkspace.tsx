@@ -1,38 +1,18 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import {
-  buildMatrix, CellStatus, Objective, orderedPriorities, Priority, Problem, SECTORS, Strategy, Tactic,
+  buildMatrix, CellStatus, Objective, orderedPriorities, Priority, Problem, SECTORS, Strategy,
 } from 'ppost-engine';
-import { nextId, resetDemoData, setPriorities, usePpost } from '../ppost/store';
-import { PpostState } from '../ppost/seedData';
-import { EditorTarget, EntityEditor } from '../ppost/EntityEditor';
+import { discardDraft, resetDemoData, setPriorities, StoreState, usePpost } from '../ppost/store';
+import { EditorTarget, EntityEditor, tacticIssues } from '../ppost/EntityEditor';
+import { blankObjective, blankProblem, blankStrategy, blankTactic } from '../ppost/records';
 import {
   Button, CELL_STYLE, Drawer, HORIZON_LABEL, IdChip, inputCls, SeverityBadge, StatusBadge, UnknownBadge, sectorLabel,
 } from '../ppost/ui';
 
-const D = 'EV-2026-014';
 const ALL = 'ALL';
 const live = <T extends { status: string }>(xs: T[]) => xs.filter((x) => x.status !== 'ARCHIVED');
-const now = () => new Date().toISOString();
-
-/* ---------- blank records for "+ Add" buttons ---------- */
-const blankProblem = (priorityId: string): Problem => ({
-  id: nextId('problem'), disasterId: D, title: '', priorityId, sector: 'HOUSING', severity: 'MEDIUM',
-  source: 'HUMAN_DECISION', status: 'DRAFT', createdAt: now(), updatedAt: now(),
-});
-const blankObjective = (problemId: string): Objective => ({
-  id: nextId('objective'), disasterId: D, title: '', problemIds: [problemId], horizon: 'IMMEDIATE',
-  source: 'HUMAN_DECISION', status: 'DRAFT', createdAt: now(), updatedAt: now(),
-});
-const blankStrategy = (objectiveId: string): Strategy => ({
-  id: nextId('strategy'), disasterId: D, title: '', objectiveId,
-  source: 'HUMAN_DECISION', status: 'DRAFT', createdAt: now(), updatedAt: now(),
-});
-const blankTactic = (strategy: Strategy, problem: Problem): Tactic => ({
-  id: nextId('tactic'), disasterId: D, title: '', strategyId: strategy.id, primaryPriorityId: problem.priorityId,
-  sector: problem.sector, fiveW1H: { why: { objectiveId: strategy.objectiveId } },
-  source: 'HUMAN_DECISION', status: 'DRAFT', createdAt: now(), updatedAt: now(),
-});
+type PpostState = StoreState;
 
 /** Worst cell status in a priority row → colour of its chip. */
 function rowStatus(cells: { status: CellStatus }[]): CellStatus {
@@ -110,13 +90,17 @@ const PPOSTWorkspace = () => {
         </div>
       </div>
 
+      <DraftsBar s={s} onResume={setEditing} />
+
       {/* PPOST matrix per priority */}
       {inScope.map((p) => (
         <PriorityBlock key={p.id} priority={p} s={s} gapsOnly={gapsOnly} collapsible={scope === ALL}
           onEdit={setEditing} onFocus={() => setScope(p.id)} />
       ))}
 
-      {editing && <EntityEditor target={editing} onClose={() => setEditing(null)} />}
+      {editing && (
+        <EntityEditor key={editing.record.id} target={editing} onClose={() => setEditing(null)} onOpen={setEditing} />
+      )}
       {managing && <ManagePriorities priorities={s.priorities} onClose={() => setManaging(false)} />}
     </div>
   );
@@ -202,7 +186,7 @@ function buildRows(problems: Problem[], s: PpostState, gapsOnly: boolean, onEdit
   const hasGap = (p: Problem) => {
     const os = objsOf(p);
     if (!os.length) return true;
-    return os.some((o) => !isShared(o, p) && (!stratsOf(o).length || stratsOf(o).some((x) => !tacticsOf(x).length || tacticsOf(x).some((t) => !t.owner))));
+    return os.some((o) => !isShared(o, p) && (!stratsOf(o).length || stratsOf(o).some((x) => !tacticsOf(x).length || tacticsOf(x).some((t) => !t.owner || tacticIssues(t).length > 0))));
   };
 
   const cellCls = 'align-top px-3 py-2 border-b border-r border-gray-800';
@@ -221,7 +205,7 @@ function buildRows(problems: Problem[], s: PpostState, gapsOnly: boolean, onEdit
     const pCell = (
       <td rowSpan={leafP(p)} className={`${cellCls} w-[22%]`}>
         <Card id={p.id} title={p.title} onClick={() => onEdit({ kind: 'problem', record: p })}
-          badges={<><SeverityBadge severity={p.severity} />{p.fromUnknownQuestionId && <UnknownBadge questionId={p.fromUnknownQuestionId} />}</>}
+          badges={<><SeverityBadge severity={p.severity} />{p.fromUnknownQuestionId && <UnknownBadge questionId={p.fromUnknownQuestionId} />}{s.drafts[p.id] && <UnsavedChip />}</>}
           sub={sectorLabel(p.sector)}
           add={{ label: 'objective', onClick: () => onEdit({ kind: 'objective', record: blankObjective(p.id), isNew: true }) }}
           dashed={!!p.fromUnknownQuestionId} />
@@ -239,6 +223,7 @@ function buildRows(problems: Problem[], s: PpostState, gapsOnly: boolean, onEdit
       const oCell = (
         <td rowSpan={leafO(o, p)} className={`${cellCls} w-[20%]`}>
           <Card id={o.id} title={o.title} onClick={() => onEdit({ kind: 'objective', record: o })} sub={HORIZON_LABEL[o.horizon]}
+            badges={s.drafts[o.id] ? <UnsavedChip /> : undefined}
             add={{ label: 'strategy', onClick: () => onEdit({ kind: 'strategy', record: blankStrategy(o.id), isNew: true }) }} />
         </td>
       );
@@ -258,6 +243,7 @@ function buildRows(problems: Problem[], s: PpostState, gapsOnly: boolean, onEdit
         const sCell = (
           <td rowSpan={leafS(x)} className={`${cellCls} w-[18%]`}>
             <Card id={x.id} title={x.title} onClick={() => onEdit({ kind: 'strategy', record: x })}
+              badges={s.drafts[x.id] ? <UnsavedChip /> : undefined}
               add={{ label: 'tactic', onClick: () => onEdit({ kind: 'tactic', record: blankTactic(x, p), isNew: true }) }} />
           </td>
         );
@@ -278,7 +264,7 @@ function buildRows(problems: Problem[], s: PpostState, gapsOnly: boolean, onEdit
               </td>
               <td className={`${cellCls} text-xs whitespace-nowrap`}>{t.owner ?? <span className="text-red-300">⚠ No owner</span>}</td>
               <td className={`${cellCls} text-xs text-gray-300 whitespace-nowrap`}>{h ? HORIZON_LABEL[h].split(' (')[0] : '—'}</td>
-              <td className={`${cellCls} border-r-0`}><StatusBadge status={t.status} /></td>
+              <td className={`${cellCls} border-r-0`}><TacticStatus t={t} unsaved={!!s.drafts[t.id]} /></td>
             </tr>,
           );
         }
@@ -306,6 +292,49 @@ const Card = ({ id, title, sub, badges, onClick, add, dashed }: {
     )}
   </div>
 );
+
+const UnsavedChip = () => (
+  <span title="Has unsaved changes — open it to continue" className="text-[11px] px-1.5 py-0.5 rounded bg-blue-950 text-blue-300">✎ unsaved</span>
+);
+
+/** Draft tactics missing 5W1H fields show as "Incomplete" so they aren't mistaken for ready ones. */
+function TacticStatus({ t, unsaved }: { t: import('ppost-engine').Tactic; unsaved: boolean }) {
+  const missing = tacticIssues(t).length;
+  return (
+    <div className="flex flex-col items-start gap-1">
+      {t.status === 'DRAFT' && missing > 0 ? (
+        <span title={tacticIssues(t).map((i) => i.message).join('\n')}
+          className="text-[11px] px-1.5 py-0.5 rounded border border-amber-600 text-amber-300 whitespace-nowrap">
+          ⚠ Incomplete · {missing} missing
+        </span>
+      ) : <StatusBadge status={t.status} />}
+      {unsaved && <UnsavedChip />}
+    </div>
+  );
+}
+
+/** Work that was typed but not saved yet — never lost unless the user presses Cancel/Discard. */
+function DraftsBar({ s, onResume }: { s: PpostState; onResume: (t: EditorTarget) => void }) {
+  const drafts = Object.values(s.drafts);
+  if (!drafts.length) return null;
+  return (
+    <div className="rounded-lg border border-blue-800 bg-blue-950/40 p-3 mb-4" aria-label="Unsaved drafts">
+      <div className="text-xs font-semibold text-blue-200 mb-2">
+        {drafts.length} unsaved draft{drafts.length === 1 ? '' : 's'} — your typing was kept
+      </div>
+      {drafts.map((d) => (
+        <div key={d.record.id} className="flex items-center gap-2 text-xs py-1">
+          <IdChip id={d.record.id} />
+          <span className="text-gray-400 capitalize">{d.isNew ? `new ${d.kind}` : d.kind}</span>
+          <span className="text-gray-100 truncate flex-1">{d.record.title || <i className="text-gray-500">Untitled</i>}</span>
+          <span className="text-gray-500 hidden md:inline">{new Date(d.savedAt).toLocaleTimeString()}</span>
+          <Button onClick={() => onResume({ kind: d.kind, record: d.record, isNew: d.isNew } as EditorTarget)}>Resume</Button>
+          <Button variant="ghost" onClick={() => { if (window.confirm('Discard this unsaved draft?')) discardDraft(d.record.id); }}>Discard</Button>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 /* ---------- Manage priorities: rename, reorder, activate ---------- */
 function ManagePriorities({ priorities, onClose }: { priorities: Priority[]; onClose: () => void }) {

@@ -12,7 +12,27 @@ export interface PpostState {
   tactics: Tactic[];
 }
 
-const D = 'EV-2026-014';
+/**
+ * The event being planned. TODO: read this from the team's `disasters` table
+ * (Disaster Events page, owned by another team member) once it exposes situation facts.
+ */
+export interface SituationFact { key: string; label: string; value: string | null; source: string }
+export const CURRENT_EVENT = {
+  id: 'EV-2026-014',
+  name: 'Clearwater Ridge Wildfire',
+  hazard: 'WILDFIRE' as const,
+  location: 'Interior BC (synthetic)',
+  situationVersion: 'SitRep v3',
+  facts: [
+    { key: 'areaBurned', label: 'Area burned', value: '14,200 ha', source: 'SitRep v3' },
+    { key: 'homesDestroyed', label: 'Homes destroyed', value: '42 (confirmed)', source: 'SitRep v3' },
+    { key: 'evacuees', label: 'Residents under evacuation order', value: '1,200', source: 'SitRep v3' },
+    { key: 'homesDamaged', label: 'Damaged homes', value: null, source: 'SitRep v3' },
+    { key: 'waterSystem', label: 'Water system status', value: null, source: 'SitRep v3' },
+  ] as SituationFact[],
+};
+
+const D = CURRENT_EVENT.id;
 const T0 = '2026-10-08T09:00:00.000Z';
 const base = { disasterId: D, createdAt: T0, updatedAt: T0 };
 

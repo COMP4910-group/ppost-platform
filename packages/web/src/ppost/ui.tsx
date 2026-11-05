@@ -52,8 +52,8 @@ export const IdChip = ({ id }: { id: string }) => (
 );
 
 /** Right-side drawer. Esc closes it. */
-export const Drawer = ({ title, onClose, children, footer, width = 'w-[480px]' }: {
-  title: React.ReactNode; onClose: () => void; children: React.ReactNode; footer?: React.ReactNode; width?: string;
+export const Drawer = ({ title, onClose, children, footer, width = 'w-[480px]', closeLabel = 'Close' }: {
+  title: React.ReactNode; onClose: () => void; children: React.ReactNode; footer?: React.ReactNode; width?: string; closeLabel?: string;
 }) => {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
@@ -62,11 +62,11 @@ export const Drawer = ({ title, onClose, children, footer, width = 'w-[480px]' }
   }, [onClose]);
   return (
     <div className="fixed inset-0 z-40 flex justify-end" role="dialog" aria-modal="true">
-      <div className="absolute inset-0 bg-black/50" onClick={onClose} />
+      <div className="absolute inset-0 bg-black/50" onClick={onClose} title={closeLabel} />
       <aside className={`relative ${width} max-w-full h-full bg-gray-900 border-l border-gray-700 shadow-2xl flex flex-col`}>
         <div className="flex items-start justify-between gap-3 p-4 border-b border-gray-800">
           <div className="min-w-0">{title}</div>
-          <button onClick={onClose} aria-label="Close" className="text-gray-400 hover:text-white text-lg leading-none px-2">×</button>
+          <button onClick={onClose} aria-label={closeLabel} title={closeLabel} className="text-gray-400 hover:text-white text-lg leading-none px-2">×</button>
         </div>
         <div className="flex-1 overflow-y-auto p-4">{children}</div>
         {footer && <div className="px-4 py-3 border-t border-gray-800 flex items-center gap-2">{footer}</div>}

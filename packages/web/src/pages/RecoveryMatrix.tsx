@@ -163,7 +163,7 @@ const RecoveryMatrix = () => {
         <CellDrawer cell={selected} s={s} onClose={() => setSelected(null)} onEdit={setEditing}
           onOpenWorkspace={() => navigate(`/ppost?priority=${selected.priorityId}`)} />
       )}
-      {editing && <EntityEditor target={editing} onClose={() => setEditing(null)} />}
+      {editing && <EntityEditor key={editing.record.id} target={editing} onClose={() => setEditing(null)} onOpen={setEditing} />}
     </div>
   );
 };
