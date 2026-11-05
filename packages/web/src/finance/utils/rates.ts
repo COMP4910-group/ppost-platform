@@ -25,6 +25,8 @@ export function applyRateToLine(line: CostLine, rate: RateEntry): CostLine {
   const next: CostLine = {
     ...line,
     rateId: rate.id,
+    pricing: 'unit',
+    percent: undefined,
     description: rate.resource,
     category: rate.category,
     unit: rate.unit,

@@ -384,3 +384,30 @@
   min-width: 200px;
   margin-left: auto;
 }
+
+/* ── Percentage lines ────────────────────────────────────────────────────── */
+.cost-cell--percent {
+  padding: 5px 6px;
+}
+
+.percent-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.percent-input {
+  max-width: 90px;
+}
+
+.percent-of {
+  font-size: 13px;
+  font-family: var(--font-mono);
+  white-space: nowrap;
+}
+
+.percent-base-label {
+  font-family: inherit;
+  font-size: 11px;
+  color: var(--c-text-muted);
+}

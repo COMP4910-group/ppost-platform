@@ -3,6 +3,7 @@ import type { CostLine, CostCategory, RateEntry } from '../../types';
 import { COST_CATEGORY_LABELS } from '../../types';
 import { computeLineCost, formatCurrency } from '../../utils/calculations';
 import { applyRateToLine, effectiveRate } from '../../utils/rates';
+import { canBePercent, isPercentLine, percentBaseLabel } from '../../utils/percent';
 
 interface CostLineRowProps {
   line: CostLine;
@@ -12,6 +13,8 @@ interface CostLineRowProps {
   editable?: boolean;
   /** Rate table entries the user can fill this line from */
   rates?: RateEntry[];
+  /** For % lines: the amount the percentage is applied to */
+  percentBase?: number;
 }
 
 // Fields that, when edited by hand, mean the line no longer matches its rate
@@ -35,6 +38,7 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
   onDelete,
   editable = true,
   rates = [],
+  percentBase = 0,
 }) => {
   // Generic field updater: recalculates totalCost whenever qty/rate/duration changes
   const update = useCallback(
@@ -64,6 +68,7 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
     [update],
   );
 
+  const isPercent = isPercentLine(line);
   const categoryRates = rates.filter((r) => r.category === line.category);
   const linked = !!line.rateId && categoryRates.some((r) => r.id === line.rateId);
 
@@ -83,7 +88,7 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
         ) : (
           <span>{line.description}</span>
         )}
-          {editable && categoryRates.length > 0 && (
+          {editable && !isPercent && categoryRates.length > 0 && (
             <select
               className={`cost-input cost-input--select rate-picker${linked ? ' rate-picker--linked' : ''}`}
               value={linked ? line.rateId : ''}
@@ -123,8 +128,53 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
         ) : (
           <span>{COST_CATEGORY_LABELS[line.category]}</span>
         )}
+        {editable && canBePercent(line.category) && (
+          <select
+            className="cost-input cost-input--select rate-picker"
+            value={isPercent ? 'percent' : 'unit'}
+            onChange={(e) =>
+              onChange({
+                ...line,
+                pricing: e.target.value as 'unit' | 'percent',
+                percent: line.percent ?? 0,
+                rateId: undefined,
+              })
+            }
+            aria-label="Pricing method"
+          >
+            <option value="unit">Unit rate</option>
+            <option value="percent">% of base</option>
+          </select>
+        )}
       </td>
 
+      {isPercent ? (
+        <td className="cost-cell cost-cell--percent" colSpan={4}>
+          <span className="percent-group">
+            {editable ? (
+              <input
+                type="number"
+                className="cost-input cost-input--number percent-input"
+                value={line.percent ?? 0}
+                min={0}
+                step="any"
+                onChange={(e) => {
+                  const val = parseFloat(e.target.value);
+                  onChange({ ...line, percent: isNaN(val) ? 0 : val });
+                }}
+                aria-label="Percentage"
+              />
+            ) : (
+              <span>{line.percent ?? 0}</span>
+            )}
+            <span className="percent-of">
+              % of {formatCurrency(percentBase)}
+              <span className="percent-base-label"> ({percentBaseLabel(line.category)})</span>
+            </span>
+          </span>
+        </td>
+      ) : (
+        <>
       {/* Quantity */}
       <td className="cost-cell cost-cell--number">
         {editable ? (
@@ -209,6 +259,8 @@ export const CostLineRow: React.FC<CostLineRowProps> = ({
           </span>
         )}
       </td>
+        </>
+      )}
 
       {/* Computed total */}
       <td className="cost-cell cost-cell--total">

@@ -18,13 +18,18 @@ import type { CostCategory, CostLine, RateEntry } from '../../types';
 import { COST_CATEGORY_LABELS } from '../../types';
 import {
   computeGrandTotal,
-  computeLineCost,
   computeSubtotals,
   formatCurrency,
   newId,
 } from '../../utils/calculations';
 import { applyRateToLine, effectiveRate } from '../../utils/rates';
 import { useRates } from '../../store/rateStore';
+import {
+  DEFAULT_PERCENT_CATEGORIES,
+  PERCENT_CATEGORIES,
+  percentBaseFor,
+  resolveLineCosts,
+} from '../../utils/percent';
 import { CostLineRow } from './CostLineRow';
 import { SummaryPanel } from './SummaryPanel';
 import './styles.css';
@@ -42,6 +47,18 @@ function makeBlankLine(category: CostCategory = 'labour'): CostLine {
     duration: 1,
     durationUnit: 'day',
     totalCost: 0,
+  };
+}
+
+/** Escalation, engineering allowance and contingency start as a % line. */
+function makeQuickLine(category: CostCategory): CostLine {
+  const line = makeBlankLine(category);
+  if (!DEFAULT_PERCENT_CATEGORIES.includes(category)) return line;
+  return {
+    ...line,
+    description: COST_CATEGORY_LABELS[category],
+    pricing: 'percent',
+    percent: 0,
   };
 }
 
@@ -69,19 +86,16 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
   const storeRates = useRates();
   const rateList = rates ?? storeRates;
 
-  const [lines, setLines] = useState<CostLine[]>(() =>
-    initialLines.map((l) => ({
-      ...l,
-      // Ensure totalCost is always fresh on mount
-      totalCost: computeLineCost(l.quantity, l.unitRate, l.duration),
-    })),
-  );
+  // totalCost is always recalculated, so % lines stay in step with the rest
+  const [lines, setLines] = useState<CostLine[]>(() => resolveLineCosts(initialLines));
 
-  // Propagate changes up
+  // Recalculate every line (percentages depend on other lines), then
+  // propagate changes up
   const applyLines = useCallback(
     (next: CostLine[]) => {
-      setLines(next);
-      onChange?.(next);
+      const resolved = resolveLineCosts(next);
+      setLines(resolved);
+      onChange?.(resolved);
     },
     [onChange],
   );
@@ -104,7 +118,7 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
 
   const handleAddLine = useCallback(
     (category?: CostCategory) => {
-      applyLines([...lines, makeBlankLine(category)]);
+      applyLines([...lines, category ? makeQuickLine(category) : makeBlankLine()]);
     },
     [lines, applyLines],
   );
@@ -126,6 +140,13 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
         .filter((g) => g.items.length > 0),
     [rateList],
   );
+
+  // Amount each percentage category is applied to (shown on % lines)
+  const percentBases = useMemo(() => {
+    const bases: Partial<Record<CostCategory, number>> = {};
+    for (const cat of PERCENT_CATEGORIES) bases[cat] = percentBaseFor(lines, cat);
+    return bases;
+  }, [lines]);
 
   // ── Derived totals ───────────────────────────────────────────────────────
 
@@ -205,6 +226,7 @@ export const ClassDEstimator: React.FC<ClassDEstimatorProps> = ({
                           onDelete={handleDelete}
                           editable={editable}
                           rates={rateList}
+                          percentBase={percentBases[line.category] ?? 0}
                         />
                       ))}
                     </React.Fragment>

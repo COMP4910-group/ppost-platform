@@ -77,3 +77,14 @@ export {
   estimateChangedSinceSnapshot,
 } from './utils/boe';
 export type { ChecklistItem } from './utils/boe';
+
+// ─── Percentage lines ─────────────────────────────────────────────────────────
+export {
+  PERCENT_CATEGORIES,
+  canBePercent,
+  categoryLevel,
+  isPercentLine,
+  percentBaseLabel,
+  percentBaseFor,
+  resolveLineCosts,
+} from './utils/percent';
