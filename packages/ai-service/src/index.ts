@@ -17,3 +17,24 @@ export type { ProposalGenerationErrorCode } from "./errors.ts";
 
 export * from "./schemas.ts";
 export type * from "./types.ts";
+
+// Initial Recovery Plan draft generation
+export { generateRecoveryPlanDraft } from "./plan/generateRecoveryPlanDraft.ts";
+export type {
+  GenerateRecoveryPlanDraftOptions,
+  RecoveryPlanDraftResult,
+} from "./plan/generateRecoveryPlanDraft.ts";
+export {
+  assembleRecoveryPlanDraft,
+  findUnknownSourceIds,
+  findUnresolvedReferences,
+} from "./plan/assemblePlan.ts";
+export type { UnresolvedReference } from "./plan/assemblePlan.ts";
+export {
+  RECOVERY_PLAN_PROMPT_VERSION,
+  RECOVERY_PLAN_SYSTEM_PROMPT,
+  buildRecoveryPlanPrompt,
+} from "./plan/prompt.ts";
+export * from "./plan/snapshotSchema.ts";
+export * from "./plan/draftSchema.ts";
+export type * from "./plan/types.ts";
