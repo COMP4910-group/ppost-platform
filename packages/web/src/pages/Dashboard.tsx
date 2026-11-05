@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase'
 
 const StatCard = ({ value, label, sub, color, unknown }: { value: string; label: string; sub: string; color?: string; unknown?: boolean }) => (
   <div className={`bg-gray-900 rounded-lg p-3 border ${unknown ? 'border-yellow-600 border-dashed' : 'border-gray-800'}`}>
@@ -57,7 +57,14 @@ const DeadlineItem = ({ day: date, month, title, sub, urgent }: { day: string; m
 );
 
 const Dashboard = () => {
-  const navigate = useNavigate();
+  React.useEffect(() => {
+    const fetchDisasters = async () => {
+      const { data, error } = await supabase.from('disasters').select('*')
+      console.log('Disasters:', data, error)
+    }
+    fetchDisasters()
+  }, [])
+
   return (
     <div className="p-6 bg-gray-950 min-h-full">
 
@@ -182,7 +189,7 @@ const Dashboard = () => {
               <button className="bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 px-3 py-2 rounded text-left">Start assessment ›</button>
               <button className="bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 px-3 py-2 rounded text-left">Open PPOST ›</button>
               <button className="bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 px-3 py-2 rounded text-left">Build estimate ›</button>
-              <button onClick={() => navigate('/recovery-plan')} className="bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 px-3 py-2 rounded text-left">Generate plan ›</button>
+              <button className="bg-gray-800 hover:bg-gray-700 text-xs text-gray-300 px-3 py-2 rounded text-left">Generate plan ›</button>
             </div>
           </div>
         </div>
