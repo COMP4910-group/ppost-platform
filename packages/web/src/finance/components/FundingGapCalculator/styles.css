@@ -1,0 +1,88 @@
+/* FundingGapCalculator — extends the ClassDEstimator stylesheet */
+
+.funding-gap__total {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.funding-gap__total-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.funding-gap__total-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.funding-gap__total-input {
+  max-width: 220px;
+  font-size: 15px;
+}
+
+.funding-gap__hint {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--c-text-muted);
+}
+
+.funding-gap__hint--block {
+  display: block;
+  margin: 6px 0 0;
+}
+
+.funding-gap__confirmed {
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.funding-gap__confirmed input {
+  vertical-align: middle;
+}
+
+.funding-gap__coverage {
+  margin-top: 16px;
+}
+
+.funding-gap__coverage-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--c-text-muted);
+  margin-bottom: 4px;
+}
+
+.funding-gap__bar {
+  height: 8px;
+  border-radius: 99px;
+  background: var(--c-category-bg);
+  border: 1px solid var(--c-border);
+  overflow: hidden;
+}
+
+.funding-gap__bar-fill {
+  height: 100%;
+  background: #16a34a;
+  transition: width 200ms;
+}
+
+.funding-gap__notes {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+
+.funding-gap__note {
+  font-size: 12px;
+  color: var(--c-text-muted);
+  padding: 6px 0;
+  border-top: 1px solid var(--c-border);
+}
+
+.funding-gap__note--warn {
+  color: var(--c-danger);
+}

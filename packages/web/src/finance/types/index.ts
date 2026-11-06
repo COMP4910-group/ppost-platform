@@ -49,6 +49,18 @@ export interface CostLine {
   totalCost: number;
   /** Notes / justification for this line */
   notes?: string;
+  /** Rate table entry this line was filled from (for traceability) */
+  rateId?: string;
+  /**
+   * How this line is priced.
+   * 'unit'    (default) → Quantity × Unit Rate × Duration
+   * 'percent'           → percent × the costs that come before this category
+   *                       (only for overhead, escalation, engineering
+   *                       allowance and contingency)
+   */
+  pricing?: 'unit' | 'percent';
+  /** Percentage used when pricing = 'percent', e.g. 10 for 10 % */
+  percent?: number;
 }
 
 // ─── Rate Table Entry ─────────────────────────────────────────────────────────

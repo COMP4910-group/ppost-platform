@@ -1,0 +1,45 @@
+/* RateTable — extends the ClassDEstimator stylesheet (same tokens + classes) */
+
+.rate-table__notice {
+  margin: 0;
+  padding: 10px 20px;
+  font-size: 12px;
+  color: var(--c-total-text);
+  background: var(--c-total-bg);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.rate-table__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg-alt);
+}
+
+.rate-table__search {
+  flex: 1 1 220px;
+  max-width: 320px;
+}
+
+.rate-table__filter {
+  width: auto;
+  min-width: 170px;
+}
+
+.rate-table__wrapper {
+  border-right: none;
+}
+
+.rate-table__per {
+  margin-left: 2px;
+  font-size: 11px;
+  color: var(--c-text-muted);
+}
+
+.rate-table__reset--confirm {
+  border-color: var(--c-danger);
+  color: var(--c-danger);
+}
