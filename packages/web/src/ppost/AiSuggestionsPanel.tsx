@@ -6,7 +6,7 @@ import React, { useState } from 'react';
 import { getSuggestionProvider, PpostSuggestion, sampleSuggestionProvider, SuggestionRequest } from './aiSuggestions';
 
 const KIND_PLURAL: Record<SuggestionRequest['want'], string> = {
-  objective: 'objectives', strategy: 'strategies', tactic: 'tactics', problem: 'problems',
+  objective: 'objectives', strategy: 'strategies', tactic: 'tactics', problem: 'problems', 'assessment-insights': 'tasks',
 };
 
 export function AiSuggestionsPanel({ request, onUse }: {

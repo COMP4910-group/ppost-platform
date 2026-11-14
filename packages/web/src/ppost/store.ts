@@ -6,7 +6,18 @@
  */
 import { useSyncExternalStore } from 'react';
 import { Answer, Objective, Priority, Problem, Strategy, Tactic, VerificationTask } from 'ppost-engine';
-import { PpostState, SEED } from './seedData';
+import { CostEntry, PpostState, SEED, SEED_COSTS } from './seedData';
+import type { QuestionUI } from './assessmentQuestions';
+import type { PpostSuggestion } from './aiSuggestions';
+
+export interface InsightState {
+  status: 'added' | 'drafted' | 'dismissed';
+  /** Record created from it (problem / tactic / task id). */
+  recordId?: string;
+  reason?: string;
+}
+
+export type { CostEntry } from './seedData';
 
 export type EntityKind = 'problem' | 'objective' | 'strategy' | 'tactic';
 export type AnyRecord = Problem | Objective | Strategy | Tactic;
@@ -28,12 +39,23 @@ export interface AssessmentState {
   confirmedFromSituation: Record<string, boolean>;
   /** Question id → problem already recorded in PPOST for it (prevents duplicates). */
   linked: Record<string, string>;
+  /** Questions whose "deeper questions" are open. */
+  expanded: Record<string, boolean>;
+  /** Questions suggested by the AI from uploaded documents (empty until the AI is connected). */
+  aiQuestions: QuestionUI[];
+  /** AI "deeper / hidden task" insights for this assessment, and what the user did with each. */
+  insights: PpostSuggestion[];
+  insightsFrom?: 'AI' | 'SAMPLE';
+  insightsAt?: string;
+  insightState: Record<string, InsightState>;
 }
 
 export interface StoreState extends PpostState {
   drafts: Record<string, EditorDraft>;
   assessment: AssessmentState;
   tasks: VerificationTask[];
+  /** Append-only cost history per tactic (allowances, Class D revisions…). Never edited, only added to. */
+  costs: CostEntry[];
 }
 
 const KEY = 'ppost-workspace-v1';
@@ -41,11 +63,12 @@ const KEY = 'ppost-workspace-v1';
 const EMPTY_EXTRAS = {
   drafts: {} as Record<string, EditorDraft>,
   assessment: {
-    answers: {}, notes: {}, confirmedFromSituation: {},
+    answers: {}, notes: {}, confirmedFromSituation: {}, expanded: {}, aiQuestions: [], insights: [], insightState: {},
     // demo problems that were entered before the assessment existed
     linked: { 'Q-H01': 'P-02', 'Q-H02': 'P-04', 'Q-W03': 'P-05', 'Q-H07': 'P-06', 'Q-HW01': 'P-07', 'Q-R01': 'P-08', 'Q-E01': 'P-09', 'Q-EC01': 'P-10' },
   } as AssessmentState,
   tasks: [] as VerificationTask[],
+  costs: SEED_COSTS,
 };
 const initial = (): StoreState => ({ ...SEED, ...EMPTY_EXTRAS });
 
@@ -199,6 +222,37 @@ export function addTasks(tasks: VerificationTask[]): number {
   const fresh = tasks.filter((t) => !state.tasks.some((x) => x.id === t.id));
   if (fresh.length) set({ ...state, tasks: [...state.tasks, ...fresh] });
   return fresh.length;
+}
+
+export function setAiQuestions(qs: QuestionUI[]) {
+  set({ ...state, assessment: { ...state.assessment, aiQuestions: qs } });
+}
+
+export function setInsights(insights: PpostSuggestion[], from: 'AI' | 'SAMPLE') {
+  set({ ...state, assessment: { ...state.assessment, insights, insightsFrom: from, insightsAt: new Date().toISOString() } });
+}
+
+export function markInsight(id: string, st: InsightState) {
+  set({ ...state, assessment: { ...state.assessment, insightState: { ...state.assessment.insightState, [id]: st } } });
+}
+
+export function clearInsight(id: string) {
+  const { [id]: _gone, ...rest } = state.assessment.insightState;
+  set({ ...state, assessment: { ...state.assessment, insightState: rest } });
+}
+
+export function setExpanded(questionId: string, open: boolean) {
+  set({ ...state, assessment: { ...state.assessment, expanded: { ...state.assessment.expanded, [questionId]: open } } });
+}
+
+/* ---------- costs ---------- */
+
+let costSeq = 0;
+/** Adds a new cost entry for a tactic. Earlier entries are kept as history. */
+export function recordCost(entry: Omit<CostEntry, 'id' | 'at'> & { at?: string }): CostEntry {
+  const saved: CostEntry = { ...entry, id: `C-${Date.now()}-${++costSeq}`, at: entry.at ?? new Date().toISOString() };
+  set({ ...state, costs: [...state.costs, saved] });
+  return saved;
 }
 
 /** Restore the synthetic demo data (clears drafts and assessment answers too). */

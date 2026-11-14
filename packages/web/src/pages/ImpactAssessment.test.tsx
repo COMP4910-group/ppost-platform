@@ -4,10 +4,12 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import ImpactAssessment from './ImpactAssessment';
 import { getState, resetDemoData } from '../ppost/store';
+import { registerQuestionProvider } from '../ppost/questionProviders';
 
 const renderPage = () => render(<MemoryRouter><ImpactAssessment /></MemoryRouter>);
 const answer = (qid: string, a: string) =>
   userEvent.click(within(screen.getByRole('radiogroup', { name: `Answer for ${qid}` })).getByRole('radio', { name: a }));
+const note = (qid: string, text: string) => userEvent.type(screen.getByLabelText(`Note for ${qid}`), text);
 
 beforeEach(() => resetDemoData());
 
@@ -45,12 +47,15 @@ test('situation report facts are suggested, but a person must confirm them', () 
 test('results are added to PPOST as drafts only when the button is pressed', () => {
   renderPage();
   answer('Q-P01', '? UNKNOWN');
+  note('Q-P01', 'Utility has not confirmed the outage map');
   answer('Q-E02', 'YES');
   expect(getState().problems.some((p) => p.id === 'P-Q-P01-U')).toBe(false);
 
   userEvent.click(screen.getByRole('button', { name: /to PPOST as drafts/ }));
   const s = getState();
-  expect(s.problems.find((p) => p.id === 'P-Q-P01-U')).toMatchObject({ status: 'DRAFT', fromUnknownQuestionId: 'Q-P01' });
+  expect(s.problems.find((p) => p.id === 'P-Q-P01-U')).toMatchObject({
+    status: 'DRAFT', fromUnknownQuestionId: 'Q-P01', description: 'From assessment Q-P01: Utility has not confirmed the outage map',
+  });
   expect(s.problems.some((p) => p.id === 'P-Q-E02')).toBe(true);
   expect(s.tactics.find((t) => t.id === 'T-Q-P01-SAFE')).toMatchObject({ strategyId: 'S-Q-P01', safetyPrecaution: true });
   expect(s.tasks.map((t) => t.id)).toContain('VT-Q-P01');
@@ -60,8 +65,64 @@ test('results are added to PPOST as drafts only when the button is pressed', () 
 test('an existing problem is not duplicated; its safety tactic is attached to it', () => {
   renderPage();
   answer('Q-W03', '? UNKNOWN'); // P-05 already exists for this question
+  note('Q-W03', 'No pressure readings yet');
   userEvent.click(screen.getByRole('button', { name: /to PPOST as drafts/ }));
   const s = getState();
   expect(s.problems.some((p) => p.id === 'P-Q-W03-U')).toBe(false);
   expect(s.objectives.find((o) => o.id === 'O-Q-W03')?.problemIds).toEqual(['P-05']);
+});
+
+test('notes are optional for YES/NO but required for UNKNOWN before adding to PPOST', () => {
+  renderPage();
+  answer('Q-H07', 'YES');
+  expect(screen.getByRole('article', { name: 'Q-H07' })).not.toHaveTextContent('A note is required');
+
+  answer('Q-CI04', '? UNKNOWN');
+  const card = screen.getByRole('article', { name: 'Q-CI04' });
+  expect(card).toHaveTextContent('A note is required for UNKNOWN answers');
+  expect(screen.getByRole('alert')).toHaveTextContent('Q-CI04');
+
+  userEvent.click(screen.getByRole('button', { name: /missing a note/ }));
+  expect(getState().problems.some((p) => p.id === 'P-Q-CI04-U')).toBe(false); // blocked
+
+  note('Q-CI04', 'Carrier outage map not received');
+  userEvent.click(screen.getByRole('button', { name: /to PPOST as drafts/ }));
+  expect(getState().problems.some((p) => p.id === 'P-Q-CI04-U')).toBe(true);
+});
+
+test('"Ask deeper questions" opens more precise follow-up questions', () => {
+  renderPage();
+  expect(screen.queryByRole('article', { name: 'Q-W03-D1' })).not.toBeInTheDocument();
+  userEvent.click(within(screen.getByRole('article', { name: 'Q-W03' })).getByRole('button', { name: /Ask 3 deeper questions/ }));
+  expect(screen.getByRole('article', { name: 'Q-W03-D1' })).toHaveTextContent('hospitals, care homes or clinics');
+
+  answer('Q-W03-D2', 'NO');
+  expect(screen.getByRole('article', { name: 'Q-W03-D2' })).toHaveTextContent('Creates problem: No alternate drinking-water supply');
+});
+
+test('AI questions from documents: placeholder until the AI service registers', async () => {
+  renderPage();
+  userEvent.click(screen.getByText(/Where do these questions come from/));
+  const sources = screen.getByText(/Where do these questions come from/).closest('details')!;
+  expect(within(sources as HTMLElement).getByText(/not connected/i)).toBeInTheDocument();
+  expect(sources).toHaveTextContent('Built-in question set');
+});
+
+test('when an AI question provider is registered, its questions are added and labelled', async () => {
+  registerQuestionProvider({
+    name: 'Test AI',
+    generate: async () => [{
+      id: 'x', text: 'Is the landfill accepting fire debris?', sector: 'ENVIRONMENT', priorityId: 'PR-7',
+      unknownPolicy: 'VERIFY', why: 'Debris removal needs a place to go.', hazards: ['ANY'],
+    }],
+  });
+  try {
+    renderPage();
+    userEvent.click(screen.getByText(/Where do these questions come from/));
+    userEvent.click(screen.getByRole('button', { name: 'Generate questions from documents' }));
+    const card = await screen.findByRole('article', { name: 'Q-AI-01' });
+    expect(card).toHaveTextContent('AI-suggested from documents');
+  } finally {
+    registerQuestionProvider(null);
+  }
 });
