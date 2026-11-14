@@ -35,7 +35,7 @@ A web-based disaster recovery planning platform built for local governments, Ind
 
 ## Stack
 - **Frontend:** React + TypeScript + Tailwind CSS
-- **Backend:** Node.js + Express
+- **Backend:** Django + Express
 - **Database:** PostgreSQL
 - **AI:** Claude API (Anthropic)
 - **Infrastructure:** Docker

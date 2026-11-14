@@ -1,10 +1,12 @@
 import React from 'react';
+import { FundingGapCalculator, RateTable } from '../finance';
 
 const FinancialTracking = () => {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-white mb-2">FinancialTracking</h1>
-      <p className="text-gray-400">This page is under construction.</p>
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-bold text-white">Financial Tracking</h1>
+      <FundingGapCalculator />
+      <RateTable title="Rate Table – Standard Unit Rates" />
     </div>
   );
 };

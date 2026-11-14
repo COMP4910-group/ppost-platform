@@ -1,5 +1,10 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+
+// Auth
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginPage from './pages/LoginPage';
+import SignupPage from './pages/SignupPage';
 
 // Pages
 import Dashboard from './pages/Dashboard';
@@ -98,6 +103,9 @@ const Sidebar = () => {
 
 const Topbar = () => {
   const location = useLocation();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+
   const pageNames: Record<string, string> = {
     '/': 'Dashboard',
     '/assessment': 'Impact Assessment',
@@ -115,6 +123,15 @@ const Topbar = () => {
     '/settings': 'Settings',
   };
 
+  const initials = user?.email
+    ? user.email.substring(0, 2).toUpperCase()
+    : '??';
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/login');
+  };
+
   return (
     <div className="h-12 bg-gray-900 border-b border-gray-800 flex items-center justify-between px-4">
       <div className="text-sm text-gray-400">
@@ -126,9 +143,21 @@ const Topbar = () => {
           placeholder="Search records, plans..."
         />
         <button className="bg-green-700 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded">
-          ✦ AI Copilot
+          AI Copilot
         </button>
-        <div className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold">JM</div>
+        <div
+          title={user?.email ?? ''}
+          className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold cursor-default"
+        >
+          {initials}
+        </div>
+        <button
+          onClick={handleSignOut}
+          title="Sign out"
+          className="text-gray-500 hover:text-gray-300 text-xs transition-colors"
+        >
+          Sign out
+        </button>
       </div>
     </div>
   );
@@ -146,28 +175,51 @@ const Layout = ({ children }: { children: React.ReactNode }) => (
   </div>
 );
 
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-gray-400 text-sm animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Layout>{children}</Layout>;
+};
+
 const App: React.FC = () => {
   return (
-    <BrowserRouter>
-      <Layout>
+    <AuthProvider>
+      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/assessment" element={<ImpactAssessment />} />
-          <Route path="/matrix" element={<RecoveryMatrix />} />
-          <Route path="/ppost" element={<PPOSTWorkspace />} />
-          <Route path="/estimates" element={<ClassDEstimates />} />
-          <Route path="/funding" element={<FundingAssistance />} />
-          <Route path="/recovery-plan" element={<InitialRecoveryPlan />} />
-          <Route path="/projects" element={<RecoveryProjects />} />
-          <Route path="/financial" element={<FinancialTracking />} />
-          <Route path="/ai" element={<AICopilot />} />
-          <Route path="/reports" element={<Reports />} />
-          <Route path="/documents" element={<DocumentsEvidence />} />
-          <Route path="/audit" element={<AuditApprovals />} />
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/assessment" element={<ProtectedRoute><ImpactAssessment /></ProtectedRoute>} />
+          <Route path="/matrix" element={<ProtectedRoute><RecoveryMatrix /></ProtectedRoute>} />
+          <Route path="/ppost" element={<ProtectedRoute><PPOSTWorkspace /></ProtectedRoute>} />
+          <Route path="/estimates" element={<ProtectedRoute><ClassDEstimates /></ProtectedRoute>} />
+          <Route path="/funding" element={<ProtectedRoute><FundingAssistance /></ProtectedRoute>} />
+          <Route path="/recovery-plan" element={<ProtectedRoute><InitialRecoveryPlan /></ProtectedRoute>} />
+          <Route path="/projects" element={<ProtectedRoute><RecoveryProjects /></ProtectedRoute>} />
+          <Route path="/financial" element={<ProtectedRoute><FinancialTracking /></ProtectedRoute>} />
+          <Route path="/ai" element={<ProtectedRoute><AICopilot /></ProtectedRoute>} />
+          <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+          <Route path="/documents" element={<ProtectedRoute><DocumentsEvidence /></ProtectedRoute>} />
+          <Route path="/audit" element={<ProtectedRoute><AuditApprovals /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </Layout>
-    </BrowserRouter>
+      </BrowserRouter>
+    </AuthProvider>
   );
 };
 
