@@ -10,11 +10,14 @@ import { AiInsightsPanel } from '../ppost/AiInsightsPanel';
 import { buildInsightContext } from '../ppost/assessmentInsights';
 import { EditorTarget, EntityEditor } from '../ppost/EntityEditor';
 import { Button, IdChip, sectorLabel, SeverityBadge } from '../ppost/ui';
+import { useServerSync } from '../ppost/sync';
+import { HistoryPanel, SyncStatusChip } from '../ppost/HistoryPanel';
 
 type Filter = 'ALL' | 'UNANSWERED' | 'UNKNOWN' | 'NEEDS_NOTE';
 const ANSWERS: Answer[] = ['YES', 'NO', 'UNKNOWN'];
 
 const ImpactAssessment = () => {
+  useServerSync();
   const s = usePpost();
   const navigate = useNavigate();
   const aiQuestions = s.assessment.aiQuestions;
@@ -67,6 +70,7 @@ const ImpactAssessment = () => {
           </p>
         </div>
         <div className="w-64">
+          <div className="flex justify-end mb-2"><SyncStatusChip /></div>
           <div className="h-2 bg-gray-800 rounded" aria-hidden>
             <div className="h-2 bg-green-500 rounded" style={{ width: `${visible.length ? (answered / visible.length) * 100 : 0}%` }} />
           </div>
@@ -284,6 +288,7 @@ function QuestionCard({ q, answer, note, confirmed, linked, deep, deepOpen, deep
           className={`w-full bg-gray-950 border rounded px-2.5 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${noteMissing ? 'border-red-600' : 'border-gray-700'}`} />
         {noteMissing && <span className="block text-[11px] text-red-400 mt-1">A note is required for UNKNOWN answers.</span>}
       </label>
+      <HistoryPanel kind="answer" recordId={q.id} label="Answer history (who answered, when)" />
 
       {/* system reaction */}
       {answer === 'UNKNOWN' && safety && (

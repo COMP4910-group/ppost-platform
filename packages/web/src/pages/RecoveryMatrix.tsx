@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { buildMatrix, CellStatus, MatrixCell, orderedPriorities, SECTORS, SectorId, TimeHorizon } from 'ppost-engine';
 import { StoreState, usePpost } from '../ppost/store';
+import { useServerSync } from '../ppost/sync';
+import { SyncStatusChip } from '../ppost/HistoryPanel';
 import { costCellStatus, costState, currentCost, money, moneyFull, rollup, STAGE_LABEL, tacticsForCell } from '../ppost/financeBridge';
 import { EditorTarget, EntityEditor } from '../ppost/EntityEditor';
 import { Button, CELL_STYLE, Drawer, HORIZON_LABEL, IdChip, SeverityBadge, StatusBadge, UnknownBadge, sectorLabel } from '../ppost/ui';
@@ -35,6 +37,7 @@ function filterByHorizon(s: PpostState, h: TimeHorizon | 'ALL'): PpostState {
 }
 
 const RecoveryMatrix = () => {
+  useServerSync();
   const all = usePpost();
   const navigate = useNavigate();
   const [horizon, setHorizon] = useState<TimeHorizon | 'ALL'>('ALL');
@@ -64,6 +67,7 @@ const RecoveryMatrix = () => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <SyncStatusChip />
           <div role="group" aria-label="Time horizon" className="flex rounded border border-gray-700 overflow-hidden">
             {(['ALL', 'IMMEDIATE', 'MID_TERM', 'LONG_TERM'] as const).map((h) => (
               <button key={h} onClick={() => setHorizon(h)} aria-pressed={horizon === h}

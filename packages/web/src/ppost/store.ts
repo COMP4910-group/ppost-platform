@@ -2,7 +2,8 @@
  * PPOST workspace store — one shared source of truth for the Recovery Matrix,
  * PPOST Workspace and Impact Assessment pages. Saves to the browser (localStorage) for now.
  *
- * Later: replace load()/save() with Supabase calls; the pages won't change.
+ * Every change is also sent to the Django backend by ./sync.ts (who, what, when),
+ * and the saved data is loaded back from the server after login.
  */
 import { useSyncExternalStore } from 'react';
 import { Answer, Objective, Priority, Problem, Strategy, Tactic, VerificationTask } from 'ppost-engine';
@@ -103,10 +104,18 @@ function set(next: StoreState) {
   listeners.forEach((l) => l());
 }
 
-const subscribe = (l: () => void) => {
+/** Listen for any change (used by the server sync). Returns an unsubscribe function. */
+export const subscribe = (l: () => void) => {
   listeners.add(l);
-  return () => listeners.delete(l);
+  return () => {
+    listeners.delete(l);
+  };
 };
+
+/** Swap in a whole new state (used when loading the saved data from the server). */
+export function replaceState(next: StoreState) {
+  set(next);
+}
 
 /** React hook: re-renders whenever the PPOST data changes. */
 export function usePpost(): StoreState {

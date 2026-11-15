@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "corsheaders",
     # Local
     "accounts",
+    "ppost",  # PPOST planning data + audit log (Divyansh)
 ]
 
 MIDDLEWARE = [
