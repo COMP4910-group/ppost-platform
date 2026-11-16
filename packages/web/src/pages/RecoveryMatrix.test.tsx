@@ -41,3 +41,11 @@ test('clicking a cell opens its PPOST chain and links to the workspace', () => {
   userEvent.click(within(drawer).getByRole('button', { name: /Open P6 in PPOST Workspace/ }));
   expect(screen.getByText('at /ppost?priority=PR-6')).toBeInTheDocument();
 });
+
+test('Cost view shows how much money each area needs, finalized vs draft', () => {
+  renderMatrix();
+  userEvent.click(screen.getByRole('button', { name: 'Cost ($)' }));
+  const cell = screen.getByRole('button', { name: /Protect Property × Housing: .*\$3,054,000 total, \$96,400 finalized, 1 need estimate/ });
+  expect(cell).toBeInTheDocument();
+  expect(screen.getByLabelText('Cost summary')).toHaveTextContent('Needs an estimate');
+});

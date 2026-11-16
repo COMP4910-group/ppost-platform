@@ -23,6 +23,8 @@ export const CURRENT_EVENT = {
   hazard: 'WILDFIRE' as const,
   location: 'Interior BC (synthetic)',
   situationVersion: 'SitRep v3',
+  /** What users see. Sample data for now; the real report name/version/date comes from the Disaster Events intake (Earl). */
+  situationLabel: 'Sample situation report',
   facts: [
     { key: 'areaBurned', label: 'Area burned', value: '14,200 ha', source: 'SitRep v3' },
     { key: 'homesDestroyed', label: 'Homes destroyed', value: '42 (confirmed)', source: 'SitRep v3' },
@@ -116,3 +118,44 @@ export const SEED: PpostState = {
     tactic({ id: 'T-024', strategyId: 'S-14', primaryPriorityId: 'PR-8', sector: 'ECONOMY', owner: 'R. Okafor', title: 'Small business reopening grants desk', fiveW1H: { when: { horizon: 'MID_TERM' } } }),
   ],
 };
+
+/* ---------------------------------------------------------------------------
+ * Cost history per tactic (SYNTHETIC demo values).
+ * Allowance = rough number entered in PPOST before a Class D estimate exists.
+ * CLASS_D entries will come from the Class D Estimates page (Daniel) through
+ * src/ppost/financeBridge.ts. Entries are never edited — new ones are added.
+ * ------------------------------------------------------------------------- */
+export type CostStage = 'ALLOWANCE' | 'CLASS_D' | 'REFINED' | 'APPROVED_BUDGET';
+export type CostStatus = 'draft' | 'in_review' | 'approved';
+
+export interface CostEntry {
+  id: string;
+  tacticId: string;
+  amount: number;
+  stage: CostStage;
+  status: CostStatus;
+  /** e.g. "v1.1" for Class D revisions */
+  revision?: string;
+  reason: string;
+  by: string;
+  at: string;
+  source: 'PPOST' | 'CLASS_D_ESTIMATOR' | 'SYNTHETIC';
+}
+
+const c = (tacticId: string, amount: number, stage: CostStage, status: CostStatus, at: string, by: string, reason: string, revision?: string): CostEntry =>
+  ({ id: `C-${tacticId}-${at}`, tacticId, amount, stage, status, at: `${at}T16:00:00.000Z`, by, reason, revision, source: 'SYNTHETIC' });
+
+export const SEED_COSTS: CostEntry[] = [
+  c('T-001', 85000, 'CLASS_D', 'approved', '2026-10-09', 'R. Okafor', 'Assessor crew 6 days + fallers on standby', 'v1.0'),
+  c('T-014', 1500000, 'ALLOWANCE', 'draft', '2026-10-09', 'L. Tremblay', 'Initial allowance: 42 units at about $35k each'),
+  c('T-014', 1704000, 'CLASS_D', 'draft', '2026-10-12', 'R. Okafor', 'Base $1.42M + 20% contingency', 'v1.0'),
+  c('T-014', 2122900, 'CLASS_D', 'in_review', '2026-10-15', 'R. Okafor', 'Remote surge 1.15 applied; contingency raised to 30% because 6 site-condition assessments are UNKNOWN', 'v1.1'),
+  c('T-015', 612000, 'CLASS_D', 'draft', '2026-10-13', 'R. Okafor', '42 lots, ash and debris haul to licensed landfill', 'v1.0'),
+  c('T-016', 120000, 'ALLOWANCE', 'draft', '2026-10-09', 'M. Chen', 'Fencing allowance before quotes'),
+  c('T-016', 96400, 'CLASS_D', 'approved', '2026-10-14', 'R. Okafor', 'Two local quotes received — lower than allowance', 'v1.0'),
+  c('T-017', 118700, 'ALLOWANCE', 'draft', '2026-10-10', 'L. Tremblay', '2 staff for 6 months + office'),
+  c('T-018', 104000, 'CLASS_D', 'draft', '2026-10-13', 'R. Okafor', 'Hazard trees near 42 lots', 'v1.0'),
+  c('T-021', 240000, 'ALLOWANCE', 'draft', '2026-10-11', 'A. Singh', 'Gauges, telemetry and alerting'),
+  c('T-023', 1850000, 'CLASS_D', 'in_review', '2026-10-16', 'R. Okafor', 'Temporary modular bridge incl. abutments', 'v1.0'),
+  c('T-024', 300000, 'ALLOWANCE', 'draft', '2026-10-12', 'R. Okafor', 'Grant desk staffing and small grants pool'),
+];

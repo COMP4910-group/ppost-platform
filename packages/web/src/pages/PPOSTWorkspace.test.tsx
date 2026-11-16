@@ -113,3 +113,26 @@ test('AI suggestions are a labelled placeholder; using one opens a draft for rev
   // nothing saved until the person presses Create
   expect(getState().objectives.some((o) => o.title.startsWith('Stabilize the immediate impact'))).toBe(false);
 });
+
+test('a tactic shows its cost history and a new allowance can be added', () => {
+  renderWorkspace();
+  userEvent.click(screen.getByText('Install interim modular housing on 42 destroyed lots'));
+  const cost = within(screen.getByRole('dialog')).getByLabelText('Tactic cost');
+  expect(within(cost).getByLabelText('Cost history')).toHaveTextContent('Class D v1.1: $2,122,900');
+  expect(cost).toHaveTextContent('▲ +$418,900');
+});
+
+test('adding an initial allowance needs an amount and a reason', () => {
+  renderWorkspace();
+  userEvent.click(screen.getByText('Insurance and damage documentation support'));
+  const cost = within(screen.getByRole('dialog')).getByLabelText('Tactic cost');
+  expect(cost).toHaveTextContent('Needs estimate');
+  userEvent.click(within(cost).getByRole('button', { name: '+ Initial allowance' }));
+  userEvent.type(within(cost).getByLabelText('Allowance amount'), '45000');
+  userEvent.click(within(cost).getByRole('button', { name: 'Add allowance' }));
+  expect(cost).toHaveTextContent('Say how you got this number');
+  userEvent.type(within(cost).getByLabelText('How was this number reached'), '2 staff for 3 months');
+  userEvent.click(within(cost).getByRole('button', { name: 'Add allowance' }));
+  expect(cost).toHaveTextContent('$45,000');
+  expect(getState().costs.filter((c) => c.tacticId === 'T-020')).toHaveLength(1);
+});

@@ -13,8 +13,10 @@ import {
 import { archive, discardDraft, EntityKind, getState, saveDraft, StoreState, upsert, usePpost } from './store';
 import { blankObjective, blankStrategy, blankTactic } from './records';
 import { AiSuggestionsPanel } from './AiSuggestionsPanel';
+import { TacticCostSection } from './TacticCostSection';
 import { PpostSuggestion, SuggestionRequest } from './aiSuggestions';
 import { Button, Drawer, Field, HORIZON_LABEL, IdChip, inputCls, StatusBadge } from './ui';
+import { HistoryPanel } from './HistoryPanel';
 
 export type EditorTarget =
   | { kind: 'problem'; record: Problem; isNew?: boolean }
@@ -256,6 +258,9 @@ export function EntityEditor({ target, onClose, onOpen }: {
       {kind === 'objective' && <ObjectiveFields draft={draft} patch={patch} s={s} />}
       {kind === 'strategy' && <StrategyFields draft={draft} patch={patch} s={s} />}
       {kind === 'tactic' && <TacticFields draft={draft} patch={patch} s={s} issueFor={issueFor} />}
+      {kind === 'tactic' && (isNew
+        ? <p className="text-[11px] text-gray-500 mb-3">Save this tactic first, then you can add its cost.</p>
+        : <TacticCostSection tactic={draft} />)}
 
       <div className="grid grid-cols-2 gap-3">
         {kind !== 'tactic' ? (
@@ -274,6 +279,7 @@ export function EntityEditor({ target, onClose, onOpen }: {
       </div>
       <div className="text-[11px] text-gray-500 mb-4">
         Source: {draft.source?.replace('_', ' ').toLowerCase()} · Last saved {new Date(draft.updatedAt).toLocaleString()}
+        {!isNew && <HistoryPanel kind={kind} recordId={draft.id} label="Change history (who changed what, when)" />}
       </div>
 
       {aiRequest && onOpen && (

@@ -14,17 +14,45 @@
  *   - No confidence percentages are shown.
  */
 import { Answer, Objective, Problem, SectorId, Strategy, TimeHorizon } from 'ppost-engine';
+import { createHttpSuggestionProvider } from './aiServiceAdapter';
 
 /** What the user is looking at when asking for suggestions. */
 export type SuggestionRequest =
   | { want: 'objective'; problem: Problem }
   | { want: 'strategy'; objective: Objective; problems: Problem[] }
   | { want: 'tactic'; strategy: Strategy; objective?: Objective; problem?: Problem }
-  | { want: 'problem'; answers: { questionId: string; question: string; answer: Answer; sector: SectorId; priorityId: string }[] };
+  | { want: 'problem'; answers: { questionId: string; question: string; answer: Answer; sector: SectorId; priorityId: string }[] }
+  | { want: 'assessment-insights'; context: AssessmentInsightContext };
+
+/**
+ * Everything the AI needs to find deeper / hidden tasks after an assessment:
+ * the answers (with notes), what the PPOST rules engine already produced, and what is already in PPOST.
+ * Route: POST {REACT_APP_PPOST_AI_URL}/ai/assessment-insights  body = this object, returns { insights: PpostSuggestion[] }
+ */
+export interface AssessmentInsightContext {
+  event: { id: string; name: string; hazard: string; location: string };
+  facts: { label: string; value: string | null }[];
+  answers: {
+    questionId: string; question: string; answer: Answer; note?: string;
+    sector: SectorId; priorityId: string; safetySensitive: boolean; deeperOf?: string;
+  }[];
+  /** Output of the PPOST rules engine for these answers (already shown to the user). */
+  ruleResults: {
+    problems: { id: string; title: string; severity: string; questionId: string }[];
+    safetyTactics: { id: string; title: string; questionId: string }[];
+    verificationTasks: { id: string; title: string; assignedRole: string; dueInHours: number }[];
+  };
+  /** Current PPOST plan, so the AI does not repeat what exists and can attach tactics to a strategy. */
+  existing: {
+    problems: { id: string; title: string; priorityId: string; sector: SectorId }[];
+    strategies: { id: string; title: string; objectiveId: string; problemId?: string; priorityId?: string }[];
+    tactics: { id: string; title: string; strategyId: string }[];
+  };
+}
 
 export interface PpostSuggestion {
   id: string;
-  kind: 'problem' | 'objective' | 'strategy' | 'tactic';
+  kind: 'problem' | 'objective' | 'strategy' | 'tactic' | 'task';
   title: string;
   description?: string;
   /** Why the AI suggests this — always shown to the user. */
@@ -35,6 +63,11 @@ export interface PpostSuggestion {
   horizon?: TimeHorizon;
   sector?: SectorId;
   priorityId?: string;
+  /** For kind 'tactic': an EXISTING strategy id to attach to (from context.existing.strategies). */
+  parentStrategyId?: string;
+  /** For kind 'task' (verification / follow-up task). */
+  assignedRole?: string;
+  dueInHours?: number;
 }
 
 export interface SuggestionProvider {
@@ -51,6 +84,11 @@ export function registerSuggestionProvider(p: SuggestionProvider | null) {
 }
 
 export function getSuggestionProvider(): SuggestionProvider | null {
+  // Auto-connect to the AI API route when it is configured (see aiServiceAdapter.ts).
+  const url = process.env.REACT_APP_PPOST_AI_URL;
+  if (!provider && url) {
+    provider = createHttpSuggestionProvider(url);
+  }
   return provider;
 }
 
@@ -110,6 +148,8 @@ export const sampleSuggestionProvider: SuggestionProvider = {
             sources: [req.strategy.id, ...(req.problem ? [req.problem.id] : [])],
           },
         ];
+      case 'assessment-insights':
+        return sampleInsights(req.context);
       case 'problem':
         return req.answers
           .filter((a) => a.answer !== 'NO')
@@ -125,3 +165,56 @@ export const sampleSuggestionProvider: SuggestionProvider = {
     }
   },
 };
+
+/** SAMPLE (not AI): combines answers to show the kind of "hidden task" the AI is expected to find. */
+function sampleInsights(ctx: AssessmentInsightContext): PpostSuggestion[] {
+  const a = (id: string) => ctx.answers.find((x) => x.questionId === id)?.answer;
+  const strat = (id: string) => ctx.existing.strategies.find((x) => x.id === id)?.id;
+  const out: PpostSuggestion[] = [];
+  const unknownSafety = ctx.answers.filter((x) => x.answer === 'UNKNOWN' && x.safetySensitive);
+
+  if ((a('Q-W03') === 'UNKNOWN' || a('Q-W03') === 'YES') && !a('Q-W03-D1')) {
+    out.push({
+      id: sid(), kind: 'task', title: 'Confirm whether hospitals or care homes rely on the affected water system',
+      rationale: 'The water system is not confirmed safe and nobody has checked critical health facilities yet.',
+      sources: ['Q-W03'], assignedRole: 'Infrastructure Lead', dueInHours: 24,
+    });
+  }
+  if (a('Q-H01') === 'YES') {
+    out.push({
+      id: sid(), kind: 'problem', sector: 'HUMAN_WELLNESS', priorityId: 'PR-3',
+      title: 'Households who lost homes may need mental-health and grief support',
+      rationale: 'Home loss is strongly linked to stress and grief; no wellness problem is recorded yet.',
+      sources: ['Q-H01'],
+    });
+    out.push({
+      id: sid(), kind: 'tactic', parentStrategyId: strat('S-08'),
+      title: 'Hold a re-entry information session for owners of destroyed homes',
+      rationale: 'Owners need one place to hear about debris removal, permits and insurance before rebuilding.',
+      sources: ['Q-H01', 'S-08'],
+    });
+  }
+  if (a('Q-E02') === 'YES' || a('Q-H01-D3') === 'NO' || a('Q-H01-D3') === 'UNKNOWN') {
+    out.push({
+      id: sid(), kind: 'tactic', parentStrategyId: strat('S-09'),
+      title: 'Book a licensed asbestos abatement crew before debris removal starts',
+      rationale: 'Hazardous materials are present or not screened; debris removal cannot start safely without it.',
+      sources: ['Q-E02', 'Q-H01-D3', 'S-09'].filter((x) => x.startsWith('S') || a(x)),
+    });
+  }
+  if (unknownSafety.length >= 2) {
+    out.push({
+      id: sid(), kind: 'task', title: 'Daily 15-minute review of open safety UNKNOWNs until all are verified',
+      rationale: `${unknownSafety.length} safety questions are still UNKNOWN; a daily check stops them being forgotten.`,
+      sources: unknownSafety.map((x) => x.questionId), assignedRole: 'Planning Section Chief', dueInHours: 24,
+    });
+  }
+  if (!out.length) {
+    out.push({
+      id: sid(), kind: 'task', title: 'Check every verification task has an owner and a due date',
+      rationale: 'A general follow-up while more answers are collected.', sources: ['Assessment'],
+      assignedRole: 'Planning Section Chief', dueInHours: 48,
+    });
+  }
+  return out;
+}
