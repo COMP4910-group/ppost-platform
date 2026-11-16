@@ -100,12 +100,28 @@ test('"Ask deeper questions" opens more precise follow-up questions', () => {
   expect(screen.getByRole('article', { name: 'Q-W03-D2' })).toHaveTextContent('Creates problem: No alternate drinking-water supply');
 });
 
-test('AI questions from documents: placeholder until the AI service registers', async () => {
+test('shows the Disaster Situation Overview, without the developer "where questions come from" panel', () => {
   renderPage();
-  userEvent.click(screen.getByText(/Where do these questions come from/));
-  const sources = screen.getByText(/Where do these questions come from/).closest('details')!;
-  expect(within(sources as HTMLElement).getByText(/not connected/i)).toBeInTheDocument();
-  expect(sources).toHaveTextContent('Built-in question set');
+  const overview = screen.getByRole('region', { name: 'Disaster Situation Overview' });
+  expect(overview).toHaveTextContent('Sample situation report');
+  expect(overview).toHaveTextContent('Reported');
+  expect(overview).toHaveTextContent('Unknown — needs verification');
+  expect(screen.queryByText(/Where do these questions come from/)).not.toBeInTheDocument();
+  expect(screen.queryByText(/SitRep v3/)).not.toBeInTheDocument();
+  // AI button is hidden while the AI service is not connected
+  expect(screen.queryByRole('button', { name: /Suggest questions from documents/ })).not.toBeInTheDocument();
+});
+
+test('history is not shown inside question cards; it opens in the Activity history side panel', () => {
+  renderPage();
+  expect(screen.queryByText(/Answer history/)).not.toBeInTheDocument();
+  userEvent.click(screen.getByRole('button', { name: 'View history for Q-W03' }));
+  const panel = screen.getByRole('dialog');
+  expect(panel).toHaveTextContent('Activity history');
+  expect((within(panel).getByLabelText('Filter by question') as HTMLSelectElement).value).toBe('Q-W03');
+  userEvent.click(within(panel).getByRole('button', { name: 'Close' }));
+  userEvent.click(screen.getByRole('button', { name: 'Activity history' }));
+  expect((within(screen.getByRole('dialog')).getByLabelText('Filter by question') as HTMLSelectElement).value).toBe('');
 });
 
 test('when an AI question provider is registered, its questions are added and labelled', async () => {
@@ -118,8 +134,7 @@ test('when an AI question provider is registered, its questions are added and la
   });
   try {
     renderPage();
-    userEvent.click(screen.getByText(/Where do these questions come from/));
-    userEvent.click(screen.getByRole('button', { name: 'Generate questions from documents' }));
+    userEvent.click(screen.getByRole('button', { name: /Suggest questions from documents/ }));
     const card = await screen.findByRole('article', { name: 'Q-AI-01' });
     expect(card).toHaveTextContent('AI-suggested from documents');
   } finally {

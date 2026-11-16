@@ -11,7 +11,7 @@ import { buildInsightContext } from '../ppost/assessmentInsights';
 import { EditorTarget, EntityEditor } from '../ppost/EntityEditor';
 import { Button, IdChip, sectorLabel, SeverityBadge } from '../ppost/ui';
 import { useServerSync } from '../ppost/sync';
-import { HistoryPanel, SyncStatusChip } from '../ppost/HistoryPanel';
+import { ActivityLog, SyncStatusChip } from '../ppost/HistoryPanel';
 
 type Filter = 'ALL' | 'UNANSWERED' | 'UNKNOWN' | 'NEEDS_NOTE';
 const ANSWERS: Answer[] = ['YES', 'NO', 'UNKNOWN'];
@@ -27,6 +27,8 @@ const ImpactAssessment = () => {
   const [filter, setFilter] = useState<Filter>('ALL');
   const [message, setMessage] = useState('');
   const [editing, setEditing] = useState<EditorTarget | null>(null);
+  /** Activity history side panel: undefined = closed, '' = all questions, 'Q-…' = one question. */
+  const [historyFor, setHistoryFor] = useState<string | undefined>(undefined);
 
   const answers = s.assessment.answers;
   const expanded = s.assessment.expanded;
@@ -64,32 +66,50 @@ const ImpactAssessment = () => {
         <div>
           <h1 className="text-2xl font-bold">Impact Assessment</h1>
           <p className="text-sm text-gray-400 mt-1">
-            {CURRENT_EVENT.name} · Wildfire question set · {answered} of {visible.length} answered ·{' '}
+            {CURRENT_EVENT.name} · {CURRENT_EVENT.hazard.charAt(0) + CURRENT_EVENT.hazard.slice(1).toLowerCase()} assessment · {answered} of {visible.length} answered ·{' '}
             <span className="text-amber-300">{preview.unknownIds.length} UNKNOWN</span>
             {missingNotes.length > 0 && <span className="text-red-300"> · {missingNotes.length} UNKNOWN need a note</span>}
           </p>
         </div>
-        <div className="w-64">
-          <div className="flex justify-end mb-2"><SyncStatusChip /></div>
+        <div className="w-72">
+          <div className="flex flex-wrap justify-end items-center gap-2 mb-2">
+            <SyncStatusChip />
+            <Button onClick={() => setHistoryFor('')}>Activity history</Button>
+          </div>
           <div className="h-2 bg-gray-800 rounded" aria-hidden>
             <div className="h-2 bg-green-500 rounded" style={{ width: `${visible.length ? (answered / visible.length) * 100 : 0}%` }} />
           </div>
         </div>
       </div>
 
-      {/* what the situation report already says */}
-      <section aria-label="Known situation" className="rounded-lg border border-gray-800 bg-gray-900 p-3 mb-4">
-        <div className="text-xs text-gray-400 mb-2">What we already know · {CURRENT_EVENT.situationVersion}</div>
-        <div className="flex flex-wrap gap-2">
-          {CURRENT_EVENT.facts.map((f) => (
-            <span key={f.key} className={`text-xs px-2 py-1 rounded ${f.value ? 'bg-gray-800 text-gray-200' : 'border border-dashed border-amber-500 text-amber-300'}`}>
-              {f.label}: <b>{f.value ?? '? not yet known'}</b>
+      {/* disaster situation overview: reported facts vs. what still needs verification */}
+      <section aria-label="Disaster Situation Overview" className="rounded-lg border border-gray-800 bg-gray-900 p-3 mb-4">
+        <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
+          <div>
+            <h2 className="text-sm font-semibold">Disaster Situation Overview</h2>
+            <div className="text-[11px] text-gray-400">{CURRENT_EVENT.name} · {CURRENT_EVENT.situationLabel}</div>
+          </div>
+          <AiQuestionButton s={s} />
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-[11px] uppercase tracking-wide text-gray-500 mr-1">Reported</span>
+          {CURRENT_EVENT.facts.filter((f) => f.value).map((f) => (
+            <span key={f.key} className="text-xs px-2 py-1 rounded bg-gray-800 text-gray-200">
+              {f.label}: <b>{f.value}</b>
             </span>
           ))}
         </div>
+        {CURRENT_EVENT.facts.some((f) => !f.value) && (
+          <div className="flex flex-wrap items-center gap-2 mt-2">
+            <span className="text-[11px] uppercase tracking-wide text-amber-400 mr-1">Unknown — needs verification</span>
+            {CURRENT_EVENT.facts.filter((f) => !f.value).map((f) => (
+              <span key={f.key} className="text-xs px-2 py-1 rounded border border-dashed border-amber-500 text-amber-300">
+                {f.label}: <b>not yet known</b>
+              </span>
+            ))}
+          </div>
+        )}
       </section>
-
-      <QuestionSources s={s} questionCount={questions.filter((q) => !q.deepOf).length} deepCount={questions.filter((q) => q.deepOf).length} />
 
       <div className="grid grid-cols-12 gap-4">
         {/* left: sector navigator */}
@@ -121,7 +141,8 @@ const ImpactAssessment = () => {
             <QuestionCard key={q.id} q={q} answer={answers[q.id]} note={s.assessment.notes[q.id] ?? ''}
               confirmed={!!s.assessment.confirmedFromSituation[q.id]} linked={s.assessment.linked[q.id]}
               deep={deepQuestionsOf(questions, q.id)} deepOpen={!!expanded[q.id]}
-              deepAnswered={deepQuestionsOf(questions, q.id).filter((d) => answers[d.id] !== undefined).length} />
+              deepAnswered={deepQuestionsOf(questions, q.id).filter((d) => answers[d.id] !== undefined).length}
+              onHistory={() => setHistoryFor(q.id)} />
           ))}
         </main>
 
@@ -194,6 +215,11 @@ const ImpactAssessment = () => {
       </div>
 
       {editing && <EntityEditor key={editing.record.id} target={editing} onClose={() => setEditing(null)} onOpen={setEditing} />}
+      {historyFor !== undefined && (
+        <ActivityLog key={historyFor || 'all'} scope="assessment" title="Activity history"
+          questions={questions.map((q) => ({ id: q.id, text: q.text }))} initialQuestion={historyFor || undefined}
+          onClose={() => setHistoryFor(undefined)} />
+      )}
     </div>
   );
 };
@@ -222,9 +248,9 @@ const ResultGroup = ({ title, empty, children }: { title: string; empty: string;
   );
 };
 
-function QuestionCard({ q, answer, note, confirmed, linked, deep, deepOpen, deepAnswered }: {
+function QuestionCard({ q, answer, note, confirmed, linked, deep, deepOpen, deepAnswered, onHistory }: {
   q: QuestionUI; answer?: Answer; note: string; confirmed: boolean; linked?: string;
-  deep: QuestionUI[]; deepOpen: boolean; deepAnswered: number;
+  deep: QuestionUI[]; deepOpen: boolean; deepAnswered: number; onHistory: () => void;
 }) {
   const [showWhy, setShowWhy] = useState(false);
   const noteRequired = answer === 'UNKNOWN';
@@ -244,23 +270,28 @@ function QuestionCard({ q, answer, note, confirmed, linked, deep, deepOpen, deep
         {q.followUpOf && <span className="text-[11px] text-gray-500">follow-up to {q.followUpOf}</span>}
       </div>
       <h3 className="text-sm text-gray-100 mb-1">{q.text}</h3>
-      <button onClick={() => setShowWhy(!showWhy)} className="text-[11px] text-blue-300 hover:underline" aria-expanded={showWhy}>
-        {showWhy ? 'Hide why we ask' : 'Why we ask'}
-      </button>
+      <div className="flex gap-3">
+        <button onClick={() => setShowWhy(!showWhy)} className="text-[11px] text-blue-300 hover:underline" aria-expanded={showWhy}>
+          {showWhy ? 'Hide why we ask' : 'Why we ask'}
+        </button>
+        <button onClick={onHistory} className="text-[11px] text-gray-400 hover:text-white hover:underline" aria-label={`View history for ${q.id}`}>
+          View question history
+        </button>
+      </div>
       {showWhy && <p className="text-xs text-gray-400 mt-1">{q.why}</p>}
 
       {/* situation report hint (person must confirm) */}
       {fact && !confirmed && answer === undefined && (
         <div className="mt-2 rounded bg-gray-950 border border-gray-800 px-2 py-1.5 text-xs text-gray-300 flex flex-wrap items-center gap-2">
           {fact.value
-            ? <>Situation report says <b>{fact.label}: {fact.value}</b> → suggests <b>{q.situationFact!.suggests}</b></>
+            ? <>Situation report indicates <b>{fact.label}: {fact.value}</b> → suggests <b>{q.situationFact!.suggests}</b></>
             : <>Situation report: <b>{fact.label}</b> is not yet known → suggests <b>UNKNOWN</b> unless you can verify</>}
           <button onClick={() => confirmFromSituation(q.id, q.situationFact!.suggests)} className="text-green-400 hover:underline">
             Confirm {q.situationFact!.suggests}
           </button>
         </div>
       )}
-      {confirmed && <div className="mt-1 text-[11px] text-gray-500">Answer confirmed from {CURRENT_EVENT.situationVersion}</div>}
+      {confirmed && <div className="mt-1 text-[11px] text-gray-500">Answer confirmed from the situation report</div>}
 
       {/* YES / NO / UNKNOWN */}
       <div role="radiogroup" aria-label={`Answer for ${q.id}`} className="flex gap-2 mt-3">
@@ -288,7 +319,6 @@ function QuestionCard({ q, answer, note, confirmed, linked, deep, deepOpen, deep
           className={`w-full bg-gray-950 border rounded px-2.5 py-1.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500 ${noteMissing ? 'border-red-600' : 'border-gray-700'}`} />
         {noteMissing && <span className="block text-[11px] text-red-400 mt-1">A note is required for UNKNOWN answers.</span>}
       </label>
-      <HistoryPanel kind="answer" recordId={q.id} label="Answer history (who answered, when)" />
 
       {/* system reaction */}
       {answer === 'UNKNOWN' && safety && (
@@ -323,15 +353,17 @@ function QuestionCard({ q, answer, note, confirmed, linked, deep, deepOpen, deep
   );
 }
 
-/** Shows where questions come from, and the (not yet connected) AI-from-documents source. */
-function QuestionSources({ s, questionCount, deepCount }: { s: StoreState; questionCount: number; deepCount: number }) {
+/**
+ * "Suggest questions from documents" — only shown once the AI service registers a question provider.
+ * Nothing is shown while it is not connected.
+ */
+function AiQuestionButton({ s }: { s: StoreState }) {
   const provider = getQuestionProvider();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const aiCount = s.assessment.aiQuestions.length;
+  if (!provider) return null;
 
   const generate = async () => {
-    if (!provider) return;
     setBusy(true); setError('');
     try {
       const existing = [...questionsFor(CURRENT_EVENT.hazard).map((q) => q.id), ...s.assessment.aiQuestions.map((q) => q.id)];
@@ -348,32 +380,10 @@ function QuestionSources({ s, questionCount, deepCount }: { s: StoreState; quest
   };
 
   return (
-    <details className="rounded-lg border border-gray-800 bg-gray-900 p-3 mb-4">
-      <summary className="text-xs text-gray-300 cursor-pointer">
-        Where do these questions come from? <span className="text-gray-500">({questionCount} questions · {deepCount} deeper questions{aiCount ? ` · ${aiCount} AI-suggested` : ''})</span>
-      </summary>
-      <ul className="mt-2 space-y-2 text-xs">
-        <li className="text-gray-300">
-          <b className="text-green-400">✓ Built-in question set</b> — written by the PPOST team for {CURRENT_EVENT.hazard.toLowerCase()} events,
-          picked by hazard type. Each question has a rule for what happens on YES / NO / UNKNOWN.
-        </li>
-        <li className="text-gray-300">
-          <b className="text-green-400">✓ Situation report facts</b> ({CURRENT_EVENT.situationVersion}) — used to suggest answers you must confirm.
-          This is sample data for now; it will come from the Disaster Events intake when that page is connected.
-        </li>
-        <li className="text-gray-300">
-          <b className="text-green-400">✓ Deeper questions</b> — open "Ask deeper questions" under a question for more precise follow-up.
-        </li>
-        <li className="text-violet-200">
-          <b>✦ AI questions from your documents</b> — {provider
-            ? <>connected ({provider.name}).{' '}
-                <button onClick={generate} disabled={busy} className="underline disabled:opacity-50">{busy ? 'Generating…' : 'Generate questions from documents'}</button></>
-            : <span className="uppercase text-[10px] border border-violet-800 rounded px-1.5 py-0.5">not connected</span>}{' '}
-          {!provider && 'When the AI service is connected, it will read uploaded SitReps and briefings and add questions here, labelled as AI-suggested.'}
-          {error && <span className="block text-red-300">{error}</span>}
-        </li>
-      </ul>
-    </details>
+    <span className="flex items-center gap-2">
+      <Button onClick={generate} disabled={busy}>{busy ? 'Generating…' : '✦ Suggest questions from documents'}</Button>
+      {error && <span className="text-[11px] text-red-300">{error}</span>}
+    </span>
   );
 }
 

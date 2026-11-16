@@ -23,6 +23,8 @@ export const CURRENT_EVENT = {
   hazard: 'WILDFIRE' as const,
   location: 'Interior BC (synthetic)',
   situationVersion: 'SitRep v3',
+  /** What users see. Sample data for now; the real report name/version/date comes from the Disaster Events intake (Earl). */
+  situationLabel: 'Sample situation report',
   facts: [
     { key: 'areaBurned', label: 'Area burned', value: '14,200 ha', source: 'SitRep v3' },
     { key: 'homesDestroyed', label: 'Homes destroyed', value: '42 (confirmed)', source: 'SitRep v3' },

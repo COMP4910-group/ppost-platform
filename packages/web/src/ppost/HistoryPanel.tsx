@@ -2,7 +2,7 @@
  * Change history from the server: who changed what, and when.
  *  - <SyncStatusChip/>  "Saved to server · 10:42" / "Saving…" / "Offline — 3 waiting"
  *  - <HistoryPanel kind recordId/>  collapsible history of one record or question
- *  - <ActivityLog onClose/>  drawer with the latest changes across the whole event
+ *  - <ActivityLog onClose/>  side panel with the latest changes (whole event, or Impact Assessment only)
  */
 import React, { useCallback, useEffect, useState } from 'react';
 import { fetchHistory, HistoryEntry, NotSignedInError, RecordKind } from './api';
@@ -128,31 +128,81 @@ export function HistoryPanel({ kind, recordId, label = 'Change history' }: { kin
   );
 }
 
-/** Drawer with the latest changes for the whole event, filterable by type and person. */
-export function ActivityLog({ onClose }: { onClose: () => void }) {
+/** Record types that belong to the Impact Assessment. */
+export const ASSESSMENT_KINDS: RecordKind[] = ['answer', 'link', 'task', 'insight', 'ai_question', 'meta'];
+
+const ACTION_FILTER: { value: HistoryEntry['action'] | ''; label: string }[] = [
+  { value: '', label: 'All changes' },
+  { value: 'create', label: 'Created' },
+  { value: 'update', label: 'Changed' },
+  { value: 'delete', label: 'Removed' },
+  { value: 'restore', label: 'Restored' },
+];
+
+/** Does this change belong to question `qid`? (answers/links use the question id; tasks and insights carry it in their data) */
+function aboutQuestion(e: HistoryEntry, qid: string): boolean {
+  if (e.record_id === safeId(qid)) return true;
+  const ref = (d: any) => d && (d.questionId === qid || (Array.isArray(d.suggestion?.sources) && d.suggestion.sources.includes(qid)));
+  return ref(e.after) || ref(e.before);
+}
+
+/**
+ * Side panel with the latest saved changes — who, what and when.
+ * scope "assessment" limits it to Impact Assessment records and adds a question filter.
+ */
+export function ActivityLog({ onClose, scope = 'all', questions, initialQuestion, title = 'Activity log' }: {
+  onClose: () => void;
+  scope?: 'all' | 'assessment';
+  /** Questions for the question filter (assessment scope). */
+  questions?: { id: string; text: string }[];
+  /** Open already filtered to this question. */
+  initialQuestion?: string;
+  title?: string;
+}) {
+  const kinds = scope === 'assessment' ? ASSESSMENT_KINDS : (Object.keys(KIND_LABEL) as RecordKind[]);
   const [kind, setKind] = useState<RecordKind | ''>('');
-  const { rows, error, reload } = useHistory(true, { kind: kind || undefined, limit: 200 });
   const [who, setWho] = useState('');
-  const people = Array.from(new Set((rows ?? []).map((r) => r.user ?? 'unknown user')));
-  const shown = (rows ?? []).filter((r) => !who || (r.user ?? 'unknown user') === who);
+  const [action, setAction] = useState<HistoryEntry['action'] | ''>('');
+  const [question, setQuestion] = useState(initialQuestion ?? '');
+  const { rows, error, reload } = useHistory(true, { kind: kind || undefined, limit: scope === 'assessment' && !kind ? 500 : 200 });
+  const inScope = (rows ?? []).filter((r) => kinds.includes(r.kind));
+  const people = Array.from(new Set(inScope.map((r) => r.user ?? 'unknown user')));
+  const shown = inScope.filter((r) =>
+    (!who || (r.user ?? 'unknown user') === who)
+    && (!action || r.action === action)
+    && (!question || aboutQuestion(r, question)));
+  const qText = questions?.find((q) => q.id === question)?.text;
+  const subtitle = scope === 'assessment'
+    ? 'Answers, notes, verification tasks and AI insight decisions — who changed what, and when. Newest first.'
+    : `Every saved change for ${SYNC_EVENT_ID} — who, what and when (server time). Newest first.`;
   return (
     <Drawer onClose={onClose} width="w-[640px]"
-      title={<div><div className="font-semibold text-white">Activity log</div>
-        <div className="text-[11px] text-gray-400">Every saved change for {SYNC_EVENT_ID} — who, what and when (server time). Newest first.</div></div>}
+      title={<div><div className="font-semibold text-white">{title}</div>
+        <div className="text-[11px] text-gray-400">{subtitle}</div></div>}
       footer={<Button onClick={() => void reload()}>Refresh</Button>}>
-      <div className="flex gap-2 mb-3">
-        <select aria-label="Filter by type" className={`${inputCls} w-auto`} value={kind} onChange={(e) => setKind(e.target.value as RecordKind | '')}>
+      <div className="grid grid-cols-2 gap-2 mb-3">
+        {scope === 'assessment' && questions && (
+          <select aria-label="Filter by question" className={`${inputCls} col-span-2`} value={question} onChange={(e) => setQuestion(e.target.value)}>
+            <option value="">All questions</option>
+            {questions.map((q) => <option key={q.id} value={q.id}>{q.id} — {q.text.length > 70 ? `${q.text.slice(0, 70)}…` : q.text}</option>)}
+          </select>
+        )}
+        <select aria-label="Filter by type" className={inputCls} value={kind} onChange={(e) => setKind(e.target.value as RecordKind | '')}>
           <option value="">All types</option>
-          {(Object.keys(KIND_LABEL) as RecordKind[]).map((k) => <option key={k} value={k}>{KIND_LABEL[k]}</option>)}
+          {kinds.map((k) => <option key={k} value={k}>{KIND_LABEL[k]}</option>)}
         </select>
-        <select aria-label="Filter by person" className={`${inputCls} w-auto`} value={who} onChange={(e) => setWho(e.target.value)}>
+        <select aria-label="Filter by change" className={inputCls} value={action} onChange={(e) => setAction(e.target.value as HistoryEntry['action'] | '')}>
+          {ACTION_FILTER.map((a) => <option key={a.value} value={a.value}>{a.label}</option>)}
+        </select>
+        <select aria-label="Filter by person" className={`${inputCls} col-span-2`} value={who} onChange={(e) => setWho(e.target.value)}>
           <option value="">Everyone</option>
           {people.map((p) => <option key={p}>{p}</option>)}
         </select>
       </div>
+      {question && qText && <p className="text-xs text-gray-300 mb-2">Showing history for <b>{question}</b>: {qText}</p>}
       {error && <p className="text-xs text-yellow-300">{error}</p>}
       {!error && rows === null && <p className="text-xs text-gray-500">Loading…</p>}
-      {!error && rows && shown.length === 0 && <p className="text-xs text-gray-500">No changes yet.</p>}
+      {!error && rows && shown.length === 0 && <p className="text-xs text-gray-500">No changes match these filters yet.</p>}
       <ul>{shown.map((e) => <HistoryEntryRow key={e.id} e={e} showRecord />)}</ul>
     </Drawer>
   );
