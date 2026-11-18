@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     # Local
     "accounts",
     "ppost",  # PPOST planning data + audit log (Divyansh)
+    "finance",  # Class D estimates, rates, funding + audit log (Daniel)
 ]
 
 MIDDLEWARE = [
