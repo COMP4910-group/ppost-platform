@@ -1,0 +1,1187 @@
+{
+  "event_id": 1,
+  "event_name": "Clearwater Ridge Wildfire",
+  "submitted_by": "Divyansh",
+  "last_updated": "2026-11-18",
+  "data": {
+    "file_format_version": 1,
+    "module": "Activity History",
+    "owner": "Divyansh (PPOST)",
+    "ppost_disaster_id": "EV-2026-014",
+    "event_mapping": {
+      "event_id": 1,
+      "ppost_disaster_id": "EV-2026-014",
+      "mapping_status": "assumed_for_sample",
+      "note": "The team format uses event_id 1. Inside PPOST the same wildfire is identified as \"EV-2026-014\" (every PPOST record has disaster_id = \"EV-2026-014\"). This mapping is agreed for these sample files only; it is not a database join. Once Earl's disasters table is connected, PPOST will store the real event id."
+    },
+    "sample_data": true,
+    "sample_data_note": "Synthetic demonstration data for the fictional Clearwater Ridge Wildfire. Generated from the PPOST seed data and the real PPOST rules engine with a sample set of assessment answers. Not live data, not read from Supabase.",
+    "generated_at": "2026-11-18T17:40:00Z",
+    "field_names": "snake_case versions of the app's camelCase fields (e.g. priority_id = priorityId, five_w1h = fiveW1H).",
+    "related_files": [
+      "impact.json",
+      "ppost.json",
+      "matrix.json",
+      "activity_history.json"
+    ],
+    "how_it_is_stored": {
+      "current_records": "Table ppost_ppostrecord (model PpostRecord): one row per record = its latest data, version, is_deleted, created_by/at, updated_by/at.",
+      "change_events": "Table ppost_ppostchange (model PpostChange): one row per change with user, server time, action, version, changed fields, before and after values.",
+      "api": {
+        "current_state": "GET /api/ppost/events/EV-2026-014/state/",
+        "send_changes": "POST /api/ppost/events/EV-2026-014/changes/",
+        "history": "GET /api/ppost/events/EV-2026-014/history/?kind=&record_id=&limit= (newest first, max 500)",
+        "auth": "JWT (same login as the app)"
+      },
+      "immutability": "Change events are append-only in the application: the API only adds events and the Django admin shows them read-only. This is NOT enforced at the database level yet (a database user could still edit rows); database-level protection is a future improvement.",
+      "timestamps": "server_timestamp is set by the server (UTC). client_timestamp is when the browser recorded the change.",
+      "archive_vs_delete": "PPOST archives records (action 'update' with status → ARCHIVED, shown as 'archived'). Records are not deleted in normal use."
+    },
+    "action_types": {
+      "create": "created",
+      "update": "changed (or archived when status becomes ARCHIVED)",
+      "delete": "removed (soft delete)",
+      "restore": "restored"
+    },
+    "record_types": {
+      "answer": "Assessment answer (answer + note + confirmed_from_situation), record_id = question id",
+      "link": "Question → problem link, record_id = question id",
+      "task": "Verification task",
+      "problem": "Problem",
+      "objective": "Objective",
+      "strategy": "Strategy",
+      "tactic": "Tactic",
+      "cost": "Cost entry",
+      "priority": "Priority",
+      "insight": "AI insight + user decision",
+      "ai_question": "AI-suggested question",
+      "meta": "Assessment info"
+    },
+    "sample_users": {
+      "test": "team demo login",
+      "reviewer_demo": "fictional second user for the example"
+    },
+    "dashboard_summary": {
+      "events_total": 23,
+      "last_updated_at": "2026-11-18T17:34:00Z",
+      "last_updated_by": "reviewer_demo",
+      "events_by_user": {
+        "test": 18,
+        "reviewer_demo": 5
+      },
+      "events_by_action": {
+        "created": 18,
+        "changed": 4,
+        "archived": 1
+      },
+      "events_by_record_type": {
+        "answer": 8,
+        "problem": 4,
+        "objective": 3,
+        "strategy": 1,
+        "tactic": 3,
+        "link": 2,
+        "task": 2
+      },
+      "events_by_source_module": {
+        "Impact Assessment": 8,
+        "Impact Assessment (Add to PPOST)": 9,
+        "PPOST Workspace": 6
+      },
+      "recent_change_ids": [
+        23,
+        22,
+        21,
+        20,
+        19,
+        18,
+        17,
+        16
+      ]
+    },
+    "scenario_note": "Events were produced by sending these sample changes through the real PPOST backend (local test database, not Supabase); server timestamps were then set to a demonstration timeline. In the real app the first login also uploads every existing record as 'created' — those events are left out here to keep the file readable.",
+    "events": [
+      {
+        "change_id": 23,
+        "disaster_id": "EV-2026-014",
+        "record_type": "problem",
+        "record_id": "P-11",
+        "action": "update",
+        "action_label": "archived",
+        "username": "reviewer_demo",
+        "server_timestamp": "2026-11-18T17:34:00Z",
+        "client_timestamp": "2026-11-18T17:34:00Z",
+        "version": 2,
+        "changed_fields": [
+          "status",
+          "updated_at"
+        ],
+        "before": {
+          "id": "P-11",
+          "disaster_id": "EV-2026-014",
+          "title": "Water intake pressure loss (duplicate of P-05)",
+          "priority_id": "PR-4",
+          "sector": "CRITICAL_INFRASTRUCTURE",
+          "severity": "HIGH",
+          "source": "HUMAN_DECISION",
+          "status": "DRAFT",
+          "created_at": "2026-11-18T17:30:00.000Z",
+          "updated_at": "2026-11-18T17:30:00.000Z"
+        },
+        "after": {
+          "id": "P-11",
+          "disaster_id": "EV-2026-014",
+          "title": "Water intake pressure loss (duplicate of P-05)",
+          "priority_id": "PR-4",
+          "sector": "CRITICAL_INFRASTRUCTURE",
+          "severity": "HIGH",
+          "source": "HUMAN_DECISION",
+          "status": "ARCHIVED",
+          "created_at": "2026-11-18T17:30:00.000Z",
+          "updated_at": "2026-11-18T17:34:00.000Z"
+        },
+        "reason": "Duplicate of P-05",
+        "source_module": "PPOST Workspace",
+        "example_note": null
+      },
+      {
+        "change_id": 22,
+        "disaster_id": "EV-2026-014",
+        "record_type": "problem",
+        "record_id": "P-11",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:30:00Z",
+        "client_timestamp": "2026-11-18T17:30:00Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "disaster_id",
+          "id",
+          "priority_id",
+          "sector",
+          "severity",
+          "source",
+          "status",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "id": "P-11",
+          "disaster_id": "EV-2026-014",
+          "title": "Water intake pressure loss (duplicate of P-05)",
+          "priority_id": "PR-4",
+          "sector": "CRITICAL_INFRASTRUCTURE",
+          "severity": "HIGH",
+          "source": "HUMAN_DECISION",
+          "status": "DRAFT",
+          "created_at": "2026-11-18T17:30:00.000Z",
+          "updated_at": "2026-11-18T17:30:00.000Z"
+        },
+        "reason": "",
+        "source_module": "PPOST Workspace",
+        "example_note": null
+      },
+      {
+        "change_id": 21,
+        "disaster_id": "EV-2026-014",
+        "record_type": "tactic",
+        "record_id": "T-014",
+        "action": "update",
+        "action_label": "changed",
+        "username": "reviewer_demo",
+        "server_timestamp": "2026-11-18T17:28:03Z",
+        "client_timestamp": "2026-11-18T17:28:02Z",
+        "version": 2,
+        "changed_fields": [
+          "five_w1h.when.end",
+          "owner"
+        ],
+        "before": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-10-08T09:00:00.000Z",
+          "updated_at": "2026-10-08T09:00:00.000Z",
+          "source": "HUMAN_DECISION",
+          "status": "IN_REVIEW",
+          "five_w1h": {
+            "who": {
+              "accountable_person": "L. Tremblay",
+              "team": "Regional Housing Taskforce"
+            },
+            "what": {
+              "action": "Prepare pads, connect utilities and set modular units",
+              "deliverable": "42 serviced, occupied units"
+            },
+            "when": {
+              "start": "2026-10-12",
+              "end": "2026-10-30",
+              "horizon": "IMMEDIATE"
+            },
+            "where": {
+              "location": "Clearwater Ridge subdivision",
+              "parcel_ids": [
+                "42 destroyed parcels"
+              ]
+            },
+            "why": {
+              "objective_id": "O-04",
+              "rationale": "Displaced households need safe interim housing"
+            },
+            "how": {
+              "approach": "Contracted site works; modular delivery via highway corridor",
+              "delivery_method": "CONTRACTOR"
+            }
+          },
+          "id": "T-014",
+          "strategy_id": "S-07",
+          "primary_priority_id": "PR-6",
+          "secondary_priority_ids": [
+            "PR-3"
+          ],
+          "sector": "HOUSING",
+          "owner": null,
+          "title": "Install interim modular housing on 42 destroyed lots",
+          "success_measure": "42 units occupied by Nov 30",
+          "estimate_total": 2122900
+        },
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-10-08T09:00:00.000Z",
+          "updated_at": "2026-10-08T09:00:00.000Z",
+          "source": "HUMAN_DECISION",
+          "status": "IN_REVIEW",
+          "five_w1h": {
+            "who": {
+              "accountable_person": "L. Tremblay",
+              "team": "Regional Housing Taskforce"
+            },
+            "what": {
+              "action": "Prepare pads, connect utilities and set modular units",
+              "deliverable": "42 serviced, occupied units"
+            },
+            "when": {
+              "start": "2026-10-12",
+              "end": "2026-11-02",
+              "horizon": "IMMEDIATE"
+            },
+            "where": {
+              "location": "Clearwater Ridge subdivision",
+              "parcel_ids": [
+                "42 destroyed parcels"
+              ]
+            },
+            "why": {
+              "objective_id": "O-04",
+              "rationale": "Displaced households need safe interim housing"
+            },
+            "how": {
+              "approach": "Contracted site works; modular delivery via highway corridor",
+              "delivery_method": "CONTRACTOR"
+            }
+          },
+          "id": "T-014",
+          "strategy_id": "S-07",
+          "primary_priority_id": "PR-6",
+          "secondary_priority_ids": [
+            "PR-3"
+          ],
+          "sector": "HOUSING",
+          "owner": "L. Tremblay",
+          "title": "Install interim modular housing on 42 destroyed lots",
+          "success_measure": "42 units occupied by Nov 30",
+          "estimate_total": 2122900
+        },
+        "reason": "",
+        "source_module": "PPOST Workspace",
+        "example_note": null
+      },
+      {
+        "change_id": 20,
+        "disaster_id": "EV-2026-014",
+        "record_type": "tactic",
+        "record_id": "T-014",
+        "action": "create",
+        "action_label": "created",
+        "username": "reviewer_demo",
+        "server_timestamp": "2026-11-18T17:26:30Z",
+        "client_timestamp": "2026-11-18T17:26:29Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "disaster_id",
+          "estimate_total",
+          "five_w1h",
+          "id",
+          "owner",
+          "primary_priority_id",
+          "secondary_priority_ids",
+          "sector",
+          "source",
+          "status",
+          "strategy_id",
+          "success_measure",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-10-08T09:00:00.000Z",
+          "updated_at": "2026-10-08T09:00:00.000Z",
+          "source": "HUMAN_DECISION",
+          "status": "IN_REVIEW",
+          "five_w1h": {
+            "who": {
+              "accountable_person": "L. Tremblay",
+              "team": "Regional Housing Taskforce"
+            },
+            "what": {
+              "action": "Prepare pads, connect utilities and set modular units",
+              "deliverable": "42 serviced, occupied units"
+            },
+            "when": {
+              "start": "2026-10-12",
+              "end": "2026-10-30",
+              "horizon": "IMMEDIATE"
+            },
+            "where": {
+              "location": "Clearwater Ridge subdivision",
+              "parcel_ids": [
+                "42 destroyed parcels"
+              ]
+            },
+            "why": {
+              "objective_id": "O-04",
+              "rationale": "Displaced households need safe interim housing"
+            },
+            "how": {
+              "approach": "Contracted site works; modular delivery via highway corridor",
+              "delivery_method": "CONTRACTOR"
+            }
+          },
+          "id": "T-014",
+          "strategy_id": "S-07",
+          "primary_priority_id": "PR-6",
+          "secondary_priority_ids": [
+            "PR-3"
+          ],
+          "sector": "HOUSING",
+          "owner": null,
+          "title": "Install interim modular housing on 42 destroyed lots",
+          "success_measure": "42 units occupied by Nov 30",
+          "estimate_total": 2122900
+        },
+        "reason": "",
+        "source_module": "PPOST Workspace",
+        "example_note": "Earlier version of T-014 (shown so the next event has a 'before' value)"
+      },
+      {
+        "change_id": 19,
+        "disaster_id": "EV-2026-014",
+        "record_type": "objective",
+        "record_id": "O-04",
+        "action": "update",
+        "action_label": "changed",
+        "username": "reviewer_demo",
+        "server_timestamp": "2026-11-18T17:25:42Z",
+        "client_timestamp": "2026-11-18T17:25:41Z",
+        "version": 2,
+        "changed_fields": [
+          "title"
+        ],
+        "before": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-10-08T09:00:00.000Z",
+          "updated_at": "2026-10-08T09:00:00.000Z",
+          "source": "HUMAN_DECISION",
+          "status": "APPROVED",
+          "id": "O-04",
+          "problem_ids": [
+            "P-02"
+          ],
+          "horizon": "IMMEDIATE",
+          "title": "Interim housing for displaced households"
+        },
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-10-08T09:00:00.000Z",
+          "updated_at": "2026-10-08T09:00:00.000Z",
+          "source": "HUMAN_DECISION",
+          "status": "APPROVED",
+          "id": "O-04",
+          "problem_ids": [
+            "P-02"
+          ],
+          "horizon": "IMMEDIATE",
+          "title": "Provide safe interim housing for displaced households within 60 days"
+        },
+        "reason": "",
+        "source_module": "PPOST Workspace",
+        "example_note": null
+      },
+      {
+        "change_id": 18,
+        "disaster_id": "EV-2026-014",
+        "record_type": "objective",
+        "record_id": "O-04",
+        "action": "create",
+        "action_label": "created",
+        "username": "reviewer_demo",
+        "server_timestamp": "2026-11-18T17:24:10Z",
+        "client_timestamp": "2026-11-18T17:24:09Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "disaster_id",
+          "horizon",
+          "id",
+          "problem_ids",
+          "source",
+          "status",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-10-08T09:00:00.000Z",
+          "updated_at": "2026-10-08T09:00:00.000Z",
+          "source": "HUMAN_DECISION",
+          "status": "APPROVED",
+          "id": "O-04",
+          "problem_ids": [
+            "P-02"
+          ],
+          "horizon": "IMMEDIATE",
+          "title": "Interim housing for displaced households"
+        },
+        "reason": "",
+        "source_module": "PPOST Workspace",
+        "example_note": "Earlier version of O-04 (shown so the next event has a 'before' value)"
+      },
+      {
+        "change_id": 17,
+        "disaster_id": "EV-2026-014",
+        "record_type": "task",
+        "record_id": "VT-Q-F02",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "assigned_role",
+          "disaster_id",
+          "due_in_hours",
+          "id",
+          "question_id",
+          "status",
+          "title"
+        ],
+        "before": null,
+        "after": {
+          "id": "VT-Q-F02",
+          "disaster_id": "EV-2026-014",
+          "question_id": "Q-F02",
+          "status": "OPEN",
+          "title": "Confirm funding application status",
+          "assigned_role": "Finance Section Chief",
+          "due_in_hours": 72
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 16,
+        "disaster_id": "EV-2026-014",
+        "record_type": "task",
+        "record_id": "VT-Q-W03",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "assigned_role",
+          "disaster_id",
+          "due_in_hours",
+          "id",
+          "question_id",
+          "status",
+          "title"
+        ],
+        "before": null,
+        "after": {
+          "id": "VT-Q-W03",
+          "disaster_id": "EV-2026-014",
+          "question_id": "Q-W03",
+          "status": "OPEN",
+          "title": "Field-verify water intake and distribution",
+          "assigned_role": "Infrastructure Lead",
+          "due_in_hours": 48
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 15,
+        "disaster_id": "EV-2026-014",
+        "record_type": "link",
+        "record_id": "Q-W03-D2",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "problem_id",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-W03-D2",
+          "problem_id": "P-Q-W03-D2"
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 14,
+        "disaster_id": "EV-2026-014",
+        "record_type": "link",
+        "record_id": "Q-HW03",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "problem_id",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-HW03",
+          "problem_id": "P-Q-HW03"
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 13,
+        "disaster_id": "EV-2026-014",
+        "record_type": "tactic",
+        "record_id": "T-Q-W03-SAFE",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "disaster_id",
+          "five_w1h",
+          "id",
+          "primary_priority_id",
+          "safety_precaution",
+          "sector",
+          "source",
+          "status",
+          "strategy_id",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-11-18T17:20:00.000Z",
+          "updated_at": "2026-11-18T17:20:00.000Z",
+          "id": "T-Q-W03-SAFE",
+          "title": "Issue precautionary boil-water advisory review",
+          "source": "RULE",
+          "status": "DRAFT",
+          "strategy_id": "S-Q-W03",
+          "primary_priority_id": "PR-4",
+          "sector": "CRITICAL_INFRASTRUCTURE",
+          "safety_precaution": true,
+          "five_w1h": {
+            "why": {
+              "rationale": "Precaution: Q-W03 answered UNKNOWN",
+              "objective_id": "O-Q-W03"
+            },
+            "when": {
+              "horizon": "IMMEDIATE"
+            }
+          }
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 12,
+        "disaster_id": "EV-2026-014",
+        "record_type": "strategy",
+        "record_id": "S-Q-W03",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "disaster_id",
+          "id",
+          "objective_id",
+          "source",
+          "status",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "source": "RULE",
+          "status": "DRAFT",
+          "created_at": "2026-11-18T17:20:00.000Z",
+          "updated_at": "2026-11-18T17:20:00.000Z",
+          "id": "S-Q-W03",
+          "objective_id": "O-Q-W03",
+          "title": "Precautionary measures until verified"
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 11,
+        "disaster_id": "EV-2026-014",
+        "record_type": "objective",
+        "record_id": "O-Q-W03",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "disaster_id",
+          "horizon",
+          "id",
+          "problem_ids",
+          "source",
+          "status",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "source": "RULE",
+          "status": "DRAFT",
+          "created_at": "2026-11-18T17:20:00.000Z",
+          "updated_at": "2026-11-18T17:20:00.000Z",
+          "id": "O-Q-W03",
+          "problem_ids": [
+            "P-05"
+          ],
+          "horizon": "IMMEDIATE",
+          "title": "Keep people safe until \"Water system integrity compromised\" is verified"
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 10,
+        "disaster_id": "EV-2026-014",
+        "record_type": "problem",
+        "record_id": "P-Q-W03-D2",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "description",
+          "disaster_id",
+          "id",
+          "priority_id",
+          "sector",
+          "severity",
+          "source",
+          "status",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-11-18T17:20:00.000Z",
+          "updated_at": "2026-11-18T17:20:00.000Z",
+          "id": "P-Q-W03-D2",
+          "title": "No alternate drinking-water supply",
+          "source": "RULE",
+          "status": "DRAFT",
+          "priority_id": "PR-4",
+          "sector": "CRITICAL_INFRASTRUCTURE",
+          "severity": "HIGH",
+          "description": "From assessment Q-W03-D2: No tanker contract in place yet (sample note)."
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 9,
+        "disaster_id": "EV-2026-014",
+        "record_type": "problem",
+        "record_id": "P-Q-HW03",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T17:20:00Z",
+        "client_timestamp": "2026-11-18T17:20:00Z",
+        "version": 1,
+        "changed_fields": [
+          "created_at",
+          "description",
+          "disaster_id",
+          "id",
+          "priority_id",
+          "sector",
+          "severity",
+          "source",
+          "status",
+          "title",
+          "updated_at"
+        ],
+        "before": null,
+        "after": {
+          "disaster_id": "EV-2026-014",
+          "created_at": "2026-11-18T17:20:00.000Z",
+          "updated_at": "2026-11-18T17:20:00.000Z",
+          "id": "P-Q-HW03",
+          "title": "Reception centres near capacity",
+          "source": "RULE",
+          "status": "DRAFT",
+          "priority_id": "PR-3",
+          "sector": "HUMAN_WELLNESS",
+          "severity": "HIGH",
+          "description": "From assessment Q-HW03: Reception centre B reported 92% occupancy at 08:00 (sample note)."
+        },
+        "reason": "",
+        "source_module": "Impact Assessment (Add to PPOST)",
+        "example_note": null
+      },
+      {
+        "change_id": 8,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-W03-D2",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:26:54Z",
+        "client_timestamp": "2026-11-18T16:26:53Z",
+        "version": 1,
+        "changed_fields": [
+          "answer",
+          "confirmed_from_situation",
+          "note",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-W03-D2",
+          "answer": "NO",
+          "note": "No tanker contract in place yet (sample note).",
+          "confirmed_from_situation": false
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      },
+      {
+        "change_id": 7,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-HW03",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:22:09Z",
+        "client_timestamp": "2026-11-18T16:22:08Z",
+        "version": 1,
+        "changed_fields": [
+          "answer",
+          "confirmed_from_situation",
+          "note",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-HW03",
+          "answer": "YES",
+          "note": "Reception centre B reported 92% occupancy at 08:00 (sample note).",
+          "confirmed_from_situation": false
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      },
+      {
+        "change_id": 6,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-F02",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:18:20Z",
+        "client_timestamp": "2026-11-18T16:18:19Z",
+        "version": 1,
+        "changed_fields": [
+          "answer",
+          "confirmed_from_situation",
+          "note",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-F02",
+          "answer": "UNKNOWN",
+          "note": "Finance has not confirmed whether the DFA application was filed (sample note).",
+          "confirmed_from_situation": false
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      },
+      {
+        "change_id": 5,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-W03",
+        "action": "update",
+        "action_label": "changed",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:14:47Z",
+        "client_timestamp": "2026-11-18T16:14:46Z",
+        "version": 2,
+        "changed_fields": [
+          "note"
+        ],
+        "before": {
+          "question_id": "Q-W03",
+          "answer": "UNKNOWN",
+          "note": "Utility has not reported pressure readings yet",
+          "confirmed_from_situation": false
+        },
+        "after": {
+          "question_id": "Q-W03",
+          "answer": "UNKNOWN",
+          "note": "Utility has not reported pressure readings yet; M. Chen visiting the intake today (sample note).",
+          "confirmed_from_situation": false
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      },
+      {
+        "change_id": 4,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-W03",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:12:05Z",
+        "client_timestamp": "2026-11-18T16:12:04Z",
+        "version": 1,
+        "changed_fields": [
+          "answer",
+          "confirmed_from_situation",
+          "note",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-W03",
+          "answer": "UNKNOWN",
+          "note": "Utility has not reported pressure readings yet",
+          "confirmed_from_situation": false
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      },
+      {
+        "change_id": 3,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-HW02",
+        "action": "update",
+        "action_label": "changed",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:08:31Z",
+        "client_timestamp": "2026-11-18T16:08:30Z",
+        "version": 2,
+        "changed_fields": [
+          "answer",
+          "note"
+        ],
+        "before": {
+          "question_id": "Q-HW02",
+          "answer": "YES",
+          "note": "",
+          "confirmed_from_situation": false
+        },
+        "after": {
+          "question_id": "Q-HW02",
+          "answer": "NO",
+          "note": "Crew health reports show no smoke-exposure cases this shift (sample note).",
+          "confirmed_from_situation": false
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      },
+      {
+        "change_id": 2,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-HW02",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:07:40Z",
+        "client_timestamp": "2026-11-18T16:07:39Z",
+        "version": 1,
+        "changed_fields": [
+          "answer",
+          "confirmed_from_situation",
+          "note",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-HW02",
+          "answer": "YES",
+          "note": "",
+          "confirmed_from_situation": false
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      },
+      {
+        "change_id": 1,
+        "disaster_id": "EV-2026-014",
+        "record_type": "answer",
+        "record_id": "Q-H01",
+        "action": "create",
+        "action_label": "created",
+        "username": "test",
+        "server_timestamp": "2026-11-18T16:05:12Z",
+        "client_timestamp": "2026-11-18T16:05:11Z",
+        "version": 1,
+        "changed_fields": [
+          "answer",
+          "confirmed_from_situation",
+          "note",
+          "question_id"
+        ],
+        "before": null,
+        "after": {
+          "question_id": "Q-H01",
+          "answer": "YES",
+          "note": "",
+          "confirmed_from_situation": true
+        },
+        "reason": "",
+        "source_module": "Impact Assessment",
+        "example_note": null
+      }
+    ],
+    "current_records_after_these_events": [
+      {
+        "record_type": "answer",
+        "record_id": "Q-H01",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T16:05:12Z",
+        "last_change_id": 1
+      },
+      {
+        "record_type": "answer",
+        "record_id": "Q-HW02",
+        "version": 2,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T16:08:31Z",
+        "last_change_id": 3
+      },
+      {
+        "record_type": "answer",
+        "record_id": "Q-W03",
+        "version": 2,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T16:14:47Z",
+        "last_change_id": 5
+      },
+      {
+        "record_type": "answer",
+        "record_id": "Q-F02",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T16:18:20Z",
+        "last_change_id": 6
+      },
+      {
+        "record_type": "answer",
+        "record_id": "Q-HW03",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T16:22:09Z",
+        "last_change_id": 7
+      },
+      {
+        "record_type": "answer",
+        "record_id": "Q-W03-D2",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T16:26:54Z",
+        "last_change_id": 8
+      },
+      {
+        "record_type": "problem",
+        "record_id": "P-Q-HW03",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 9
+      },
+      {
+        "record_type": "problem",
+        "record_id": "P-Q-W03-D2",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 10
+      },
+      {
+        "record_type": "objective",
+        "record_id": "O-Q-W03",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 11
+      },
+      {
+        "record_type": "strategy",
+        "record_id": "S-Q-W03",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 12
+      },
+      {
+        "record_type": "tactic",
+        "record_id": "T-Q-W03-SAFE",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 13
+      },
+      {
+        "record_type": "link",
+        "record_id": "Q-HW03",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 14
+      },
+      {
+        "record_type": "link",
+        "record_id": "Q-W03-D2",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 15
+      },
+      {
+        "record_type": "task",
+        "record_id": "VT-Q-W03",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 16
+      },
+      {
+        "record_type": "task",
+        "record_id": "VT-Q-F02",
+        "version": 1,
+        "is_deleted": false,
+        "updated_by": "test",
+        "updated_at": "2026-11-18T17:20:00Z",
+        "last_change_id": 17
+      },
+      {
+        "record_type": "objective",
+        "record_id": "O-04",
+        "version": 2,
+        "is_deleted": false,
+        "updated_by": "reviewer_demo",
+        "updated_at": "2026-11-18T17:25:42Z",
+        "last_change_id": 19
+      },
+      {
+        "record_type": "tactic",
+        "record_id": "T-014",
+        "version": 2,
+        "is_deleted": false,
+        "updated_by": "reviewer_demo",
+        "updated_at": "2026-11-18T17:28:03Z",
+        "last_change_id": 21
+      },
+      {
+        "record_type": "problem",
+        "record_id": "P-11",
+        "version": 2,
+        "is_deleted": false,
+        "updated_by": "reviewer_demo",
+        "updated_at": "2026-11-18T17:34:00Z",
+        "last_change_id": 23
+      }
+    ]
+  }
+}

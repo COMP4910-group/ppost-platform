@@ -1,0 +1,2162 @@
+{
+  "event_id": 1,
+  "event_name": "Clearwater Ridge Wildfire",
+  "submitted_by": "Divyansh",
+  "last_updated": "2026-11-18",
+  "data": {
+    "file_format_version": 1,
+    "module": "Recovery Matrix",
+    "owner": "Divyansh (PPOST)",
+    "ppost_disaster_id": "EV-2026-014",
+    "event_mapping": {
+      "event_id": 1,
+      "ppost_disaster_id": "EV-2026-014",
+      "mapping_status": "assumed_for_sample",
+      "note": "The team format uses event_id 1. Inside PPOST the same wildfire is identified as \"EV-2026-014\" (every PPOST record has disaster_id = \"EV-2026-014\"). This mapping is agreed for these sample files only; it is not a database join. Once Earl's disasters table is connected, PPOST will store the real event id."
+    },
+    "sample_data": true,
+    "sample_data_note": "Synthetic demonstration data for the fictional Clearwater Ridge Wildfire. Generated from the PPOST seed data and the real PPOST rules engine with a sample set of assessment answers. Not live data, not read from Supabase.",
+    "generated_at": "2026-11-18T17:40:00Z",
+    "field_names": "snake_case versions of the app's camelCase fields (e.g. priority_id = priorityId, five_w1h = fiveW1H).",
+    "related_files": [
+      "impact.json",
+      "ppost.json",
+      "matrix.json",
+      "activity_history.json"
+    ],
+    "page": "/matrix",
+    "layout": "Rows = 8 priorities in rank order; columns = recovery sectors. A cell holds the problems with that priority and sector, plus their objective → strategy → tactic chains.",
+    "status_values": {
+      "RED": "Unresolved UNKNOWN on a CRITICAL safety item, or a CRITICAL/HIGH problem with no objective",
+      "AMBER": "Has problems but at least one PPOST chain is incomplete or a tactic is missing an owner",
+      "GREEN": "Every problem has a complete chain down to an owned tactic",
+      "NOT_ASSESSED": "No problems recorded for this priority and sector"
+    },
+    "cost_status_values": {
+      "RED": "At least one tactic in the cell has no cost yet (needs estimate)",
+      "AMBER": "All tactics have a cost, but some is still draft (not approved)",
+      "GREEN": "All costs finalized (tactic approved and its latest cost approved)",
+      "NOT_ASSESSED": "No tactics in the cell"
+    },
+    "priorities": [
+      {
+        "id": "PR-1",
+        "rank": 1,
+        "name": "Responder Safety & Health"
+      },
+      {
+        "id": "PR-2",
+        "rank": 2,
+        "name": "Save Lives"
+      },
+      {
+        "id": "PR-3",
+        "rank": 3,
+        "name": "Reduce Suffering"
+      },
+      {
+        "id": "PR-4",
+        "rank": 4,
+        "name": "Protect Public Health"
+      },
+      {
+        "id": "PR-5",
+        "rank": 5,
+        "name": "Protect Government Infrastructure"
+      },
+      {
+        "id": "PR-6",
+        "rank": 6,
+        "name": "Protect Property"
+      },
+      {
+        "id": "PR-7",
+        "rank": 7,
+        "name": "Protect the Environment"
+      },
+      {
+        "id": "PR-8",
+        "rank": 8,
+        "name": "Reduce Economic & Social Losses"
+      }
+    ],
+    "sectors": [
+      {
+        "id": "HUMAN_WELLNESS",
+        "label": "Human Wellness",
+        "optional": false
+      },
+      {
+        "id": "HOUSING",
+        "label": "Housing",
+        "optional": false
+      },
+      {
+        "id": "ENVIRONMENT",
+        "label": "Environment",
+        "optional": false
+      },
+      {
+        "id": "ECONOMY",
+        "label": "Economy",
+        "optional": false
+      },
+      {
+        "id": "CRITICAL_INFRASTRUCTURE",
+        "label": "Critical Infrastructure",
+        "optional": false
+      },
+      {
+        "id": "GOVERNANCE",
+        "label": "Governance",
+        "optional": true
+      }
+    ],
+    "dashboard_summary": {
+      "cells_total": 48,
+      "cells_by_status": {
+        "RED": 2,
+        "AMBER": 2,
+        "GREEN": 4,
+        "NOT_ASSESSED": 40
+      },
+      "attention_cells": [
+        {
+          "priority_id": "PR-3",
+          "sector": "HUMAN_WELLNESS",
+          "status": "RED",
+          "reasons": [
+            "P-07: tactic missing owner",
+            "P-Q-HW03: high-severity problem with no objective"
+          ]
+        },
+        {
+          "priority_id": "PR-4",
+          "sector": "CRITICAL_INFRASTRUCTURE",
+          "status": "RED",
+          "reasons": [
+            "P-05: unresolved UNKNOWN on a safety item",
+            "P-05: tactic missing owner",
+            "P-Q-W03-D2: high-severity problem with no objective"
+          ]
+        },
+        {
+          "priority_id": "PR-6",
+          "sector": "HOUSING",
+          "status": "AMBER",
+          "reasons": [
+            "P-02: tactic missing owner"
+          ]
+        },
+        {
+          "priority_id": "PR-7",
+          "sector": "ENVIRONMENT",
+          "status": "AMBER",
+          "reasons": [
+            "P-09: incomplete PPOST chain"
+          ]
+        }
+      ],
+      "outstanding_unknown_safety_concerns": [
+        "P-05"
+      ],
+      "tactics_missing_owner": [
+        "T-020",
+        "T-022",
+        "T-Q-W03-SAFE"
+      ],
+      "cost_summary_sample": {
+        "program": {
+          "total_sample": 5529000,
+          "finalized_sample": 181400,
+          "draft_sample": 5347600,
+          "needs_estimate_tactic_ids": [
+            "T-020",
+            "T-022",
+            "T-Q-W03-SAFE"
+          ],
+          "tactic_count": 12
+        },
+        "by_priority": {
+          "PR-1": {
+            "total_sample": 85000,
+            "finalized_sample": 85000,
+            "draft_sample": 0,
+            "needs_estimate_tactic_ids": [],
+            "tactic_count": 1
+          },
+          "PR-2": {
+            "total_sample": 240000,
+            "finalized_sample": 0,
+            "draft_sample": 240000,
+            "needs_estimate_tactic_ids": [],
+            "tactic_count": 1
+          },
+          "PR-3": {
+            "total_sample": 0,
+            "finalized_sample": 0,
+            "draft_sample": 0,
+            "needs_estimate_tactic_ids": [
+              "T-022"
+            ],
+            "tactic_count": 1
+          },
+          "PR-4": {
+            "total_sample": 0,
+            "finalized_sample": 0,
+            "draft_sample": 0,
+            "needs_estimate_tactic_ids": [
+              "T-Q-W03-SAFE"
+            ],
+            "tactic_count": 1
+          },
+          "PR-5": {
+            "total_sample": 1850000,
+            "finalized_sample": 0,
+            "draft_sample": 1850000,
+            "needs_estimate_tactic_ids": [],
+            "tactic_count": 1
+          },
+          "PR-6": {
+            "total_sample": 3054000,
+            "finalized_sample": 96400,
+            "draft_sample": 2957600,
+            "needs_estimate_tactic_ids": [
+              "T-020"
+            ],
+            "tactic_count": 6
+          },
+          "PR-7": {
+            "total_sample": 0,
+            "finalized_sample": 0,
+            "draft_sample": 0,
+            "needs_estimate_tactic_ids": [],
+            "tactic_count": 0
+          },
+          "PR-8": {
+            "total_sample": 300000,
+            "finalized_sample": 0,
+            "draft_sample": 300000,
+            "needs_estimate_tactic_ids": [],
+            "tactic_count": 1
+          }
+        },
+        "by_sector": {
+          "CRITICAL_INFRASTRUCTURE": {
+            "total_sample": 1935000,
+            "finalized_sample": 85000,
+            "draft_sample": 1850000,
+            "needs_estimate_tactic_ids": [
+              "T-Q-W03-SAFE"
+            ],
+            "tactic_count": 3
+          },
+          "HOUSING": {
+            "total_sample": 3294000,
+            "finalized_sample": 96400,
+            "draft_sample": 3197600,
+            "needs_estimate_tactic_ids": [
+              "T-020"
+            ],
+            "tactic_count": 7
+          },
+          "HUMAN_WELLNESS": {
+            "total_sample": 0,
+            "finalized_sample": 0,
+            "draft_sample": 0,
+            "needs_estimate_tactic_ids": [
+              "T-022"
+            ],
+            "tactic_count": 1
+          },
+          "ECONOMY": {
+            "total_sample": 300000,
+            "finalized_sample": 0,
+            "draft_sample": 300000,
+            "needs_estimate_tactic_ids": [],
+            "tactic_count": 1
+          }
+        },
+        "currency": "CAD",
+        "note": "SAMPLE values from the PPOST cost history (synthetic), not authoritative financial figures. Totals use each tactic's latest cost entry. Program and by_priority totals count each tactic once, under its primary priority. Cell totals follow the problem chain; in this sample no tactic appears in more than one cell. Authoritative Class D totals belong to the Finance module (Daniel)."
+      }
+    },
+    "cells": [
+      {
+        "priority_id": "PR-1",
+        "priority_rank": 1,
+        "sector": "HUMAN_WELLNESS",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-1",
+        "priority_rank": 1,
+        "sector": "HOUSING",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-1",
+        "priority_rank": 1,
+        "sector": "ENVIRONMENT",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-1",
+        "priority_rank": 1,
+        "sector": "ECONOMY",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-1",
+        "priority_rank": 1,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "GREEN",
+        "reasons": [],
+        "problem_ids": [
+          "P-01"
+        ],
+        "objective_ids": [
+          "O-01"
+        ],
+        "strategy_ids": [
+          "S-01"
+        ],
+        "tactic_ids": [
+          "T-001"
+        ],
+        "counts": {
+          "problems": 1,
+          "objectives": 1,
+          "strategies": 1,
+          "tactics": 1
+        },
+        "completeness_percent": 100,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "GREEN",
+          "total_sample": 85000,
+          "finalized_sample": 85000,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [
+            "C-T-001-2026-10-09"
+          ],
+          "class_d_cost_entry_ids": [
+            "C-T-001-2026-10-09"
+          ],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-1",
+        "priority_rank": 1,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-2",
+        "priority_rank": 2,
+        "sector": "HUMAN_WELLNESS",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-2",
+        "priority_rank": 2,
+        "sector": "HOUSING",
+        "status": "GREEN",
+        "reasons": [],
+        "problem_ids": [
+          "P-06"
+        ],
+        "objective_ids": [
+          "O-06"
+        ],
+        "strategy_ids": [
+          "S-11"
+        ],
+        "tactic_ids": [
+          "T-021"
+        ],
+        "counts": {
+          "problems": 1,
+          "objectives": 1,
+          "strategies": 1,
+          "tactics": 1
+        },
+        "completeness_percent": 100,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": [
+            "T-021"
+          ]
+        },
+        "incomplete_record_count": 1,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "AMBER",
+          "total_sample": 240000,
+          "finalized_sample": 0,
+          "draft_sample": 240000,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [
+            "C-T-021-2026-10-11"
+          ],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-2",
+        "priority_rank": 2,
+        "sector": "ENVIRONMENT",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-2",
+        "priority_rank": 2,
+        "sector": "ECONOMY",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-2",
+        "priority_rank": 2,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-2",
+        "priority_rank": 2,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-3",
+        "priority_rank": 3,
+        "sector": "HUMAN_WELLNESS",
+        "status": "RED",
+        "reasons": [
+          "P-07: tactic missing owner",
+          "P-Q-HW03: high-severity problem with no objective"
+        ],
+        "problem_ids": [
+          "P-07",
+          "P-Q-HW03"
+        ],
+        "objective_ids": [
+          "O-07"
+        ],
+        "strategy_ids": [
+          "S-12"
+        ],
+        "tactic_ids": [
+          "T-022"
+        ],
+        "counts": {
+          "problems": 2,
+          "objectives": 1,
+          "strategies": 1,
+          "tactics": 1
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [
+            "P-07",
+            "P-Q-HW03"
+          ],
+          "tactics_with_5w1h_warnings": [
+            "T-022"
+          ]
+        },
+        "incomplete_record_count": 3,
+        "tactics_missing_owner": [
+          "T-022"
+        ],
+        "cost": {
+          "cost_status": "RED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [
+            "T-022"
+          ],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-3",
+        "priority_rank": 3,
+        "sector": "HOUSING",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-3",
+        "priority_rank": 3,
+        "sector": "ENVIRONMENT",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-3",
+        "priority_rank": 3,
+        "sector": "ECONOMY",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-3",
+        "priority_rank": 3,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-3",
+        "priority_rank": 3,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-4",
+        "priority_rank": 4,
+        "sector": "HUMAN_WELLNESS",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-4",
+        "priority_rank": 4,
+        "sector": "HOUSING",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-4",
+        "priority_rank": 4,
+        "sector": "ENVIRONMENT",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-4",
+        "priority_rank": 4,
+        "sector": "ECONOMY",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-4",
+        "priority_rank": 4,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "RED",
+        "reasons": [
+          "P-05: unresolved UNKNOWN on a safety item",
+          "P-05: tactic missing owner",
+          "P-Q-W03-D2: high-severity problem with no objective"
+        ],
+        "problem_ids": [
+          "P-05",
+          "P-Q-W03-D2"
+        ],
+        "objective_ids": [
+          "O-Q-W03"
+        ],
+        "strategy_ids": [
+          "S-Q-W03"
+        ],
+        "tactic_ids": [
+          "T-Q-W03-SAFE"
+        ],
+        "counts": {
+          "problems": 2,
+          "objectives": 1,
+          "strategies": 1,
+          "tactics": 1
+        },
+        "completeness_percent": 0,
+        "unknown_count": 1,
+        "unknown_safety_concerns": [
+          "P-05"
+        ],
+        "incomplete_records": {
+          "problems_without_complete_chain": [
+            "P-05",
+            "P-Q-W03-D2"
+          ],
+          "tactics_with_5w1h_warnings": [
+            "T-Q-W03-SAFE"
+          ]
+        },
+        "incomplete_record_count": 3,
+        "tactics_missing_owner": [
+          "T-Q-W03-SAFE"
+        ],
+        "cost": {
+          "cost_status": "RED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [
+            "T-Q-W03-SAFE"
+          ],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-4",
+        "priority_rank": 4,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-5",
+        "priority_rank": 5,
+        "sector": "HUMAN_WELLNESS",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-5",
+        "priority_rank": 5,
+        "sector": "HOUSING",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-5",
+        "priority_rank": 5,
+        "sector": "ENVIRONMENT",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-5",
+        "priority_rank": 5,
+        "sector": "ECONOMY",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-5",
+        "priority_rank": 5,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "GREEN",
+        "reasons": [],
+        "problem_ids": [
+          "P-08"
+        ],
+        "objective_ids": [
+          "O-08"
+        ],
+        "strategy_ids": [
+          "S-13"
+        ],
+        "tactic_ids": [
+          "T-023"
+        ],
+        "counts": {
+          "problems": 1,
+          "objectives": 1,
+          "strategies": 1,
+          "tactics": 1
+        },
+        "completeness_percent": 100,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": [
+            "T-023"
+          ]
+        },
+        "incomplete_record_count": 1,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "AMBER",
+          "total_sample": 1850000,
+          "finalized_sample": 0,
+          "draft_sample": 1850000,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [
+            "C-T-023-2026-10-16"
+          ],
+          "class_d_cost_entry_ids": [
+            "C-T-023-2026-10-16"
+          ],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-5",
+        "priority_rank": 5,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-6",
+        "priority_rank": 6,
+        "sector": "HUMAN_WELLNESS",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-6",
+        "priority_rank": 6,
+        "sector": "HOUSING",
+        "status": "AMBER",
+        "reasons": [
+          "P-02: tactic missing owner"
+        ],
+        "problem_ids": [
+          "P-02",
+          "P-03",
+          "P-04"
+        ],
+        "objective_ids": [
+          "O-04",
+          "O-05"
+        ],
+        "strategy_ids": [
+          "S-07",
+          "S-08",
+          "S-09",
+          "S-10"
+        ],
+        "tactic_ids": [
+          "T-014",
+          "T-015",
+          "T-016",
+          "T-017",
+          "T-018",
+          "T-020"
+        ],
+        "counts": {
+          "problems": 3,
+          "objectives": 2,
+          "strategies": 4,
+          "tactics": 6
+        },
+        "completeness_percent": 67,
+        "unknown_count": 1,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [
+            "P-02"
+          ],
+          "tactics_with_5w1h_warnings": [
+            "T-015",
+            "T-016",
+            "T-017",
+            "T-018",
+            "T-020"
+          ]
+        },
+        "incomplete_record_count": 6,
+        "tactics_missing_owner": [
+          "T-020"
+        ],
+        "cost": {
+          "cost_status": "RED",
+          "total_sample": 3054000,
+          "finalized_sample": 96400,
+          "draft_sample": 2957600,
+          "needs_estimate_tactic_ids": [
+            "T-020"
+          ],
+          "current_cost_entry_ids": [
+            "C-T-014-2026-10-15",
+            "C-T-015-2026-10-13",
+            "C-T-016-2026-10-14",
+            "C-T-017-2026-10-10",
+            "C-T-018-2026-10-13"
+          ],
+          "class_d_cost_entry_ids": [
+            "C-T-014-2026-10-15",
+            "C-T-015-2026-10-13",
+            "C-T-016-2026-10-14",
+            "C-T-018-2026-10-13"
+          ],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-6",
+        "priority_rank": 6,
+        "sector": "ENVIRONMENT",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-6",
+        "priority_rank": 6,
+        "sector": "ECONOMY",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-6",
+        "priority_rank": 6,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-6",
+        "priority_rank": 6,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-7",
+        "priority_rank": 7,
+        "sector": "HUMAN_WELLNESS",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-7",
+        "priority_rank": 7,
+        "sector": "HOUSING",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-7",
+        "priority_rank": 7,
+        "sector": "ENVIRONMENT",
+        "status": "AMBER",
+        "reasons": [
+          "P-09: incomplete PPOST chain"
+        ],
+        "problem_ids": [
+          "P-09"
+        ],
+        "objective_ids": [
+          "O-09"
+        ],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 1,
+          "objectives": 1,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [
+            "P-09"
+          ],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 1,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-7",
+        "priority_rank": 7,
+        "sector": "ECONOMY",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-7",
+        "priority_rank": 7,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-7",
+        "priority_rank": 7,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-8",
+        "priority_rank": 8,
+        "sector": "HUMAN_WELLNESS",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-8",
+        "priority_rank": 8,
+        "sector": "HOUSING",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-8",
+        "priority_rank": 8,
+        "sector": "ENVIRONMENT",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-8",
+        "priority_rank": 8,
+        "sector": "ECONOMY",
+        "status": "GREEN",
+        "reasons": [],
+        "problem_ids": [
+          "P-10"
+        ],
+        "objective_ids": [
+          "O-10"
+        ],
+        "strategy_ids": [
+          "S-14"
+        ],
+        "tactic_ids": [
+          "T-024"
+        ],
+        "counts": {
+          "problems": 1,
+          "objectives": 1,
+          "strategies": 1,
+          "tactics": 1
+        },
+        "completeness_percent": 100,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": [
+            "T-024"
+          ]
+        },
+        "incomplete_record_count": 1,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "AMBER",
+          "total_sample": 300000,
+          "finalized_sample": 0,
+          "draft_sample": 300000,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [
+            "C-T-024-2026-10-12"
+          ],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-8",
+        "priority_rank": 8,
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      },
+      {
+        "priority_id": "PR-8",
+        "priority_rank": 8,
+        "sector": "GOVERNANCE",
+        "status": "NOT_ASSESSED",
+        "reasons": [],
+        "problem_ids": [],
+        "objective_ids": [],
+        "strategy_ids": [],
+        "tactic_ids": [],
+        "counts": {
+          "problems": 0,
+          "objectives": 0,
+          "strategies": 0,
+          "tactics": 0
+        },
+        "completeness_percent": 0,
+        "unknown_count": 0,
+        "unknown_safety_concerns": [],
+        "incomplete_records": {
+          "problems_without_complete_chain": [],
+          "tactics_with_5w1h_warnings": []
+        },
+        "incomplete_record_count": 0,
+        "tactics_missing_owner": [],
+        "cost": {
+          "cost_status": "NOT_ASSESSED",
+          "total_sample": 0,
+          "finalized_sample": 0,
+          "draft_sample": 0,
+          "needs_estimate_tactic_ids": [],
+          "current_cost_entry_ids": [],
+          "class_d_cost_entry_ids": [],
+          "class_d_estimate_ids": []
+        }
+      }
+    ]
+  }
+}
