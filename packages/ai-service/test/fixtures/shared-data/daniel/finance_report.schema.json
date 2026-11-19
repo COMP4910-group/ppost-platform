@@ -1,0 +1,303 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/COMP4910-group/ppost-platform/finance_report.schema.json",
+  "title": "PPOST Finance Report",
+  "description": "Everything the finance section knows about one disaster event, for building reports. Owner: Daniel (finance). Money is CAD with 2 decimals. Dates are ISO 8601. Field names match the finance_* tables in Supabase.",
+  "type": "object",
+  "required": ["report_type", "schema_version", "generated_at", "synthetic", "disclaimer", "currency", "event", "summary",
+               "estimates", "cost_history", "funding", "financial_entries", "lifecycle_by_tactic", "assistance"],
+  "additionalProperties": false,
+  "properties": {
+    "report_type": { "const": "finance_report" },
+    "schema_version": { "type": "string", "description": "Bumped when the format changes. Check this before reading.", "examples": ["1.0"] },
+    "generated_at": { "type": "string", "format": "date-time" },
+    "generated_by": { "type": "string" },
+    "synthetic": { "type": "boolean", "description": "true = demo data. Reports must show a 'synthetic' label when true." },
+    "disclaimer": { "type": "string", "description": "Must be shown on every finance report." },
+    "currency": { "const": "CAD" },
+
+    "event": {
+      "type": "object",
+      "required": ["id", "name"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "type": "string", "pattern": "^[A-Za-z0-9_-]{1,40}$", "examples": ["EV-2026-014"] },
+        "name": { "type": "string" },
+        "hazard": { "type": "string" },
+        "location": { "type": "string" },
+        "declared_at": { "type": "string", "format": "date" }
+      }
+    },
+
+    "summary": {
+      "type": "object",
+      "description": "Headline numbers for the whole event.",
+      "required": ["requirement", "finalized", "draft", "approved_funding", "requested_funding", "likely_funding",
+                   "realistic_funding", "gap", "coverage_pct", "committed", "spent", "claimed", "reimbursed",
+                   "tactics_estimated", "tactics_needing_estimate"],
+      "additionalProperties": false,
+      "properties": {
+        "requirement": { "$ref": "#/$defs/money", "description": "Total need = finalized + draft." },
+        "finalized": { "$ref": "#/$defs/money", "description": "Sum of APPROVED estimates." },
+        "draft": { "$ref": "#/$defs/money", "description": "Sum of estimates not yet approved." },
+        "approved_funding": { "$ref": "#/$defs/money", "description": "Sources with status approved or received." },
+        "requested_funding": { "$ref": "#/$defs/money", "description": "Sources with status requested." },
+        "likely_funding": { "$ref": "#/$defs/money", "description": "Requested sources marked likely." },
+        "realistic_funding": { "$ref": "#/$defs/money", "description": "approved_funding + likely_funding." },
+        "gap": { "$ref": "#/$defs/money", "description": "requirement - realistic_funding, never below 0." },
+        "coverage_pct": { "type": "number", "minimum": 0, "description": "realistic_funding / requirement x 100." },
+        "committed": { "$ref": "#/$defs/money" },
+        "spent": { "$ref": "#/$defs/money" },
+        "claimed": { "$ref": "#/$defs/money" },
+        "reimbursed": { "$ref": "#/$defs/money" },
+        "tactics_estimated": { "type": "integer", "minimum": 0 },
+        "tactics_needing_estimate": { "type": "array", "items": { "$ref": "#/$defs/tactic_id" } }
+      }
+    },
+
+    "estimates": {
+      "type": "array",
+      "description": "The CURRENT estimate revision for each tactic (older revisions are in cost_history).",
+      "items": {
+        "type": "object",
+        "required": ["tactic_id", "title", "revision", "code", "status", "estimate_class", "accuracy_low_pct",
+                     "accuracy_high_pct", "direct_total", "total", "low", "high", "by_category", "prepared_by",
+                     "prepared_date", "reviewed_by", "reviewed_at", "supersedes", "lines", "basis"],
+        "additionalProperties": false,
+        "properties": {
+          "tactic_id": { "$ref": "#/$defs/tactic_id" },
+          "title": { "type": "string" },
+          "revision": { "type": "string", "pattern": "^\\d+\\.\\d+$", "examples": ["1.1"] },
+          "code": { "type": "string", "description": "tactic_id + ':v' + revision", "examples": ["T-014:v1.1"] },
+          "status": { "$ref": "#/$defs/record_status" },
+          "estimate_class": { "enum": ["A", "B", "C", "D"] },
+          "accuracy_low_pct": { "type": "integer", "examples": [-50] },
+          "accuracy_high_pct": { "type": "integer", "examples": [100] },
+          "direct_total": { "$ref": "#/$defs/money", "description": "Labour + equipment + materials + subcontractors + facility rental." },
+          "total": { "$ref": "#/$defs/money" },
+          "low": { "$ref": "#/$defs/money", "description": "total adjusted by accuracy_low_pct." },
+          "high": { "$ref": "#/$defs/money", "description": "total adjusted by accuracy_high_pct." },
+          "by_category": {
+            "type": "object",
+            "description": "Subtotal per category. Only categories that have lines appear.",
+            "propertyNames": { "$ref": "#/$defs/category" },
+            "additionalProperties": { "$ref": "#/$defs/money" }
+          },
+          "prepared_by": { "type": ["string", "null"] },
+          "prepared_date": { "type": ["string", "null"], "format": "date" },
+          "reviewed_by": { "type": ["string", "null"], "description": "Never the same person as prepared_by." },
+          "reviewed_at": { "type": ["string", "null"], "format": "date-time" },
+          "supersedes": { "type": ["string", "null"], "description": "Code of the revision this one replaced.", "examples": ["T-014:v1.0"] },
+          "lines": { "type": "array", "items": { "$ref": "#/$defs/cost_line" } },
+          "basis": {
+            "type": ["object", "null"],
+            "description": "Basis of Estimate.",
+            "required": ["scope_description", "assumptions", "exclusions"],
+            "additionalProperties": false,
+            "properties": {
+              "scope_description": { "type": "string" },
+              "assumptions": { "type": "array", "items": { "type": "string" } },
+              "exclusions": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+
+    "cost_history": {
+      "type": "array",
+      "description": "Every estimate change, oldest first. Use it for 'change since first estimate' and trend charts.",
+      "items": {
+        "type": "object",
+        "required": ["tactic_id", "revision", "status", "total", "change_from_previous", "change_pct", "at", "by", "reason"],
+        "additionalProperties": false,
+        "properties": {
+          "tactic_id": { "$ref": "#/$defs/tactic_id" },
+          "revision": { "type": "string" },
+          "status": { "$ref": "#/$defs/record_status" },
+          "total": { "$ref": "#/$defs/money" },
+          "change_from_previous": { "type": ["number", "null"], "description": "Dollars vs the previous entry for this tactic; null for the first one. Can be negative." },
+          "change_pct": { "type": ["number", "null"] },
+          "at": { "type": "string", "format": "date-time" },
+          "by": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+
+    "funding": {
+      "type": "object",
+      "required": ["mix", "mix_amounts", "sources", "requests"],
+      "additionalProperties": false,
+      "properties": {
+        "mix": {
+          "type": "object",
+          "description": "Planned split of the requirement. The three numbers always total 100.",
+          "required": ["government_pct", "local_gov_pct", "community_pct"],
+          "additionalProperties": false,
+          "properties": {
+            "government_pct": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "local_gov_pct": { "type": "integer", "minimum": 0, "maximum": 100 },
+            "community_pct": { "type": "integer", "minimum": 0, "maximum": 100 }
+          }
+        },
+        "mix_amounts": {
+          "type": "object",
+          "description": "requirement x each mix percentage. The three amounts add up to the requirement.",
+          "required": ["government", "local_gov", "community"],
+          "additionalProperties": false,
+          "properties": {
+            "government": { "$ref": "#/$defs/money" },
+            "local_gov": { "$ref": "#/$defs/money" },
+            "community": { "$ref": "#/$defs/money" }
+          }
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "name", "source_type", "mix_group", "amount", "status", "confirmed", "likely", "tactic_ids", "document_ids"],
+            "additionalProperties": false,
+            "properties": {
+              "code": { "type": "string", "pattern": "^FS-\\d{2,}$" },
+              "name": { "type": "string" },
+              "source_type": { "enum": ["local_reserves", "provincial_dfa", "federal_program", "ngo_charity",
+                                        "community_fundraising", "insurance", "in_kind"] },
+              "mix_group": { "$ref": "#/$defs/mix_group" },
+              "amount": { "$ref": "#/$defs/money" },
+              "status": { "$ref": "#/$defs/funding_status" },
+              "confirmed": { "type": "boolean" },
+              "likely": { "type": "boolean" },
+              "tactic_ids": { "type": "array", "items": { "$ref": "#/$defs/tactic_id" } },
+              "document_ids": { "type": "array", "items": { "$ref": "#/$defs/document_id" } }
+            }
+          }
+        },
+        "requests": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["code", "title", "funding_source_code", "amount", "status", "generated_by", "document_id", "approval_id", "sent_at"],
+            "additionalProperties": false,
+            "properties": {
+              "code": { "type": "string", "pattern": "^FR-\\d{2,}$" },
+              "title": { "type": "string" },
+              "funding_source_code": { "type": ["string", "null"] },
+              "amount": { "$ref": "#/$defs/money" },
+              "status": { "enum": ["draft", "in_review", "approved", "sent", "archived"] },
+              "generated_by": { "enum": ["template", "ai", "person"], "description": "If 'ai', label the text 'AI draft - review before sending'." },
+              "document_id": { "anyOf": [{ "$ref": "#/$defs/document_id" }, { "type": "null" }] },
+              "approval_id": { "type": ["string", "null"], "pattern": "^APR-\\d{4,}$" },
+              "sent_at": { "type": ["string", "null"], "format": "date-time" }
+            }
+          }
+        }
+      }
+    },
+
+    "financial_entries": {
+      "type": "array",
+      "description": "Append-only money events, oldest first. Corrections appear as new entries, never edits.",
+      "items": {
+        "type": "object",
+        "required": ["code", "tactic_id", "stage", "amount", "entry_date", "reference", "document_ids", "note", "created_by", "created_at"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string", "pattern": "^FE-\\d{4,}$" },
+          "tactic_id": { "$ref": "#/$defs/tactic_id" },
+          "stage": { "$ref": "#/$defs/stage" },
+          "amount": { "type": "number", "description": "CAD, 2 decimals." },
+          "entry_date": { "type": "string", "format": "date" },
+          "reference": { "type": "string", "description": "PO / invoice / claim / payment number." },
+          "document_ids": { "type": "array", "items": { "$ref": "#/$defs/document_id" } },
+          "note": { "type": "string" },
+          "created_by": { "type": "string" },
+          "created_at": { "type": "string", "format": "date-time" }
+        }
+      }
+    },
+
+    "lifecycle_by_tactic": {
+      "type": "array",
+      "description": "One row per estimated tactic: where its money is, and whether spending is within the approved budget.",
+      "items": {
+        "type": "object",
+        "required": ["tactic_id", "title", "current_stage", "estimate_total", "estimate_status", "approved_budget",
+                     "committed", "spent", "claimed", "reimbursed", "remaining_budget", "variance_status"],
+        "additionalProperties": false,
+        "properties": {
+          "tactic_id": { "$ref": "#/$defs/tactic_id" },
+          "title": { "type": "string" },
+          "current_stage": { "$ref": "#/$defs/stage" },
+          "estimate_total": { "$ref": "#/$defs/money" },
+          "estimate_status": { "$ref": "#/$defs/record_status" },
+          "approved_budget": { "type": ["number", "null"], "description": "Approved estimate total; null if not approved yet." },
+          "committed": { "$ref": "#/$defs/money" },
+          "spent": { "$ref": "#/$defs/money" },
+          "claimed": { "$ref": "#/$defs/money" },
+          "reimbursed": { "$ref": "#/$defs/money" },
+          "remaining_budget": { "type": ["number", "null"], "description": "approved_budget - spent (negative = over budget)." },
+          "variance_status": { "enum": ["within_budget", "over_budget", "no_budget"],
+                               "description": "Show with an icon AND text, not colour only." }
+        }
+      }
+    },
+
+    "assistance": {
+      "type": "array",
+      "description": "Non-financial help.",
+      "items": {
+        "type": "object",
+        "required": ["code", "assistance_type", "description", "quantity", "provider", "status"],
+        "additionalProperties": false,
+        "properties": {
+          "code": { "type": "string", "pattern": "^AS-\\d{2,}$" },
+          "assistance_type": { "enum": ["equipment", "engineers", "temporary_housing", "volunteers", "expedited_permits", "other"] },
+          "description": { "type": "string" },
+          "quantity": { "type": "integer", "minimum": 0 },
+          "provider": { "type": "string" },
+          "status": { "$ref": "#/$defs/funding_status" }
+        }
+      }
+    }
+  },
+
+  "$defs": {
+    "money": { "type": "number", "minimum": 0, "description": "CAD, 2 decimals. Display with toLocaleString('en-CA', {style:'currency', currency:'CAD'})." },
+    "tactic_id": { "type": "string", "pattern": "^T-\\d{3,}$", "examples": ["T-014"] },
+    "document_id": { "type": "string", "pattern": "^DOC-\\d{4,}$" },
+    "record_status": { "enum": ["draft", "in_review", "approved", "archived"] },
+    "funding_status": { "enum": ["needed", "requested", "approved", "received"] },
+    "mix_group": { "enum": ["government", "local_gov", "community"] },
+    "stage": { "enum": ["need", "estimate", "funding_ask", "approval", "commitment", "expenditure", "claim", "reimbursement", "closeout"] },
+    "category": { "enum": ["labour", "equipment", "materials", "subcontractors", "facility_rental", "overhead", "escalation",
+                           "engineering_allowance", "contingency"] },
+    "cost_line": {
+      "type": "object",
+      "description": "Unit lines: total_cost = quantity x unit_rate x duration. Percent lines: total_cost = percent % of every category before it (direct -> overhead -> escalation -> engineering allowance -> contingency).",
+      "required": ["position", "description", "category", "pricing", "quantity", "unit", "unit_rate", "duration",
+                   "duration_unit", "percent", "rate_code", "total_cost", "notes"],
+      "additionalProperties": false,
+      "properties": {
+        "position": { "type": "integer", "minimum": 0 },
+        "description": { "type": "string" },
+        "category": { "$ref": "#/$defs/category" },
+        "pricing": { "enum": ["unit", "percent"] },
+        "quantity": { "type": ["number", "null"], "minimum": 0 },
+        "unit": { "type": ["string", "null"], "examples": ["hr", "day", "mo", "m3", "each", "lump"] },
+        "unit_rate": { "type": ["number", "null"], "minimum": 0 },
+        "duration": { "type": ["number", "null"], "minimum": 0 },
+        "duration_unit": { "enum": ["hr", "day", "wk", "mo", null] },
+        "percent": { "type": ["number", "null"], "minimum": 0 },
+        "rate_code": { "type": ["string", "null"], "description": "Rate Table entry used, e.g. RATE-EQP-01. null = typed by hand." },
+        "total_cost": { "$ref": "#/$defs/money" },
+        "notes": { "type": "string" }
+      },
+      "allOf": [
+        { "if": { "properties": { "pricing": { "const": "percent" } } },
+          "then": { "properties": { "percent": { "type": "number" },
+                                    "category": { "enum": ["overhead", "escalation", "engineering_allowance", "contingency"] } } } }
+      ]
+    }
+  }
+}
