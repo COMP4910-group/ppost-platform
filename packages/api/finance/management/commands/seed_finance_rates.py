@@ -49,4 +49,4 @@ class Command(BaseCommand):
                 source=SOURCE, effective_date=date(2026, 1, 1)))
             created += made
         self.stdout.write(self.style.SUCCESS(
-            f"Sample rates: {created} added, {len(RATES) - created} already there."))
+                f"Sample rates: {created} added, {len(RATES) - created} already there."))

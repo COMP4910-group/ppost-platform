@@ -177,3 +177,86 @@ class SeedCommandTests(TestCase):
         call_command("seed_finance_rates", verbosity=0)
         self.assertEqual(Rate.objects.count(), 22)
         self.assertEqual(Rate.objects.get(code="RATE-FAC-01").resource, "Site Office Trailer")
+
+
+# ─── Finance report (JSON for Johnny's reports) ──────────────────────────────
+import json
+import tempfile
+from pathlib import Path
+
+from rest_framework.test import APIClient
+
+from .report import build_report
+
+try:
+    import jsonschema
+except ImportError:  # optional: only used to check the report against report_schema.json
+    jsonschema = None
+
+SCHEMA = json.loads((Path(__file__).parent / "report_schema.json").read_text(encoding="utf-8"))
+
+
+class ReportTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        call_command("seed_finance_demo", verbosity=0)
+
+    def test_totals_add_up(self):
+        r = build_report(EV)
+        s = r["summary"]
+        self.assertEqual(s["finalized"], 124077.10)  # T-014 v1.1 approved
+        self.assertEqual(s["draft"], 278050.00)  # T-020 226,800 + T-022 51,250
+        self.assertEqual(s["requirement"], 402127.10)
+        self.assertEqual((s["approved_funding"], s["likely_funding"]), (135000.00, 200000.00))
+        self.assertEqual(s["gap"], 67127.10)
+        self.assertEqual((s["committed"], s["spent"], s["claimed"], s["reimbursed"]), (45000.0, 30500.0, 30500.0, 24400.0))
+        self.assertAlmostEqual(sum(r["funding"]["mix_amounts"].values()), 402127.10, places=2)
+        for e in r["estimates"]:
+            self.assertAlmostEqual(sum(l["total_cost"] for l in e["lines"]), e["total"], places=2)
+        self.assertTrue(r["synthetic"])
+        self.assertIn("SYNTHETIC", r["disclaimer"])
+
+    def test_only_current_revision_and_history(self):
+        r = build_report(EV)
+        t14 = [e for e in r["estimates"] if e["tactic_id"] == "T-014"]
+        self.assertEqual([e["revision"] for e in t14], ["1.1"])
+        self.assertEqual(t14[0]["reviewed_by"], "demo_reviewer")
+        self.assertEqual(t14[0]["supersedes"], "T-014:v1.0")
+        hist = [h for h in r["cost_history"] if h["tactic_id"] == "T-014"]
+        self.assertEqual(hist[0]["change_from_previous"], None)
+        self.assertEqual(hist[-1]["status"], "approved")
+        new = next(h for h in hist if h["revision"] == "1.1")
+        self.assertEqual(new["change_from_previous"], round(124077.10 - 92160.00, 2))
+
+    def test_lifecycle(self):
+        life = {x["tactic_id"]: x for x in build_report(EV)["lifecycle_by_tactic"]}
+        self.assertEqual(life["T-014"]["current_stage"], "reimbursement")
+        self.assertEqual(life["T-014"]["remaining_budget"], round(124077.10 - 30500, 2))
+        self.assertEqual(life["T-014"]["variance_status"], "within_budget")
+        self.assertEqual(life["T-020"]["variance_status"], "no_budget")
+
+    def test_matches_schema(self):
+        if jsonschema is None:
+            self.skipTest("pip install jsonschema to run the schema check")
+        jsonschema.validate(build_report(EV), SCHEMA)
+        jsonschema.validate(build_report("EV-EMPTY"), SCHEMA)  # an event with no data is still valid
+
+    def test_api_needs_login_and_returns_json(self):
+        client = APIClient()
+        self.assertEqual(client.get(f"/api/finance/events/{EV}/report/").status_code, 401)
+        client.force_authenticate(User.objects.get(username="demo_preparer"))
+        res = client.get(f"/api/finance/events/{EV}/report/?download=1")
+        self.assertEqual(res.status_code, 200)
+        self.assertEqual(res.json()["summary"]["requirement"], 402127.10)
+        self.assertIn("attachment", res["Content-Disposition"])
+        self.assertEqual(client.get("/api/finance/events/bad id!/report/").status_code, 400)
+
+    def test_export_command_writes_file(self):
+        with tempfile.TemporaryDirectory() as d:
+            out = Path(d) / "report.json"
+            call_command("export_finance_report", EV, output=str(out), verbosity=0)
+            self.assertEqual(json.loads(out.read_text(encoding="utf-8"))["event"]["name"], "Clearwater Ridge Wildfire")
+
+    def test_seed_demo_runs_once(self):
+        call_command("seed_finance_demo", verbosity=0)  # second run adds nothing
+        self.assertEqual(Estimate.objects.filter(event_id=EV).count(), 4)
