@@ -3,6 +3,7 @@ import {
   AI_RECOMMENDATION_LABEL,
   NOT_PROVIDED,
   PROVISIONAL_STRUCTURE,
+  PROVISIONAL_STRUCTURE_WITH_SOURCES,
   RecoveryPlanDraftSchema,
 } from "./draftSchema.ts";
 import { listSourceRecordIds } from "./snapshotSchema.ts";
@@ -35,10 +36,12 @@ export function assembleRecoveryPlanDraft(
 ): RecoveryPlanDraft {
   const references = findUnresolvedReferences(snapshot);
   const title = `Initial Recovery Plan: ${snapshot.disaster.name}`;
+  const hasCosts = hasCostData(snapshot);
+  const hasSources = snapshot.sources.length > 0;
 
   const draft: RecoveryPlanDraft = {
     kind: "INITIAL_RECOVERY_PLAN_DRAFT",
-    structure: { ...PROVISIONAL_STRUCTURE },
+    structure: hasSources || hasCosts ? { ...PROVISIONAL_STRUCTURE_WITH_SOURCES } : { ...PROVISIONAL_STRUCTURE },
     title,
     disasterId: snapshot.disaster.id,
     snapshotCapturedAt: snapshot.capturedAt,
@@ -54,6 +57,7 @@ export function assembleRecoveryPlanDraft(
       prioritiesSection(snapshot),
       ppostSection(snapshot, references),
       resourcesAndBudgetSection(snapshot),
+      ...(hasCosts ? [costsAndFundingSection(snapshot)] : []),
       gapsSection(snapshot, references, narrative.confirmationsNeeded),
       section(
         "RECOMMENDED_NEXT_STEPS",
@@ -63,6 +67,7 @@ export function assembleRecoveryPlanDraft(
           ? narrative.recommendations.map(aiItem)
           : [field("Recommendations", null, [])],
       ),
+      ...(hasSources ? [provenanceSection(snapshot)] : []),
       sourceIndexSection(snapshot),
     ],
   };
@@ -151,7 +156,20 @@ function documentControlSection(s: Snapshot, title: string): PlanSection {
     ),
     field("Document structure", PROVISIONAL_STRUCTURE.note, []),
     field("AI involvement", AI_NOTICE, []),
+    ...(s.eventMapping ? [eventMappingField(s.eventMapping)] : []),
+    // The finance owner's disclaimer, verbatim, wherever its figures appear.
+    ...(s.finance ? [field("Finance disclaimer", s.finance.disclaimer, [s.finance.sourceId])] : []),
   ]);
+}
+
+function eventMappingField(m: NonNullable<Snapshot["eventMapping"]>): PlanField {
+  const value =
+    `Team event ${m.teamEventId} → PPOST ${m.ppostDisasterId}` +
+    (m.financeEventId ? ` → finance ${m.financeEventId}` : "") +
+    (m.status === "ASSUMED" ? " (assumed, not confirmed)" : ` (confirmed${m.confirmedBy ? ` by ${m.confirmedBy}` : ""})`);
+  return m.status === "ASSUMED"
+    ? confirmation("Event mapping", value, [m.ppostDisasterId])
+    : field("Event mapping", value, [m.ppostDisasterId]);
 }
 
 function eventOverviewSection(s: Snapshot): PlanSection {
@@ -264,25 +282,39 @@ function ppostSection(s: Snapshot, references: UnresolvedReference[]): PlanSecti
 
 function resourcesAndBudgetSection(s: Snapshot): PlanSection {
   const items: PlanItem[] = [];
-  const estimated = s.tactics.filter((t) => t.estimateTotal !== undefined);
-  const sum = estimated.reduce((total, t) => total + (t.estimateTotal ?? 0), 0);
+  const separateCosts = hasCostData(s);
 
-  items.push(
-    field("Currency", s.currency, []),
-    field("Tactics with a supplied Class D estimate", `${estimated.length} of ${s.tactics.length}`, []),
-    field(
-      "Sum of supplied tactic estimates (tactics without an estimate are excluded)",
-      estimated.length > 0 ? amount(sum, s.currency) : null,
-      estimated.map((t) => t.id),
-    ),
-    field("Funding sources and funding gap", null, []),
-  );
+  if (separateCosts) {
+    // Export costs are reported in "Costs and funding"; they are never summed here.
+    items.push(
+      field(
+        "Costs",
+        'Reported in "Costs and funding": finance estimates and PPOST cost entries are shown separately and are not combined.',
+        [],
+      ),
+    );
+  } else {
+    const estimated = s.tactics.filter((t) => t.estimateTotal !== undefined);
+    const sum = estimated.reduce((total, t) => total + (t.estimateTotal ?? 0), 0);
+    items.push(
+      field("Currency", s.currency, []),
+      field("Tactics with a supplied Class D estimate", `${estimated.length} of ${s.tactics.length}`, []),
+      field(
+        "Sum of supplied tactic estimates (tactics without an estimate are excluded)",
+        estimated.length > 0 ? amount(sum, s.currency) : null,
+        estimated.map((t) => t.id),
+      ),
+      field("Funding sources and funding gap", null, []),
+    );
+  }
 
   for (const t of s.tactics) {
     const who = t.fiveW1H.who;
     items.push(
       record("TACTIC", t.id, 0, t.title, [
-        field("Class D estimate", t.estimateTotal === undefined ? null : amount(t.estimateTotal, s.currency), [t.id]),
+        ...(separateCosts
+          ? []
+          : [field("Class D estimate", t.estimateTotal === undefined ? null : amount(t.estimateTotal, s.currency), [t.id])]),
         field("Owner", t.owner, [t.id]),
         field("Team", who?.team, [t.id]),
         field("Supporting roles", joined(who?.supportingRoles), [t.id]),
@@ -319,6 +351,8 @@ function gapsSection(
         r.recordId === undefined ? [] : [r.recordId],
       ),
     );
+  for (const f of s.findings.filter((f) => f.status === "REQUIRES_CONFIRMATION"))
+    items.push(confirmation(`Source finding ${f.id} (${FINDING_LABEL[f.code]})`, f.message, [...f.recordIds, ...f.sourceIds]));
 
   const deterministicCount = items.length;
   items.push(...aiConfirmations.map(aiItem));
@@ -345,6 +379,212 @@ function sourceIndexSection(s: Snapshot): PlanSection {
     "SOURCE_DATA",
     entries.map(([id, type, name]) => field(id, `${type}: ${name}`, [id])),
   );
+}
+
+// ---------------------------------------------------------------------------
+// Source exports: costs, funding and provenance
+// ---------------------------------------------------------------------------
+
+const FINDING_LABEL: Record<Snapshot["findings"][number]["code"], string> = {
+  EVENT_MAPPING_ASSUMED: "event mapping assumed",
+  SOURCE_LABELS_MAPPING_ASSUMED: "source labels mapping as assumed",
+  EVENT_NAME_DIFFERS: "event names differ",
+  FINANCE_TACTIC_NOT_IN_PPOST: "finance tactic not in PPOST",
+  TACTIC_DESCRIPTION_REVIEW: "tactic descriptions differ",
+  COMPETING_COSTS: "competing costs",
+  PPOST_COST_POINTER_MISSING: "missing PPOST cost entry",
+  FUTURE_DATE: "future dates",
+  RECONCILIATION_MISMATCH: "figures do not reconcile",
+  MONEY_NOT_EXACT: "inexact amount",
+  SYNTHETIC_SOURCE: "synthetic data",
+  SUPPLIED_FROM_FINANCE: "taken from finance report",
+  UNRESOLVED_DOCUMENT_REFERENCE: "documents not available",
+};
+
+function hasCostData(s: Snapshot): boolean {
+  return s.finance !== undefined || s.ppostCosts.length > 0;
+}
+
+/** A supplied decimal string, grouped and padded to 2 places for display only (the value is unchanged). */
+function money(text: string, currency: string | undefined): string {
+  const negative = text.startsWith("-");
+  const [whole = "0", fraction = ""] = text.replace(/^-/, "").split(".");
+  const grouped = whole.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const display = `${negative ? "-" : ""}${grouped}.${(fraction + "00").slice(0, 2)}`;
+  return currency ? `${display} ${currency}` : `${display} (currency ${NOT_PROVIDED.toLowerCase()})`;
+}
+
+function costsAndFundingSection(s: Snapshot): PlanSection {
+  const items: PlanItem[] = [];
+  const ppostTitle = new Map(s.tactics.map((t) => [t.id, t.title]));
+  const f = s.finance;
+
+  if (f) {
+    const src = [f.sourceId];
+    const cur = f.currency;
+    const { summary: sm, reconciliation: rc } = f;
+    items.push(
+      field("Finance disclaimer", f.disclaimer, src),
+      field(
+        "How to read these figures",
+        "Figures are reproduced exactly as supplied by the finance report. Cost history, the funding split and lifecycle stages are not added to the requirement, and approved, requested and likely funding are shown separately.",
+        [],
+      ),
+      rc.mismatches === 0
+        ? field("Arithmetic check", `All ${rc.checks} derived figures are consistent when recomputed`, src)
+        : confirmation(
+            "Arithmetic check",
+            `${rc.mismatches} of ${rc.checks} derived figures do not match when recomputed; see "Gaps and items requiring confirmation"`,
+            src,
+          ),
+      field("Requirement (sum of current estimates)", money(sm.requirement, cur), src),
+      field("Estimates approved", money(sm.finalized, cur), src),
+      field("Estimates not yet approved (draft or in review)", money(sm.notYetApproved, cur), src),
+      field("Approved funding (confirmed)", money(sm.approvedFunding, cur), src),
+      field("Requested funding (not yet approved)", money(sm.requestedFunding, cur), src),
+      field("Requested funding marked likely", money(sm.likelyFunding, cur), src),
+      field("Realistic funding (approved + likely)", money(sm.realisticFunding, cur), src),
+      field("Funding gap (requirement − realistic funding)", money(sm.gap, cur), src),
+      field("Coverage", `${sm.coveragePct}%`, src),
+      sm.tacticsNeedingEstimate.length > 0
+        ? confirmation("Tactics still needing an estimate", sm.tacticsNeedingEstimate.join(", "), [...src, ...sm.tacticsNeedingEstimate])
+        : field("Tactics still needing an estimate", "None listed", src),
+    );
+
+    for (const e of f.estimates) {
+      const ppost = ppostTitle.get(e.tacticId);
+      const link =
+        e.ppostLink === "TITLES_MATCH"
+          ? field("PPOST tactic", `${e.tacticId}: ${ppost}`, [e.tacticId])
+          : e.ppostLink === "REQUIRES_REVIEW"
+            ? confirmation("PPOST tactic", `${e.tacticId} is titled "${ppost}" in PPOST; confirm it is the same work`, [e.tacticId])
+            : confirmation("PPOST tactic", `${e.tacticId} is not in the PPOST export`, [e.tacticId]);
+      items.push(
+        record("FINANCE_ESTIMATE", e.code, 0, e.title, [
+          link,
+          field("Status", e.status, [e.code]),
+          field("Estimate class", e.estimateClass, [e.code]),
+          field("Current estimate", money(e.total, cur), [e.code]),
+          field("Accuracy range", `${money(e.low, cur)} to ${money(e.high, cur)} (${e.accuracyLowPct}% / +${e.accuracyHighPct}%)`, [e.code]),
+          field("Prepared", [e.preparedBy, e.preparedDate].filter(Boolean).join(", ") || undefined, [e.code]),
+          field("Reviewed by", e.reviewedBy, [e.code]),
+          field("Scope", e.scopeDescription, [e.code]),
+        ]),
+      );
+    }
+
+    const fundingStatus = (x: (typeof f.fundingSources)[number]) =>
+      x.status === "approved"
+        ? `Approved${x.confirmed ? " (confirmed)" : ""}`
+        : x.status === "requested"
+          ? `Requested, ${x.likely ? "marked likely" : "not marked likely"}`
+          : x.status;
+    for (const fs of f.fundingSources)
+      items.push(
+        record("FUNDING_SOURCE", fs.code, 0, fs.name, [
+          field("Status", fundingStatus(fs), [fs.code]),
+          field("Amount", money(fs.amount, cur), [fs.code]),
+          field("Funding category", fs.mixGroup, [fs.code]),
+          field("Tactics", joined(fs.tacticIds), [fs.code, ...fs.tacticIds]),
+        ]),
+      );
+    for (const q of f.fundingRequests)
+      items.push(
+        field(
+          `Funding request ${q.code}`,
+          `${q.title}: ${money(q.amount, cur)}, ${q.status}${q.sentAt ? `, sent ${q.sentAt}` : ""} (to ${q.fundingSourceCode})`,
+          [q.code, q.fundingSourceCode],
+        ),
+      );
+    for (const mix of f.fundingMix)
+      items.push(
+        field(
+          `Funding split: ${mix.group} (${mix.pct}%)`,
+          `${money(mix.amount, cur)}: a share of the requirement, not additional funding`,
+          src,
+        ),
+      );
+    for (const l of f.lifecycle)
+      items.push(
+        field(
+          `Spending lifecycle ${l.tacticId} (same money at successive stages)`,
+          [
+            l.approvedBudget ? `approved budget ${money(l.approvedBudget, cur)}` : null,
+            `committed ${money(l.committed, cur)}`,
+            `spent ${money(l.spent, cur)}`,
+            `claimed ${money(l.claimed, cur)}`,
+            `reimbursed ${money(l.reimbursed, cur)}`,
+            l.remainingBudget ? `remaining ${money(l.remainingBudget, cur)}` : null,
+            `current stage: ${l.currentStage}`,
+          ]
+            .filter(Boolean)
+            .join("; "),
+          [l.tacticId, ...src],
+        ),
+      );
+    for (const h of f.costHistory)
+      items.push(
+        field(
+          `Finance cost history ${h.tacticId} v${h.revision} (history only, not added)`,
+          `${money(h.total, cur)}, ${h.status}, ${h.at}${h.by ? ` by ${h.by}` : ""}${h.reason ? `: ${h.reason}` : ""}`,
+          [h.tacticId, ...src],
+        ),
+      );
+  }
+
+  if (s.ppostCosts.length > 0) {
+    items.push(
+      field(
+        "PPOST cost entries",
+        "Sample amounts from the PPOST export (currency not provided). Shown separately from the finance report and not added to it; only the entry each tactic marks as current is current.",
+        [...new Set(s.ppostCosts.map((c) => c.sourceId))],
+      ),
+    );
+    for (const c of s.ppostCosts.filter((c) => c.isCurrent))
+      items.push(
+        record("COST_ENTRY", c.id, 0, `${c.tacticId}: current PPOST cost`, [
+          field("Amount", money(c.amount, c.currency), [c.id]),
+          field("Stage", c.stage, [c.id]),
+          field("Status", c.status, [c.id]),
+          field("Entered", [c.enteredBy, c.at].filter(Boolean).join(", ") || undefined, [c.id]),
+        ]),
+      );
+    for (const c of s.ppostCosts.filter((c) => !c.isCurrent))
+      items.push(
+        field(
+          `PPOST cost history ${c.id} (not current, not added)`,
+          `${money(c.amount, c.currency)}, ${c.stage}, ${c.status}${c.at ? `, ${c.at}` : ""}`,
+          [c.id, c.tacticId],
+        ),
+      );
+  }
+
+  return section("COSTS_AND_FUNDING", "Costs and funding", "SOURCE_DATA", items);
+}
+
+function provenanceSection(s: Snapshot): PlanSection {
+  const items: PlanItem[] = [];
+  if (s.eventMapping) {
+    items.push(eventMappingField(s.eventMapping));
+    if (s.eventMapping.basis) items.push(field("Mapping basis", s.eventMapping.basis, [s.eventMapping.ppostDisasterId]));
+  }
+  for (const src of s.sources)
+    items.push(
+      record("SOURCE_FILE", src.sourceId, 0, src.fileName, [
+        field("Kind", src.kind.replace(/_/g, " ").toLowerCase(), [src.sourceId]),
+        field("Submitted by", src.submittedBy, [src.sourceId]),
+        field("Last updated", src.lastUpdated, [src.sourceId]),
+        field("Generated at", src.generatedAt, [src.sourceId]),
+        field("Format version", src.formatVersion, [src.sourceId]),
+        field("Synthetic data", src.synthetic ? "Yes" : "No", [src.sourceId]),
+        field("SHA-256 of the original file", src.sha256, [src.sourceId]),
+        field("Size", `${src.bytes} bytes`, [src.sourceId]),
+        ...(src.disclaimer ? [field("Disclaimer", src.disclaimer, [src.sourceId])] : []),
+      ]),
+    );
+  for (const f of s.findings.filter((f) => f.status === "INFO"))
+    items.push(field(`Note ${f.id} (${FINDING_LABEL[f.code]})`, f.message, [...f.recordIds, ...f.sourceIds]));
+  return section("SOURCE_PROVENANCE", "Source files and provenance", "SOURCE_DATA", items);
 }
 
 // ---------------------------------------------------------------------------

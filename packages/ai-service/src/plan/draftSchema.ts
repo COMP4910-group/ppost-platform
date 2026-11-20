@@ -48,6 +48,9 @@ export const PROVISIONAL_STRUCTURE = {
   note: "Provisional structure pending the client's Initial Recovery Plan template.",
 } as const;
 
+/** v1 plus "Costs and funding" and "Source files and provenance", used when a snapshot carries source exports. */
+export const PROVISIONAL_STRUCTURE_WITH_SOURCES = { ...PROVISIONAL_STRUCTURE, id: "provisional-v2" } as const;
+
 export const FieldStatusSchema = z.enum(["PROVIDED", "NOT_PROVIDED", "REQUIRES_CONFIRMATION"]);
 
 export const PlanFieldSchema = z.object({
@@ -67,6 +70,10 @@ export const PlanRecordTypeSchema = z.enum([
   "TACTIC",
   "ASSESSMENT_QUESTION",
   "VERIFICATION_TASK",
+  "SOURCE_FILE",
+  "FINANCE_ESTIMATE",
+  "FUNDING_SOURCE",
+  "COST_ENTRY",
 ]);
 
 export const PlanRecordSchema = z.object({
@@ -101,8 +108,10 @@ export const PlanSectionKeySchema = z.enum([
   "RECOVERY_PRIORITIES",
   "PPOST_CHAINS",
   "RESOURCES_AND_BUDGET",
+  "COSTS_AND_FUNDING",
   "GAPS_AND_CONFIRMATIONS",
   "RECOMMENDED_NEXT_STEPS",
+  "SOURCE_PROVENANCE",
   "SOURCE_RECORD_INDEX",
 ]);
 
@@ -116,7 +125,7 @@ export const PlanSectionSchema = z.object({
 export const RecoveryPlanDraftSchema = z.object({
   kind: z.literal("INITIAL_RECOVERY_PLAN_DRAFT"),
   structure: z.object({
-    id: z.literal(PROVISIONAL_STRUCTURE.id),
+    id: z.enum([PROVISIONAL_STRUCTURE.id, PROVISIONAL_STRUCTURE_WITH_SOURCES.id]),
     provisional: z.literal(true),
     note: z.string().min(1),
   }),

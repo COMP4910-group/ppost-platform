@@ -1,0 +1,613 @@
+{
+  "report_type": "finance_report",
+  "schema_version": "1.0",
+  "generated_at": "2026-12-21T17:00:00Z",
+  "generated_by": "daniel",
+  "synthetic": true,
+  "disclaimer": "Planning and tracking only - not a payment or accounting system. SYNTHETIC DEMO DATA.",
+  "currency": "CAD",
+  "event": {
+    "id": "EV-2026-014",
+    "name": "Clearwater Ridge Wildfire",
+    "hazard": "wildfire",
+    "location": "Interior British Columbia, Canada",
+    "declared_at": "2026-08-14"
+  },
+  "summary": {
+    "requirement": 402127.1,
+    "finalized": 124077.1,
+    "draft": 278050.0,
+    "approved_funding": 135000.0,
+    "requested_funding": 215000.0,
+    "likely_funding": 200000.0,
+    "realistic_funding": 335000.0,
+    "gap": 67127.1,
+    "coverage_pct": 83.3,
+    "committed": 45000.0,
+    "spent": 30500.0,
+    "claimed": 30500.0,
+    "reimbursed": 24400.0,
+    "tactics_estimated": 3,
+    "tactics_needing_estimate": [
+      "T-031"
+    ]
+  },
+  "estimates": [
+    {
+      "tactic_id": "T-014",
+      "title": "Debris removal - Highway 5, km 12-18",
+      "revision": "1.1",
+      "code": "T-014:v1.1",
+      "status": "approved",
+      "estimate_class": "D",
+      "accuracy_low_pct": -50,
+      "accuracy_high_pct": 100,
+      "direct_total": 78000.0,
+      "total": 124077.1,
+      "low": 62038.55,
+      "high": 248154.2,
+      "by_category": {
+        "labour": 17600.0,
+        "equipment": 59200.0,
+        "facility_rental": 1200.0,
+        "overhead": 7800.0,
+        "escalation": 2574.0,
+        "engineering_allowance": 7069.92,
+        "contingency": 28633.18
+      },
+      "prepared_by": "daniel",
+      "prepared_date": "2026-11-16",
+      "reviewed_by": "earl",
+      "reviewed_at": "2026-11-17T21:40:00Z",
+      "supersedes": "T-014:v1.0",
+      "lines": [
+        {
+          "position": 1,
+          "description": "General Labourer",
+          "category": "labour",
+          "pricing": "unit",
+          "quantity": 4,
+          "unit": "hr",
+          "unit_rate": 55,
+          "duration": 80,
+          "duration_unit": "hr",
+          "percent": null,
+          "rate_code": "RATE-LAB-01",
+          "notes": "",
+          "total_cost": 17600.0
+        },
+        {
+          "position": 2,
+          "description": "Excavator (20 t)",
+          "category": "equipment",
+          "pricing": "unit",
+          "quantity": 2,
+          "unit": "day",
+          "unit_rate": 1400,
+          "duration": 10,
+          "duration_unit": "day",
+          "percent": null,
+          "rate_code": "RATE-EQP-01",
+          "notes": "",
+          "total_cost": 28000.0
+        },
+        {
+          "position": 3,
+          "description": "Tandem Dump Truck",
+          "category": "equipment",
+          "pricing": "unit",
+          "quantity": 3,
+          "unit": "hr",
+          "unit_rate": 130,
+          "duration": 80,
+          "duration_unit": "hr",
+          "percent": null,
+          "rate_code": "RATE-EQP-02",
+          "notes": "",
+          "total_cost": 31200.0
+        },
+        {
+          "position": 4,
+          "description": "Site Office Trailer",
+          "category": "facility_rental",
+          "pricing": "unit",
+          "quantity": 1,
+          "unit": "mo",
+          "unit_rate": 1200,
+          "duration": 1,
+          "duration_unit": "mo",
+          "percent": null,
+          "rate_code": "RATE-FAC-01",
+          "notes": "",
+          "total_cost": 1200.0
+        },
+        {
+          "position": 5,
+          "description": "Overhead",
+          "category": "overhead",
+          "pricing": "percent",
+          "quantity": null,
+          "unit": null,
+          "unit_rate": null,
+          "duration": null,
+          "duration_unit": null,
+          "percent": 10,
+          "rate_code": null,
+          "notes": "",
+          "total_cost": 7800.0
+        },
+        {
+          "position": 6,
+          "description": "Escalation",
+          "category": "escalation",
+          "pricing": "percent",
+          "quantity": null,
+          "unit": null,
+          "unit_rate": null,
+          "duration": null,
+          "duration_unit": null,
+          "percent": 3,
+          "rate_code": null,
+          "notes": "",
+          "total_cost": 2574.0
+        },
+        {
+          "position": 7,
+          "description": "Engineering Allowance",
+          "category": "engineering_allowance",
+          "pricing": "percent",
+          "quantity": null,
+          "unit": null,
+          "unit_rate": null,
+          "duration": null,
+          "duration_unit": null,
+          "percent": 8,
+          "rate_code": null,
+          "notes": "",
+          "total_cost": 7069.92
+        },
+        {
+          "position": 8,
+          "description": "Contingency",
+          "category": "contingency",
+          "pricing": "percent",
+          "quantity": null,
+          "unit": null,
+          "unit_rate": null,
+          "duration": null,
+          "duration_unit": null,
+          "percent": 30,
+          "rate_code": null,
+          "notes": "High uncertainty - access road condition UNKNOWN",
+          "total_cost": 28633.18
+        }
+      ],
+      "basis": {
+        "scope_description": "Debris removal and temporary road repair along Highway 5, km 12-18.",
+        "assumptions": [
+          "Site access available from week 2",
+          "Crews work 10-hour days, 5 days a week"
+        ],
+        "exclusions": [
+          "Permanent bridge replacement",
+          "Hazardous materials disposal"
+        ]
+      }
+    },
+    {
+      "tactic_id": "T-020",
+      "title": "Clear burned debris from residential lots",
+      "revision": "1.0",
+      "code": "T-020:v1.0",
+      "status": "draft",
+      "estimate_class": "D",
+      "accuracy_low_pct": -50,
+      "accuracy_high_pct": 100,
+      "direct_total": 189000.0,
+      "total": 226800.0,
+      "low": 113400.0,
+      "high": 453600.0,
+      "by_category": {
+        "subcontractors": 189000.0,
+        "contingency": 37800.0
+      },
+      "prepared_by": "daniel",
+      "prepared_date": "2026-11-17",
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "supersedes": null,
+      "lines": [
+        {
+          "position": 1,
+          "description": "Debris Removal Contractor",
+          "category": "subcontractors",
+          "pricing": "unit",
+          "quantity": 1,
+          "unit": "day",
+          "unit_rate": 4500,
+          "duration": 30,
+          "duration_unit": "day",
+          "percent": null,
+          "rate_code": "RATE-SUB-01",
+          "notes": "",
+          "total_cost": 135000.0
+        },
+        {
+          "position": 2,
+          "description": "Traffic Control Crew",
+          "category": "subcontractors",
+          "pricing": "unit",
+          "quantity": 1,
+          "unit": "day",
+          "unit_rate": 1800,
+          "duration": 30,
+          "duration_unit": "day",
+          "percent": null,
+          "rate_code": "RATE-SUB-02",
+          "notes": "",
+          "total_cost": 54000.0
+        },
+        {
+          "position": 3,
+          "description": "Contingency",
+          "category": "contingency",
+          "pricing": "percent",
+          "quantity": null,
+          "unit": null,
+          "unit_rate": null,
+          "duration": null,
+          "duration_unit": null,
+          "percent": 20,
+          "rate_code": null,
+          "notes": "",
+          "total_cost": 37800.0
+        }
+      ],
+      "basis": {
+        "scope_description": "Removal of burned structures and debris from 42 residential lots.",
+        "assumptions": [
+          "Lots cleared for asbestos testing first"
+        ],
+        "exclusions": [
+          "Rebuilding homes"
+        ]
+      }
+    },
+    {
+      "tactic_id": "T-022",
+      "title": "Temporary reception centre",
+      "revision": "1.0",
+      "code": "T-022:v1.0",
+      "status": "in_review",
+      "estimate_class": "D",
+      "accuracy_low_pct": -50,
+      "accuracy_high_pct": 100,
+      "direct_total": 41000.0,
+      "total": 51250.0,
+      "low": 25625.0,
+      "high": 102500.0,
+      "by_category": {
+        "facility_rental": 41000.0,
+        "contingency": 10250.0
+      },
+      "prepared_by": "daniel",
+      "prepared_date": "2026-11-17",
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "supersedes": null,
+      "lines": [
+        {
+          "position": 1,
+          "description": "Community Hall (Reception Centre)",
+          "category": "facility_rental",
+          "pricing": "unit",
+          "quantity": 1,
+          "unit": "day",
+          "unit_rate": 600,
+          "duration": 60,
+          "duration_unit": "day",
+          "percent": null,
+          "rate_code": "RATE-FAC-03",
+          "notes": "",
+          "total_cost": 36000.0
+        },
+        {
+          "position": 2,
+          "description": "Portable Toilet Unit",
+          "category": "facility_rental",
+          "pricing": "unit",
+          "quantity": 10,
+          "unit": "mo",
+          "unit_rate": 250,
+          "duration": 2,
+          "duration_unit": "mo",
+          "percent": null,
+          "rate_code": "RATE-FAC-04",
+          "notes": "",
+          "total_cost": 5000.0
+        },
+        {
+          "position": 3,
+          "description": "Contingency",
+          "category": "contingency",
+          "pricing": "percent",
+          "quantity": null,
+          "unit": null,
+          "unit_rate": null,
+          "duration": null,
+          "duration_unit": null,
+          "percent": 25,
+          "rate_code": null,
+          "notes": "",
+          "total_cost": 10250.0
+        }
+      ],
+      "basis": {
+        "scope_description": "Reception centre for displaced residents for 60 days.",
+        "assumptions": [
+          "Hall available rent-free after day 60"
+        ],
+        "exclusions": [
+          "Food and lodging costs"
+        ]
+      }
+    }
+  ],
+  "cost_history": [
+    {
+      "tactic_id": "T-014",
+      "revision": "1.0",
+      "status": "draft",
+      "total": 92300.0,
+      "change_from_previous": null,
+      "change_pct": null,
+      "at": "2026-11-12T19:00:00Z",
+      "by": "daniel",
+      "reason": "First Class D estimate"
+    },
+    {
+      "tactic_id": "T-014",
+      "revision": "1.0",
+      "status": "archived",
+      "total": 92300.0,
+      "change_from_previous": 0.0,
+      "change_pct": 0.0,
+      "at": "2026-11-16T15:12:00Z",
+      "by": "daniel",
+      "reason": "Replaced by v1.1 after access road survey"
+    },
+    {
+      "tactic_id": "T-014",
+      "revision": "1.1",
+      "status": "approved",
+      "total": 124077.1,
+      "change_from_previous": 31777.1,
+      "change_pct": 34.43,
+      "at": "2026-11-17T21:40:00Z",
+      "by": "earl",
+      "reason": "Approved"
+    },
+    {
+      "tactic_id": "T-020",
+      "revision": "1.0",
+      "status": "draft",
+      "total": 226800.0,
+      "change_from_previous": null,
+      "change_pct": null,
+      "at": "2026-11-17T18:00:00Z",
+      "by": "daniel",
+      "reason": "First Class D estimate"
+    },
+    {
+      "tactic_id": "T-022",
+      "revision": "1.0",
+      "status": "in_review",
+      "total": 51250.0,
+      "change_from_previous": null,
+      "change_pct": null,
+      "at": "2026-11-17T18:30:00Z",
+      "by": "daniel",
+      "reason": "Submitted for review"
+    }
+  ],
+  "funding": {
+    "mix": {
+      "government_pct": 70,
+      "local_gov_pct": 20,
+      "community_pct": 10
+    },
+    "mix_amounts": {
+      "government": 281488.97,
+      "local_gov": 80425.42,
+      "community": 40212.71
+    },
+    "sources": [
+      {
+        "code": "FS-01",
+        "name": "Provincial disaster financial assistance (illustrative - confirm eligibility with program guidelines)",
+        "source_type": "provincial_dfa",
+        "mix_group": "government",
+        "amount": 200000.0,
+        "status": "requested",
+        "confirmed": false,
+        "likely": true,
+        "tactic_ids": [
+          "T-014",
+          "T-020"
+        ],
+        "document_ids": [
+          "DOC-0040"
+        ]
+      },
+      {
+        "code": "FS-02",
+        "name": "Federal infrastructure program (illustrative)",
+        "source_type": "federal_program",
+        "mix_group": "government",
+        "amount": 75000.0,
+        "status": "approved",
+        "confirmed": true,
+        "likely": true,
+        "tactic_ids": [
+          "T-014"
+        ],
+        "document_ids": [
+          "DOC-0041"
+        ]
+      },
+      {
+        "code": "FS-03",
+        "name": "Regional district reserves",
+        "source_type": "local_reserves",
+        "mix_group": "local_gov",
+        "amount": 60000.0,
+        "status": "approved",
+        "confirmed": true,
+        "likely": true,
+        "tactic_ids": [
+          "T-022"
+        ],
+        "document_ids": []
+      },
+      {
+        "code": "FS-05",
+        "name": "Community crowdfunding",
+        "source_type": "community_fundraising",
+        "mix_group": "community",
+        "amount": 15000.0,
+        "status": "requested",
+        "confirmed": false,
+        "likely": false,
+        "tactic_ids": [
+          "T-022"
+        ],
+        "document_ids": []
+      }
+    ],
+    "requests": [
+      {
+        "code": "FR-01",
+        "title": "Request for disaster financial assistance - Clearwater Ridge Wildfire",
+        "funding_source_code": "FS-01",
+        "amount": 200000.0,
+        "status": "sent",
+        "generated_by": "template",
+        "document_id": "DOC-0040",
+        "approval_id": "APR-0015",
+        "sent_at": "2026-11-18T16:00:00Z"
+      }
+    ]
+  },
+  "financial_entries": [
+    {
+      "code": "FE-0001",
+      "tactic_id": "T-014",
+      "stage": "commitment",
+      "amount": 45000.0,
+      "entry_date": "2026-11-20",
+      "reference": "PO-2026-118",
+      "document_ids": [
+        "DOC-0045"
+      ],
+      "note": "Debris removal contract signed",
+      "created_by": "daniel",
+      "created_at": "2026-11-20T17:05:00Z"
+    },
+    {
+      "code": "FE-0002",
+      "tactic_id": "T-014",
+      "stage": "expenditure",
+      "amount": 30500.0,
+      "entry_date": "2026-12-04",
+      "reference": "INV-88231",
+      "document_ids": [
+        "DOC-0052"
+      ],
+      "note": "First invoice - 2 weeks of work",
+      "created_by": "daniel",
+      "created_at": "2026-12-04T16:30:00Z"
+    },
+    {
+      "code": "FE-0003",
+      "tactic_id": "T-014",
+      "stage": "claim",
+      "amount": 30500.0,
+      "entry_date": "2026-12-06",
+      "reference": "CLM-2026-07",
+      "document_ids": [
+        "DOC-0053"
+      ],
+      "note": "Claim submitted to provincial program",
+      "created_by": "daniel",
+      "created_at": "2026-12-06T18:10:00Z"
+    },
+    {
+      "code": "FE-0004",
+      "tactic_id": "T-014",
+      "stage": "reimbursement",
+      "amount": 24400.0,
+      "entry_date": "2026-12-20",
+      "reference": "EFT-55120",
+      "document_ids": [
+        "DOC-0060"
+      ],
+      "note": "80% of eligible claim reimbursed (illustrative)",
+      "created_by": "daniel",
+      "created_at": "2026-12-20T15:00:00Z"
+    }
+  ],
+  "lifecycle_by_tactic": [
+    {
+      "tactic_id": "T-014",
+      "title": "Debris removal - Highway 5, km 12-18",
+      "current_stage": "reimbursement",
+      "estimate_total": 124077.1,
+      "estimate_status": "approved",
+      "approved_budget": 124077.1,
+      "committed": 45000.0,
+      "spent": 30500.0,
+      "claimed": 30500.0,
+      "reimbursed": 24400.0,
+      "remaining_budget": 93577.1,
+      "variance_status": "within_budget"
+    },
+    {
+      "tactic_id": "T-020",
+      "title": "Clear burned debris from residential lots",
+      "current_stage": "estimate",
+      "estimate_total": 226800.0,
+      "estimate_status": "draft",
+      "approved_budget": null,
+      "committed": 0.0,
+      "spent": 0.0,
+      "claimed": 0.0,
+      "reimbursed": 0.0,
+      "remaining_budget": null,
+      "variance_status": "no_budget"
+    },
+    {
+      "tactic_id": "T-022",
+      "title": "Temporary reception centre",
+      "current_stage": "estimate",
+      "estimate_total": 51250.0,
+      "estimate_status": "in_review",
+      "approved_budget": null,
+      "committed": 0.0,
+      "spent": 0.0,
+      "claimed": 0.0,
+      "reimbursed": 0.0,
+      "remaining_budget": null,
+      "variance_status": "no_budget"
+    }
+  ],
+  "assistance": [
+    {
+      "code": "AS-01",
+      "assistance_type": "engineers",
+      "description": "Geotechnical engineers to assess slope stability",
+      "quantity": 2,
+      "provider": "Provincial ministry (illustrative)",
+      "status": "requested"
+    }
+  ]
+}
