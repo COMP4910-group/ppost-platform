@@ -1,46 +1,116 @@
-# PPOST Recovery Platform
+# PPOST RecoveryOS
 
-A web-based disaster recovery planning platform built for local governments, Indigenous governing bodies, and emergency management organizations.
+A web-based disaster recovery planning platform built for local governments, Indigenous governing bodies, and emergency management organizations. Built for COMP 4910 Capstone — Thompson Rivers University, Fall 2026.
 
-## What it does
-- Structured PPOST workflow: Disaster → Priority → Problem → Objective → Strategy → Tactic
-- Dynamic impact assessment with YES / NO / UNKNOWN logic
-- Class D cost estimating and funding gap tracking
-- AI-assisted planning with mandatory human approval
-- Initial Recovery Plan generation from structured data
-- Full audit trail and version history
+**Client:** Quan Nguyen, Thompson Rivers University
+
+---
+
+## Demo Video
+
+[Insert video link here]
+
+---
 
 ## Team
-| Member | Role | Branch |
-|--------|------|--------|
-| Earl | Core Platform / API / Auth | `feat/core-platform` |
-| Divyansh | PPOST Engine / Recovery Matrix | `feat/ppost-engine` |
-| Daniel | Financial / Recovery Planning | `feat/finance-engine` |
-| Qiaomu | AI & Evaluation | `feat/ai-service` |
 
-## Getting started
-1. Clone the repo
+| Member | Role |
+|--------|------|
+| Earl | Frontend architecture, dashboard integration, authentication |
+| Divyansh | Impact assessment, PPOST engine, recovery matrix |
+| Daniel | Class D estimates, financial planning |
+| Qiaomu | AI module, financial tracking, documents |
+
+---
+
+## Prerequisites
+
+- Python 3.11+
+- Node.js 18+
+- npm 9+
+- Supabase account (credentials provided by Earl)
+
+---
+
+## Install
+
 ```bash
-   git clone https://github.com/COMP4910-group/ppost-platform
-   cd ppost-platform
+git clone https://github.com/COMP4910-group/ppost-platform
+cd ppost-platform
+npm install
+pip install -r packages/api/requirements.txt --break-system-packages
 ```
-2. Copy the environment file
+
+---
+
+## Configuration
+
+Copy the example environment file and fill in your values (get the real `.env` from Earl):
+
 ```bash
-   cp .env.example .env
+cp packages/api/.env.example packages/api/.env
 ```
-3. Start the services
+
+---
+
+## Run
+
+**Terminal 1 — Backend:**
 ```bash
-   docker-compose up
+cd packages/api
+python manage.py runserver
 ```
+
+**Terminal 2 — Frontend:**
+```bash
+npm start --workspace=packages/web
+```
+
+Open http://localhost:3000 in your browser.
+
+---
+
+## Tests
+
+```bash
+cd packages/api
+python manage.py test
+```
+
+---
+
+## Project Structure
+
+```
+ppost-platform/
+├── packages/
+│   ├── api/        # Django backend — authentication, database, REST API
+│   └── web/        # React frontend — UI, pages, routing
+├── docs/           # Milestone documents, SOPs, meeting notes
+├── package.json    # npm workspace root
+└── README.md
+```
+
+---
 
 ## Stack
-- **Frontend:** React + TypeScript + Tailwind CSS
-- **Backend:** Django + Express
-- **Database:** PostgreSQL
-- **AI:** Claude API (Anthropic)
-- **Infrastructure:** Docker
 
-## Branching rules
+- **Frontend:** React + TypeScript + Tailwind CSS
+- **Backend:** Django + Django REST Framework
+- **Database:** Supabase (PostgreSQL)
+- **Auth:** JWT via Django Simple JWT
+
+---
+
+## Branching
+
 - Nobody pushes directly to `main`
-- All changes go through a pull request with at least 1 approval
+- All changes go through a pull request
 - Branch naming: `feat/your-feature-name`
+
+---
+
+## Documentation
+
+- [Reproduce the project →](docs/reproduce.md)
+- [Standard Operating Procedures →](docs/sops/)
