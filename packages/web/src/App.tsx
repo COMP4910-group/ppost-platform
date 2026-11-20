@@ -8,6 +8,8 @@ import SignupPage from './pages/SignupPage';
 
 // Pages
 import Dashboard from './pages/Dashboard';
+import DemoDashboard from './pages/DemoDashboard';
+import WelcomePage from './pages/WelcomePage';
 import RecoveryMatrix from './pages/RecoveryMatrix';
 import ImpactAssessment from './pages/ImpactAssessment';
 import PPOSTWorkspace from './pages/PPOSTWorkspace';
@@ -25,8 +27,7 @@ import Settings from './pages/Settings';
 const navItems = [
   { section: 'OVERVIEW', items: [
     { label: 'Dashboard', path: '/' },
-    { label: 'Disaster Events', path: '/disasters' },
-  ]},
+    ]},
   { section: 'PLANNING', items: [
     { label: 'Impact Assessment', path: '/assessment', badge: '6' },
     { label: 'Recovery Matrix', path: '/matrix' },
@@ -36,15 +37,10 @@ const navItems = [
     { label: 'Initial Recovery Plan', path: '/recovery-plan' },
   ]},
   { section: 'IMPLEMENTATION', items: [
-    { label: 'Recovery Projects', path: '/projects' },
     { label: 'Financial Tracking', path: '/financial' },
   ]},
-  { section: 'INTELLIGENCE', items: [
-    { label: 'AI Copilot', path: '/ai' },
-    { label: 'Reports', path: '/reports' },
-  ]},
   { section: 'GOVERNANCE', items: [
-    { label: 'Documents & Evidence', path: '/documents' },
+    { label: 'Documents', path: '/documents' },
     { label: 'Audit & Approvals', path: '/audit', badge: '5' },
     { label: 'Settings', path: '/settings' },
   ]},
@@ -118,7 +114,7 @@ const Topbar = () => {
     '/financial': 'Financial Tracking',
     '/ai': 'AI Copilot',
     '/reports': 'Reports',
-    '/documents': 'Documents & Evidence',
+    '/documents': 'Documents',
     '/audit': 'Audit & Approvals',
     '/settings': 'Settings',
   };
@@ -138,13 +134,6 @@ const Topbar = () => {
         Overview / <span className="text-white">{pageNames[location.pathname] || 'Dashboard'}</span>
       </div>
       <div className="flex items-center gap-3">
-        <input
-          className="bg-gray-800 text-xs text-gray-400 rounded px-3 py-1.5 w-48 outline-none"
-          placeholder="Search records, plans..."
-        />
-        <button className="bg-green-700 hover:bg-green-600 text-white text-xs px-3 py-1.5 rounded">
-          AI Copilot
-        </button>
         <div
           title={user?.email ?? ''}
           className="w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center text-xs font-bold cursor-default"
@@ -201,7 +190,9 @@ const App: React.FC = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
 
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute><WelcomePage /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/demo" element={<ProtectedRoute><DemoDashboard /></ProtectedRoute>} />
           <Route path="/assessment" element={<ProtectedRoute><ImpactAssessment /></ProtectedRoute>} />
           <Route path="/matrix" element={<ProtectedRoute><RecoveryMatrix /></ProtectedRoute>} />
           <Route path="/ppost" element={<ProtectedRoute><PPOSTWorkspace /></ProtectedRoute>} />
