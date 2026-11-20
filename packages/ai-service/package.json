@@ -19,7 +19,11 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "node --test \"test/**/*.test.ts\"",
-    "example:plan": "node examples/recoveryPlanMock.ts"
+    "example:plan": "node examples/recoveryPlanMock.ts",
+    "pretypecheck": "npm run build --prefix ../plan-document",
+    "pretest": "npm run build --prefix ../plan-document",
+    "prebuild": "npm run build --prefix ../plan-document",
+    "cli": "node src/cli.ts"
   },
   "devDependencies": {
     "@types/node": "^26.6.5",
@@ -27,6 +31,12 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",
-    "zod": "^4.6.7"
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "zod": "^4.6.7",
+    "@ppost/plan-document": "*"
+  },
+  "bin": {
+    "ppost-plan": "./dist/cli.js"
   }
 }

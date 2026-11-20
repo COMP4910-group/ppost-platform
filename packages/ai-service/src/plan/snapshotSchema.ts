@@ -149,6 +149,167 @@ export const SnapshotKnownGapSchema = z.object({
   detectedBy: text.optional(),
 });
 
+// ---------------------------------------------------------------------------
+// Optional source-export extensions (built by src/sources/buildSnapshot.ts).
+// Money is a decimal string ("124077.10"), never a float, so supplied figures
+// are reproduced exactly. Supplied figures are never replaced: reconciliation
+// results are reported as findings.
+// ---------------------------------------------------------------------------
+
+/** Non-negative amount with at most two decimals, exactly as supplied. */
+export const MoneySchema = z.string().regex(/^\d+(\.\d{1,2})?$/, "Amount must be a non-negative decimal with at most 2 places");
+/** Signed amount (e.g. a funding gap that can be negative). */
+export const SignedMoneySchema = z.string().regex(/^-?\d+(\.\d{1,2})?$/, "Amount must be a decimal with at most 2 places");
+
+export const SourceProvenanceSchema = z.object({
+  /** Citable ID for the file, e.g. "SRC-FINANCE". */
+  sourceId: id,
+  kind: z.enum(["PPOST_EXPORT", "IMPACT_EXPORT", "MATRIX_EXPORT", "FINANCE_REPORT"]),
+  fileName: text,
+  sha256: z.string().regex(/^[0-9a-f]{64}$/),
+  bytes: z.number().int().min(0),
+  submittedBy: text.optional(),
+  lastUpdated: text.optional(),
+  generatedAt: text.optional(),
+  formatVersion: text.optional(),
+  synthetic: z.boolean(),
+  /** Shown verbatim wherever the source's figures appear. */
+  disclaimer: text.optional(),
+});
+
+export const EventMappingSchema = z.object({
+  teamEventId: text,
+  ppostDisasterId: id,
+  financeEventId: id.optional(),
+  status: z.enum(["CONFIRMED", "ASSUMED"]),
+  basis: text.optional(),
+  confirmedBy: text.optional(),
+});
+
+export const FindingCodeSchema = z.enum([
+  "EVENT_MAPPING_ASSUMED",
+  "SOURCE_LABELS_MAPPING_ASSUMED",
+  "EVENT_NAME_DIFFERS",
+  "FINANCE_TACTIC_NOT_IN_PPOST",
+  "TACTIC_DESCRIPTION_REVIEW",
+  "COMPETING_COSTS",
+  "PPOST_COST_POINTER_MISSING",
+  "FUTURE_DATE",
+  "RECONCILIATION_MISMATCH",
+  "MONEY_NOT_EXACT",
+  "SYNTHETIC_SOURCE",
+  "SUPPLIED_FROM_FINANCE",
+  "UNRESOLVED_DOCUMENT_REFERENCE",
+]);
+
+export const FindingSchema = z.object({
+  id,
+  code: FindingCodeSchema,
+  status: z.enum(["REQUIRES_CONFIRMATION", "INFO"]),
+  message: text,
+  recordIds: z.array(id).default([]),
+  sourceIds: z.array(id).default([]),
+});
+
+export const PpostCostEntrySchema = z.object({
+  id,
+  sourceId: id,
+  tacticId: id,
+  amount: MoneySchema,
+  /** PPOST sample amounts carry no currency; never assumed. */
+  currency: text.optional(),
+  stage: text,
+  status: text,
+  revision: text.optional(),
+  enteredBy: text.optional(),
+  at: text.optional(),
+  /** True only for the entry the PPOST tactic points to as its current cost. */
+  isCurrent: z.boolean(),
+});
+
+const ppostLink = z.enum(["TITLES_MATCH", "REQUIRES_REVIEW", "NOT_IN_PPOST"]);
+
+export const SnapshotFinanceSchema = z.object({
+  sourceId: id,
+  schemaVersion: text,
+  currency: text,
+  disclaimer: text,
+  /** As supplied by the finance report (never recomputed in place). */
+  summary: z.object({
+    requirement: MoneySchema,
+    finalized: MoneySchema,
+    notYetApproved: MoneySchema,
+    approvedFunding: MoneySchema,
+    requestedFunding: MoneySchema,
+    likelyFunding: MoneySchema,
+    realisticFunding: MoneySchema,
+    gap: SignedMoneySchema,
+    coveragePct: text,
+    committed: MoneySchema,
+    spent: MoneySchema,
+    claimed: MoneySchema,
+    reimbursed: MoneySchema,
+    tacticsEstimated: z.number().int().min(0),
+    tacticsNeedingEstimate: z.array(id).default([]),
+  }),
+  estimates: z.array(
+    z.object({
+      code: id,
+      tacticId: id,
+      title: text,
+      revision: text,
+      status: text,
+      estimateClass: text,
+      total: MoneySchema,
+      low: MoneySchema,
+      high: MoneySchema,
+      accuracyLowPct: z.number(),
+      accuracyHighPct: z.number(),
+      preparedBy: text.optional(),
+      preparedDate: text.optional(),
+      reviewedBy: text.optional(),
+      scopeDescription: text.optional(),
+      ppostLink,
+    }),
+  ),
+  costHistory: z.array(
+    z.object({ tacticId: id, revision: text, status: text, total: MoneySchema, at: text, by: text.optional(), reason: text.optional() }),
+  ),
+  fundingSources: z.array(
+    z.object({
+      code: id,
+      name: text,
+      status: text,
+      confirmed: z.boolean(),
+      likely: z.boolean(),
+      amount: MoneySchema,
+      mixGroup: text,
+      tacticIds: z.array(id).default([]),
+    }),
+  ),
+  fundingRequests: z.array(
+    z.object({ code: id, title: text, fundingSourceCode: id, amount: MoneySchema, status: text, sentAt: text.optional() }),
+  ),
+  fundingMix: z.array(z.object({ group: text, pct: text, amount: MoneySchema })),
+  financialEntries: z.array(
+    z.object({ code: id, tacticId: id, stage: text, amount: MoneySchema, entryDate: text, reference: text.optional() }),
+  ),
+  lifecycle: z.array(
+    z.object({
+      tacticId: id,
+      currentStage: text,
+      approvedBudget: MoneySchema.optional(),
+      committed: MoneySchema,
+      spent: MoneySchema,
+      claimed: MoneySchema,
+      reimbursed: MoneySchema,
+      remainingBudget: SignedMoneySchema.optional(),
+      varianceStatus: text.optional(),
+    }),
+  ),
+  reconciliation: z.object({ checks: z.number().int().min(0), mismatches: z.number().int().min(0) }),
+});
+
 export const PlanSourceSnapshotSchema = z
   .object({
     capturedAt: text,
@@ -170,6 +331,12 @@ export const PlanSourceSnapshotSchema = z
     strategies: z.array(SnapshotStrategySchema).default([]),
     tactics: z.array(SnapshotTacticSchema).default([]),
     knownGaps: z.array(SnapshotKnownGapSchema).default([]),
+    // Source-export extensions (all optional; absent for hand-built snapshots).
+    sources: z.array(SourceProvenanceSchema).default([]),
+    eventMapping: EventMappingSchema.optional(),
+    ppostCosts: z.array(PpostCostEntrySchema).default([]),
+    finance: SnapshotFinanceSchema.optional(),
+    findings: z.array(FindingSchema).default([]),
   })
   .superRefine((snapshot, ctx) => {
     // Source record IDs must be unique across the whole snapshot so that every
@@ -207,8 +374,10 @@ export function listSourceRecordIds(
   snapshot: Pick<
     PlanSourceSnapshot,
     "disaster" | "priorities" | "assessment" | "problems" | "objectives" | "strategies" | "tactics"
-  >,
+  > &
+    Partial<Pick<PlanSourceSnapshot, "sources" | "ppostCosts" | "finance">>,
 ): string[] {
+  const finance = snapshot.finance;
   return [
     snapshot.disaster.id,
     ...snapshot.priorities.map((r) => r.id),
@@ -218,5 +387,15 @@ export function listSourceRecordIds(
     ...snapshot.objectives.map((r) => r.id),
     ...snapshot.strategies.map((r) => r.id),
     ...snapshot.tactics.map((r) => r.id),
+    ...(snapshot.sources ?? []).map((s) => s.sourceId),
+    ...(snapshot.ppostCosts ?? []).map((c) => c.id),
+    ...(finance
+      ? [
+          ...finance.estimates.map((e) => e.code),
+          ...finance.fundingSources.map((s) => s.code),
+          ...finance.fundingRequests.map((r) => r.code),
+          ...finance.financialEntries.map((e) => e.code),
+        ]
+      : []),
   ];
 }

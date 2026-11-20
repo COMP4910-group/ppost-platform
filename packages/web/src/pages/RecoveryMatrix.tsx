@@ -1,12 +1,23 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { buildMatrix, MatrixCell, orderedPriorities, SECTORS, SectorId, TimeHorizon } from 'ppost-engine';
-import { usePpost } from '../ppost/store';
-import { PpostState } from '../ppost/seedData';
+import { buildMatrix, CellStatus, MatrixCell, orderedPriorities, SECTORS, SectorId, TimeHorizon } from 'ppost-engine';
+import { StoreState, usePpost } from '../ppost/store';
+import { useServerSync } from '../ppost/sync';
+import { SyncStatusChip } from '../ppost/HistoryPanel';
+import { costCellStatus, costState, currentCost, money, moneyFull, rollup, STAGE_LABEL, tacticsForCell } from '../ppost/financeBridge';
 import { EditorTarget, EntityEditor } from '../ppost/EntityEditor';
 import { Button, CELL_STYLE, Drawer, HORIZON_LABEL, IdChip, SeverityBadge, StatusBadge, UnknownBadge, sectorLabel } from '../ppost/ui';
 
 type View = 'grid' | 'table';
+type Lens = 'status' | 'cost';
+type PpostState = StoreState;
+
+const COST_STYLE: Record<CellStatus, { cls: string; icon: string; label: string }> = {
+  RED: { cls: 'bg-red-950 border-red-500 text-red-200', icon: '$?', label: 'Needs estimate' },
+  AMBER: { cls: 'bg-amber-950 border-amber-500 text-amber-200', icon: '≈', label: 'Draft money' },
+  GREEN: { cls: 'bg-green-950 border-green-500 text-green-200', icon: '✓', label: 'Finalized' },
+  NOT_ASSESSED: { cls: 'bg-gray-900 border-gray-700 text-gray-500', icon: '○', label: 'No tactics' },
+};
 
 /** Keep only records in a time horizon (objectives carry the horizon). */
 function filterByHorizon(s: PpostState, h: TimeHorizon | 'ALL'): PpostState {
@@ -26,11 +37,13 @@ function filterByHorizon(s: PpostState, h: TimeHorizon | 'ALL'): PpostState {
 }
 
 const RecoveryMatrix = () => {
+  useServerSync();
   const all = usePpost();
   const navigate = useNavigate();
   const [horizon, setHorizon] = useState<TimeHorizon | 'ALL'>('ALL');
   const [showGovernance, setShowGovernance] = useState(false);
   const [view, setView] = useState<View>('grid');
+  const [lens, setLens] = useState<Lens>('status');
   const [selected, setSelected] = useState<MatrixCell | null>(null);
   const [editing, setEditing] = useState<EditorTarget | null>(null);
 
@@ -40,6 +53,8 @@ const RecoveryMatrix = () => {
   const grid = useMemo(() => buildMatrix(priorities, sectors, s), [priorities, sectors, s]);
   const flat = grid.flat();
   const count = (st: string) => flat.filter((c) => c.status === st).length;
+  const cellCost = (c: MatrixCell) => rollup(s, tacticsForCell(s, c.priorityId, c.sector));
+  const program = rollup(s, flat.flatMap((c) => tacticsForCell(s, c.priorityId, c.sector)));
 
   return (
     <div className="p-6 text-white">
@@ -52,6 +67,7 @@ const RecoveryMatrix = () => {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <SyncStatusChip />
           <div role="group" aria-label="Time horizon" className="flex rounded border border-gray-700 overflow-hidden">
             {(['ALL', 'IMMEDIATE', 'MID_TERM', 'LONG_TERM'] as const).map((h) => (
               <button key={h} onClick={() => setHorizon(h)} aria-pressed={horizon === h}
@@ -66,13 +82,40 @@ const RecoveryMatrix = () => {
                 className={`text-xs px-3 py-1.5 capitalize ${view === v ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800'}`}>{v}</button>
             ))}
           </div>
+          <div role="group" aria-label="Show" className="flex rounded border border-gray-700 overflow-hidden">
+            {(['status', 'cost'] as Lens[]).map((l) => (
+              <button key={l} onClick={() => setLens(l)} aria-pressed={lens === l}
+                className={`text-xs px-3 py-1.5 ${lens === l ? 'bg-gray-700 text-white' : 'text-gray-400 hover:bg-gray-800'}`}>
+                {l === 'status' ? 'Planning status' : 'Cost ($)'}
+              </button>
+            ))}
+          </div>
           <Button onClick={() => setShowGovernance((g) => !g)}>
             {showGovernance ? 'Hide Governance' : 'Activate Governance'}
           </Button>
         </div>
       </div>
 
+      {lens === 'cost' && (
+        <section aria-label="Cost summary" className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <CostTile label="Total estimated need" value={moneyFull(program.total)} sub={`${program.tacticCount} tactics in view`} />
+          <CostTile label="Finalized" value={moneyFull(program.finalized)} sub="tactic approved + estimate approved" tone="text-green-300" />
+          <CostTile label="Draft / not finalized" value={moneyFull(program.draft)} sub="allowances and estimates still in draft or review" tone="text-amber-300" />
+          <CostTile label="Needs an estimate" value={`${program.needsEstimate.length} tactics`} sub={program.needsEstimate.join(', ') || 'none'} tone="text-red-300" />
+        </section>
+      )}
+
       {/* legend + summary */}
+      {lens === 'cost' ? (
+        <div className="flex flex-wrap gap-3 mb-4 text-xs">
+          {(['RED', 'AMBER', 'GREEN', 'NOT_ASSESSED'] as const).map((st) => (
+            <span key={st} className={`px-2 py-1 rounded border ${COST_STYLE[st].cls}`}>{COST_STYLE[st].icon} {COST_STYLE[st].label}</span>
+          ))}
+          <span className="text-gray-500 self-center">
+            Numbers come from each tactic's latest cost: an initial allowance typed in PPOST, or a Class D estimate from the Class D Estimates page.
+          </span>
+        </div>
+      ) : (
       <div className="flex flex-wrap gap-3 mb-4 text-xs">
         {(['RED', 'AMBER', 'GREEN', 'NOT_ASSESSED'] as const).map((st) => (
           <span key={st} className={`px-2 py-1 rounded border ${CELL_STYLE[st].cls}`}>
@@ -84,6 +127,7 @@ const RecoveryMatrix = () => {
           Red = safety UNKNOWN or high-severity problem with no objective · Amber = incomplete chain or missing owner · Green = complete chain with owners
         </span>
       </div>
+      )}
 
       {view === 'grid' ? (
         <div className="overflow-x-auto">
@@ -104,19 +148,32 @@ const RecoveryMatrix = () => {
                       className="text-sm text-gray-200 hover:text-green-400 text-left" title="Open this priority in the PPOST Workspace">
                       <span className="text-gray-500 mr-1">{p.rank}.</span>{p.name}
                     </button>
+                    {lens === 'cost' && (
+                      <div className="text-[11px] text-gray-400">{money(grid[r].reduce((n, c) => n + cellCost(c).total, 0))}</div>
+                    )}
                   </th>
                   {grid[r].map((cell) => {
-                    const st = CELL_STYLE[cell.status];
+                    const cr = lens === 'cost' ? cellCost(cell) : undefined;
+                    const st = cr ? COST_STYLE[costCellStatus(cr)] : CELL_STYLE[cell.status];
                     const isSel = selected?.priorityId === cell.priorityId && selected?.sector === cell.sector;
                     return (
                       <td key={cell.sector} className="p-0">
                         <button
                           onClick={() => setSelected(cell)}
-                          aria-label={`${p.name} × ${sectorLabel(cell.sector)}: ${st.label}, ${cell.problemCount} problems, ${cell.objectiveCount} objectives, ${cell.tacticCount} tactics, ${cell.unknownCount} unknown`}
+                          aria-label={cr
+                            ? `${p.name} × ${sectorLabel(cell.sector)}: ${st.label}, ${moneyFull(cr.total)} total, ${moneyFull(cr.finalized)} finalized, ${cr.needsEstimate.length} need estimate`
+                            : `${p.name} × ${sectorLabel(cell.sector)}: ${st.label}, ${cell.problemCount} problems, ${cell.objectiveCount} objectives, ${cell.tacticCount} tactics, ${cell.unknownCount} unknown`}
                           className={`w-full min-h-[76px] text-left rounded-lg p-2 text-xs ${st.cls} ${cell.unknownCount ? 'border-2 border-dashed !border-amber-400' : 'border'} ${isSel ? 'ring-2 ring-blue-500' : ''} hover:brightness-125 focus:outline-none focus:ring-2 focus:ring-blue-500`}
                         >
-                          <div className="font-semibold">{st.icon} {st.label}</div>
-                          {cell.problemCount > 0 && (
+                          <div className="font-semibold">{st.icon} {cr && cr.total > 0 ? money(cr.total) : st.label}</div>
+                          {cr && cr.tacticCount > 0 && (
+                            <div className="mt-0.5 opacity-90 leading-snug">
+                              {cr.finalized > 0 && <div>✓ {money(cr.finalized)} final</div>}
+                              {cr.draft > 0 && <div>≈ {money(cr.draft)} draft</div>}
+                              {cr.needsEstimate.length > 0 && <div className="text-red-300">{cr.needsEstimate.length} need estimate</div>}
+                            </div>
+                          )}
+                          {!cr && cell.problemCount > 0 && (
                             <>
                               <div className="mt-0.5 opacity-90">
                                 {cell.problemCount}P · {cell.objectiveCount}O · {cell.tacticCount}T
@@ -139,7 +196,7 @@ const RecoveryMatrix = () => {
       ) : (
         <table className="w-full text-sm" aria-label="Recovery Matrix as table">
           <thead className="text-xs text-gray-400 border-b border-gray-800">
-            <tr>{['Priority', 'Sector', 'Status', 'Problems', 'Objectives', 'Tactics', 'Unknown', 'Complete', 'Why'].map((h) => <th key={h} className="text-left py-2 pr-3 font-medium">{h}</th>)}</tr>
+            <tr>{['Priority', 'Sector', 'Status', 'Problems', 'Objectives', 'Tactics', 'Unknown', 'Complete', 'Est. cost', 'Finalized', 'Why'].map((h) => <th key={h} className="text-left py-2 pr-3 font-medium">{h}</th>)}</tr>
           </thead>
           <tbody>
             {flat.filter((c) => c.status !== 'NOT_ASSESSED').map((c) => {
@@ -151,6 +208,8 @@ const RecoveryMatrix = () => {
                   <td className="pr-3">{CELL_STYLE[c.status].icon} {CELL_STYLE[c.status].label}</td>
                   <td className="pr-3">{c.problemCount}</td><td className="pr-3">{c.objectiveCount}</td><td className="pr-3">{c.tacticCount}</td>
                   <td className="pr-3">{c.unknownCount || '—'}</td><td className="pr-3">{c.completeness}%</td>
+                  <td className="pr-3 whitespace-nowrap">{moneyFull(cellCost(c).total)}</td>
+                  <td className="pr-3 whitespace-nowrap">{moneyFull(cellCost(c).finalized)}</td>
                   <td className="text-xs text-gray-400">{c.reasons.join('; ')}</td>
                 </tr>
               );
@@ -182,6 +241,7 @@ function CellDrawer({ cell, s, onClose, onEdit, onOpenWorkspace }: {
         <div className="font-semibold text-white">{st.icon} {st.label} · {cell.completeness}% of chains complete</div>
       </div>
     }>
+      <CellCostBox s={s} cell={cell} />
       {cell.reasons.length > 0 && (
         <div className="mb-4 rounded border border-gray-700 bg-gray-950 p-3 text-xs text-gray-300">
           <div className="font-semibold mb-1">Why this colour</div>
@@ -211,7 +271,7 @@ function CellDrawer({ cell, s, onClose, onEdit, onOpenWorkspace }: {
                     {s.tactics.filter((t) => t.strategyId === x.id && t.status !== 'ARCHIVED').map((t) => (
                       <div key={t.id} className="ml-3 pl-3 border-l border-gray-700">
                         <Row label="Tactic" id={t.id} title={t.title} onClick={() => onEdit({ kind: 'tactic', record: t })}
-                          extra={<>{t.owner ? <span className="text-[11px] text-gray-400">{t.owner}</span> : <span className="text-[11px] text-red-300">⚠ No owner</span>}<StatusBadge status={t.status} /></>} />
+                          extra={<>{t.owner ? <span className="text-[11px] text-gray-400">{t.owner}</span> : <span className="text-[11px] text-red-300">⚠ No owner</span>}<StatusBadge status={t.status} /><TacticCostChip s={s} t={t} /></>} />
                       </div>
                     ))}
                   </div>
@@ -234,5 +294,41 @@ const Row = ({ label, id, title, onClick, extra }: { label: string; id: string; 
     </div>
   </button>
 );
+
+const CostTile = ({ label, value, sub, tone = 'text-white' }: { label: string; value: string; sub: string; tone?: string }) => (
+  <div className="rounded-lg border border-gray-800 bg-gray-900 p-3">
+    <div className={`text-lg font-bold ${tone}`}>{value}</div>
+    <div className="text-xs text-gray-300">{label}</div>
+    <div className="text-[11px] text-gray-500 truncate" title={sub}>{sub}</div>
+  </div>
+);
+
+function CellCostBox({ s, cell }: { s: PpostState; cell: MatrixCell }) {
+  const r = rollup(s, tacticsForCell(s, cell.priorityId, cell.sector));
+  if (!r.tacticCount) return null;
+  return (
+    <div className="mb-4 rounded border border-gray-700 bg-gray-950 p-3 text-xs text-gray-300">
+      <div className="font-semibold mb-1">Money for this area</div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1">
+        <span>Total <b className="text-white">{moneyFull(r.total)}</b></span>
+        <span className="text-green-300">Finalized {moneyFull(r.finalized)}</span>
+        <span className="text-amber-300">Draft {moneyFull(r.draft)}</span>
+        {r.needsEstimate.length > 0 && <span className="text-red-300">Needs estimate: {r.needsEstimate.join(', ')}</span>}
+      </div>
+    </div>
+  );
+}
+
+function TacticCostChip({ s, t }: { s: PpostState; t: import('ppost-engine').Tactic }) {
+  const cost = currentCost(s, t.id);
+  const st = costState(t, cost);
+  if (st === 'NEEDS_ESTIMATE') return <span className="text-[11px] px-1.5 py-0.5 rounded border border-red-800 text-red-300">$ needs estimate</span>;
+  return (
+    <span title={`${STAGE_LABEL[cost!.stage]}${cost!.revision ? ' ' + cost!.revision : ''} · ${cost!.status}`}
+      className={`text-[11px] px-1.5 py-0.5 rounded ${st === 'FINALIZED' ? 'bg-green-950 text-green-300' : 'bg-amber-950 text-amber-300'}`}>
+      {moneyFull(cost!.amount)} {st === 'FINALIZED' ? '✓' : '(draft)'}
+    </span>
+  );
+}
 
 export default RecoveryMatrix;

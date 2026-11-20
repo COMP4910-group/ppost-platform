@@ -37,7 +37,9 @@ export function previewAssessment(s: StoreState, questions: QuestionUI[]): Asses
   const proposals: Proposal[] = r.problems.map((problem) => {
     const questionId = qidOf(problem);
     const linked = s.assessment.linked[questionId];
-    const proposal: Proposal = { questionId, problem, alreadyIn: linked && live(linked) ? linked : undefined };
+    const note = s.assessment.notes[questionId]?.trim();
+    const withNote = note ? { ...problem, description: `From assessment ${questionId}: ${note}` } : problem;
+    const proposal: Proposal = { questionId, problem: withNote, alreadyIn: linked && live(linked) ? linked : undefined };
     const tactic = r.tactics.find((t) => t.id === `T-${questionId}-SAFE`);
     if (problem.fromUnknownQuestionId && tactic) {
       const meta = { disasterId: problem.disasterId, source: 'RULE' as const, status: 'DRAFT' as const, createdAt: problem.createdAt, updatedAt: problem.updatedAt };
@@ -96,4 +98,9 @@ export function applyAssessment(preview: AssessmentPreview) {
     records: added,
     tasks,
   };
+}
+
+/** UNKNOWN answers must explain what is unknown, why, and who is checking. */
+export function unknownsWithoutNotes(s: StoreState, visibleIds: string[]): string[] {
+  return visibleIds.filter((id) => s.assessment.answers[id] === 'UNKNOWN' && !s.assessment.notes[id]?.trim());
 }

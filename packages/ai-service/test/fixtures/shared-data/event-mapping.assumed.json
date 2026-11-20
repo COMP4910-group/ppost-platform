@@ -1,0 +1,13 @@
+{
+  "mapping_version": 1,
+  "mappings": [
+    {
+      "team_event_id": "1",
+      "ppost_disaster_id": "EV-2026-014",
+      "finance_event_id": "EV-2026-014",
+      "status": "assumed",
+      "basis": "Divyansh's exports state data.event_mapping { event_id: 1, ppost_disaster_id: EV-2026-014, mapping_status: assumed_for_sample }; Daniel's finance report uses event.id EV-2026-014.",
+      "confirmed_by": null
+    }
+  ]
+}

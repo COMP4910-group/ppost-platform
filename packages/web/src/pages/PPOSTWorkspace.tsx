@@ -4,6 +4,8 @@ import {
   buildMatrix, CellStatus, Objective, orderedPriorities, Priority, Problem, SECTORS, Strategy,
 } from 'ppost-engine';
 import { discardDraft, resetDemoData, setPriorities, StoreState, usePpost } from '../ppost/store';
+import { useServerSync } from '../ppost/sync';
+import { ActivityLog, SyncStatusChip } from '../ppost/HistoryPanel';
 import { EditorTarget, EntityEditor, tacticIssues } from '../ppost/EntityEditor';
 import { blankObjective, blankProblem, blankStrategy, blankTactic } from '../ppost/records';
 import {
@@ -21,7 +23,9 @@ function rowStatus(cells: { status: CellStatus }[]): CellStatus {
 }
 
 const PPOSTWorkspace = () => {
+  useServerSync();
   const s = usePpost();
+  const [showLog, setShowLog] = useState(false);
   const navigate = useNavigate();
   const [params, setParams] = useSearchParams();
   const scope = params.get('priority') ?? ALL;
@@ -46,7 +50,9 @@ const PPOSTWorkspace = () => {
           <h1 className="text-2xl font-bold">PPOST Workspace</h1>
           <p className="text-sm text-gray-400 mt-1">Priority → Problem → Objective → Strategy → Tactic</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <SyncStatusChip />
+          <Button onClick={() => setShowLog(true)}>Activity log</Button>
           <Button variant="ghost" onClick={() => { if (window.confirm('Reset all PPOST data to the synthetic demo data?')) resetDemoData(); }}>Reset demo data</Button>
           <Button onClick={() => setManaging(true)}>Manage priorities</Button>
           <Button onClick={() => navigate('/matrix')}>Open Recovery Matrix</Button>
@@ -98,6 +104,7 @@ const PPOSTWorkspace = () => {
           onEdit={setEditing} onFocus={() => setScope(p.id)} />
       ))}
 
+      {showLog && <ActivityLog onClose={() => setShowLog(false)} />}
       {editing && (
         <EntityEditor key={editing.record.id} target={editing} onClose={() => setEditing(null)} onOpen={setEditing} />
       )}

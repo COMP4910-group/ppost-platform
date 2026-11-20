@@ -22,7 +22,11 @@ export type PlanRecordType =
   | 'STRATEGY'
   | 'TACTIC'
   | 'ASSESSMENT_QUESTION'
-  | 'VERIFICATION_TASK';
+  | 'VERIFICATION_TASK'
+  | 'SOURCE_FILE'
+  | 'FINANCE_ESTIMATE'
+  | 'FUNDING_SOURCE'
+  | 'COST_ENTRY';
 
 export interface PlanRecord {
   type: 'RECORD';
@@ -51,8 +55,10 @@ export type PlanSectionKey =
   | 'RECOVERY_PRIORITIES'
   | 'PPOST_CHAINS'
   | 'RESOURCES_AND_BUDGET'
+  | 'COSTS_AND_FUNDING'
   | 'GAPS_AND_CONFIRMATIONS'
   | 'RECOMMENDED_NEXT_STEPS'
+  | 'SOURCE_PROVENANCE'
   | 'SOURCE_RECORD_INDEX';
 
 export interface PlanSection {

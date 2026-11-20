@@ -1,0 +1,1886 @@
+{
+  "event_id": 1,
+  "event_name": "Clearwater Ridge Wildfire",
+  "submitted_by": "Divyansh",
+  "last_updated": "2026-11-18",
+  "data": {
+    "file_format_version": 1,
+    "module": "PPOST Workspace",
+    "owner": "Divyansh (PPOST)",
+    "ppost_disaster_id": "EV-2026-014",
+    "event_mapping": {
+      "event_id": 1,
+      "ppost_disaster_id": "EV-2026-014",
+      "mapping_status": "assumed_for_sample",
+      "note": "The team format uses event_id 1. Inside PPOST the same wildfire is identified as \"EV-2026-014\" (every PPOST record has disaster_id = \"EV-2026-014\"). This mapping is agreed for these sample files only; it is not a database join. Once Earl's disasters table is connected, PPOST will store the real event id."
+    },
+    "sample_data": true,
+    "sample_data_note": "Synthetic demonstration data for the fictional Clearwater Ridge Wildfire. Generated from the PPOST seed data and the real PPOST rules engine with a sample set of assessment answers. Not live data, not read from Supabase.",
+    "generated_at": "2026-11-18T17:40:00Z",
+    "field_names": "snake_case versions of the app's camelCase fields (e.g. priority_id = priorityId, five_w1h = fiveW1H).",
+    "related_files": [
+      "impact.json",
+      "ppost.json",
+      "matrix.json",
+      "activity_history.json"
+    ],
+    "hierarchy": "Priority → Problem → Objective → Strategy → Tactic (an objective can address several problems; each strategy has one objective; each tactic has one strategy)",
+    "dashboard_summary": {
+      "problems": 12,
+      "objectives": 9,
+      "strategies": 10,
+      "tactics": 12,
+      "archived_records": 1,
+      "items_awaiting_review": 16,
+      "items_awaiting_review_ids": [
+        "P-04",
+        "P-05",
+        "P-Q-HW03",
+        "P-Q-W03-D2",
+        "O-Q-W03",
+        "S-Q-W03",
+        "T-014",
+        "T-015",
+        "T-017",
+        "T-018",
+        "T-020",
+        "T-021",
+        "T-022",
+        "T-023",
+        "T-024",
+        "T-Q-W03-SAFE"
+      ],
+      "unknown_generated_problems": 2,
+      "unknown_generated_problem_ids": [
+        "P-04",
+        "P-05"
+      ],
+      "tactics_missing_owner": 3,
+      "tactics_missing_owner_ids": [
+        "T-020",
+        "T-022",
+        "T-Q-W03-SAFE"
+      ],
+      "tactics_incomplete_5w1h": 10,
+      "incomplete_ppost_chains": 6,
+      "incomplete_chain_problem_ids": [
+        "P-02",
+        "P-05",
+        "P-07",
+        "P-09",
+        "P-Q-HW03",
+        "P-Q-W03-D2"
+      ],
+      "chain_completeness_percent": 50,
+      "problems_by_priority": {
+        "PR-1": 1,
+        "PR-2": 1,
+        "PR-3": 2,
+        "PR-4": 2,
+        "PR-5": 1,
+        "PR-6": 3,
+        "PR-7": 1,
+        "PR-8": 1
+      },
+      "problems_by_sector": {
+        "HUMAN_WELLNESS": 2,
+        "HOUSING": 4,
+        "ENVIRONMENT": 1,
+        "ECONOMY": 1,
+        "CRITICAL_INFRASTRUCTURE": 4,
+        "GOVERNANCE": 0
+      },
+      "problems_by_severity": {
+        "HIGH": 7,
+        "CRITICAL": 2,
+        "MEDIUM": 3
+      },
+      "tactics_by_status": {
+        "DRAFT": 9,
+        "IN_REVIEW": 1,
+        "APPROVED": 2
+      },
+      "verification_tasks_open": 2,
+      "counting_rule": "Counts exclude ARCHIVED records (archived records are kept, never deleted). A chain is complete when the problem has objective → strategy → tactic and every tactic has an owner (same rule as the Recovery Matrix)."
+    },
+    "enums": {
+      "status": [
+        "DRAFT",
+        "IN_REVIEW",
+        "APPROVED",
+        "ARCHIVED"
+      ],
+      "record_state": {
+        "DRAFT": "draft",
+        "IN_REVIEW": "awaiting_review",
+        "APPROVED": "approved",
+        "ARCHIVED": "archived"
+      },
+      "source": {
+        "SOURCE_FACT": "situation_fact",
+        "HUMAN_DECISION": "user",
+        "RULE": "rules_engine",
+        "AI_SUGGESTION": "ai_suggestion",
+        "ASSUMPTION": "assumption"
+      },
+      "severity": [
+        "CRITICAL",
+        "HIGH",
+        "MEDIUM",
+        "LOW"
+      ],
+      "horizon": {
+        "IMMEDIATE": "0–60 days",
+        "MID_TERM": "Mid-term",
+        "LONG_TERM": "Long-term"
+      }
+    },
+    "priorities": [
+      {
+        "id": "PR-1",
+        "rank": 1,
+        "name": "Responder Safety & Health",
+        "active": true
+      },
+      {
+        "id": "PR-2",
+        "rank": 2,
+        "name": "Save Lives",
+        "active": true
+      },
+      {
+        "id": "PR-3",
+        "rank": 3,
+        "name": "Reduce Suffering",
+        "active": true
+      },
+      {
+        "id": "PR-4",
+        "rank": 4,
+        "name": "Protect Public Health",
+        "active": true
+      },
+      {
+        "id": "PR-5",
+        "rank": 5,
+        "name": "Protect Government Infrastructure",
+        "active": true
+      },
+      {
+        "id": "PR-6",
+        "rank": 6,
+        "name": "Protect Property",
+        "active": true
+      },
+      {
+        "id": "PR-7",
+        "rank": 7,
+        "name": "Protect the Environment",
+        "active": true
+      },
+      {
+        "id": "PR-8",
+        "rank": 8,
+        "name": "Reduce Economic & Social Losses",
+        "active": true
+      }
+    ],
+    "sectors": [
+      {
+        "id": "HUMAN_WELLNESS",
+        "label": "Human Wellness",
+        "optional": false
+      },
+      {
+        "id": "HOUSING",
+        "label": "Housing",
+        "optional": false
+      },
+      {
+        "id": "ENVIRONMENT",
+        "label": "Environment",
+        "optional": false
+      },
+      {
+        "id": "ECONOMY",
+        "label": "Economy",
+        "optional": false
+      },
+      {
+        "id": "CRITICAL_INFRASTRUCTURE",
+        "label": "Critical Infrastructure",
+        "optional": false
+      },
+      {
+        "id": "GOVERNANCE",
+        "label": "Governance",
+        "optional": true
+      }
+    ],
+    "problems": [
+      {
+        "id": "P-01",
+        "title": "Unstable burned structures and hazard trees in work zones",
+        "description": null,
+        "priority_id": "PR-1",
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "severity": "HIGH",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [],
+        "objective_ids": [
+          "O-01"
+        ],
+        "chain_complete": true,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-02",
+        "title": "42 homes destroyed; households cannot return",
+        "description": null,
+        "priority_id": "PR-6",
+        "sector": "HOUSING",
+        "severity": "CRITICAL",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-H01"
+        ],
+        "objective_ids": [
+          "O-04"
+        ],
+        "chain_complete": false,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-03",
+        "title": "Burned debris and ash on 42 residential lots",
+        "description": null,
+        "priority_id": "PR-6",
+        "sector": "HOUSING",
+        "severity": "HIGH",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [],
+        "objective_ids": [
+          "O-05"
+        ],
+        "chain_complete": true,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-04",
+        "title": "Damage to remaining homes not yet assessed",
+        "description": null,
+        "priority_id": "PR-6",
+        "sector": "HOUSING",
+        "severity": "HIGH",
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "RULE",
+        "source_label": "rules_engine",
+        "owner": null,
+        "from_unknown_question_id": "Q-H02",
+        "related_question_ids": [
+          "Q-H02"
+        ],
+        "objective_ids": [
+          "O-05"
+        ],
+        "chain_complete": true,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-05",
+        "title": "Water system integrity not verified",
+        "description": null,
+        "priority_id": "PR-4",
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "severity": "CRITICAL",
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "RULE",
+        "source_label": "rules_engine",
+        "owner": null,
+        "from_unknown_question_id": "Q-W03",
+        "related_question_ids": [
+          "Q-W03"
+        ],
+        "objective_ids": [
+          "O-Q-W03"
+        ],
+        "chain_complete": false,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-06",
+        "title": "Debris-flow risk to downslope homes",
+        "description": null,
+        "priority_id": "PR-2",
+        "sector": "HOUSING",
+        "severity": "HIGH",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-H07"
+        ],
+        "objective_ids": [
+          "O-06"
+        ],
+        "chain_complete": true,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-07",
+        "title": "Evacuees need psychosocial and income support",
+        "description": null,
+        "priority_id": "PR-3",
+        "sector": "HUMAN_WELLNESS",
+        "severity": "MEDIUM",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-HW01"
+        ],
+        "objective_ids": [
+          "O-07"
+        ],
+        "chain_complete": false,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-08",
+        "title": "Highway bridge approach damaged",
+        "description": null,
+        "priority_id": "PR-5",
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "severity": "HIGH",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-R01"
+        ],
+        "objective_ids": [
+          "O-08"
+        ],
+        "chain_complete": true,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-09",
+        "title": "Erosion and sediment risk to Clearwater Creek",
+        "description": null,
+        "priority_id": "PR-7",
+        "sector": "ENVIRONMENT",
+        "severity": "MEDIUM",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-E01"
+        ],
+        "objective_ids": [
+          "O-09"
+        ],
+        "chain_complete": false,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-10",
+        "title": "Local businesses closed during evacuation",
+        "description": null,
+        "priority_id": "PR-8",
+        "sector": "ECONOMY",
+        "severity": "MEDIUM",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "SOURCE_FACT",
+        "source_label": "situation_fact",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-EC01"
+        ],
+        "objective_ids": [
+          "O-10"
+        ],
+        "chain_complete": true,
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "P-Q-HW03",
+        "title": "Reception centres near capacity",
+        "description": "From assessment Q-HW03: Reception centre B reported 92% occupancy at 08:00 (sample note).",
+        "priority_id": "PR-3",
+        "sector": "HUMAN_WELLNESS",
+        "severity": "HIGH",
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "RULE",
+        "source_label": "rules_engine",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-HW03"
+        ],
+        "objective_ids": [],
+        "chain_complete": false,
+        "ai_proposal_id": null,
+        "created_at": "2026-11-18T17:20:00.000Z",
+        "updated_at": "2026-11-18T17:20:00.000Z"
+      },
+      {
+        "id": "P-Q-W03-D2",
+        "title": "No alternate drinking-water supply",
+        "description": "From assessment Q-W03-D2: No tanker contract in place yet (sample note).",
+        "priority_id": "PR-4",
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "severity": "HIGH",
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "RULE",
+        "source_label": "rules_engine",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [
+          "Q-W03-D2"
+        ],
+        "objective_ids": [],
+        "chain_complete": false,
+        "ai_proposal_id": null,
+        "created_at": "2026-11-18T17:20:00.000Z",
+        "updated_at": "2026-11-18T17:20:00.000Z"
+      },
+      {
+        "id": "P-11",
+        "title": "Water intake pressure loss (duplicate of P-05)",
+        "description": null,
+        "priority_id": "PR-4",
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "severity": "HIGH",
+        "status": "ARCHIVED",
+        "record_state": "archived",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "from_unknown_question_id": null,
+        "related_question_ids": [],
+        "objective_ids": [],
+        "chain_complete": null,
+        "ai_proposal_id": null,
+        "created_at": "2026-11-18T17:30:00.000Z",
+        "updated_at": "2026-11-18T17:34:00.000Z"
+      }
+    ],
+    "objectives": [
+      {
+        "id": "O-01",
+        "title": "Make all work zones safe before crews enter",
+        "description": null,
+        "problem_ids": [
+          "P-01"
+        ],
+        "horizon": "IMMEDIATE",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [
+          "S-01"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-04",
+        "title": "Provide safe interim housing for displaced households within 60 days",
+        "description": null,
+        "problem_ids": [
+          "P-02"
+        ],
+        "horizon": "IMMEDIATE",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [
+          "S-07",
+          "S-08"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-05",
+        "title": "Clear and secure destroyed lots for rebuild within 6 months",
+        "description": null,
+        "problem_ids": [
+          "P-03",
+          "P-04"
+        ],
+        "horizon": "MID_TERM",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [
+          "S-09",
+          "S-10"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-06",
+        "title": "Protect downslope residents before winter rains",
+        "description": null,
+        "problem_ids": [
+          "P-06"
+        ],
+        "horizon": "IMMEDIATE",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [
+          "S-11"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-07",
+        "title": "Connect every evacuated household to support services",
+        "description": null,
+        "problem_ids": [
+          "P-07"
+        ],
+        "horizon": "IMMEDIATE",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [
+          "S-12"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-08",
+        "title": "Restore full highway access",
+        "description": null,
+        "problem_ids": [
+          "P-08"
+        ],
+        "horizon": "MID_TERM",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [
+          "S-13"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-09",
+        "title": "Stabilize burned slopes near the creek",
+        "description": null,
+        "problem_ids": [
+          "P-09"
+        ],
+        "horizon": "MID_TERM",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-10",
+        "title": "Help local businesses reopen",
+        "description": null,
+        "problem_ids": [
+          "P-10"
+        ],
+        "horizon": "MID_TERM",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "strategy_ids": [
+          "S-14"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "O-Q-W03",
+        "title": "Keep people safe until \"Water system integrity compromised\" is verified",
+        "description": null,
+        "problem_ids": [
+          "P-05"
+        ],
+        "horizon": "IMMEDIATE",
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "RULE",
+        "source_label": "rules_engine",
+        "owner": null,
+        "strategy_ids": [
+          "S-Q-W03"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-11-18T17:20:00.000Z",
+        "updated_at": "2026-11-18T17:20:00.000Z"
+      }
+    ],
+    "strategies": [
+      {
+        "id": "S-01",
+        "title": "Hazard assessment and removal before entry",
+        "description": null,
+        "objective_id": "O-01",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-001"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-07",
+        "title": "Deploy prefabricated modular units",
+        "description": null,
+        "objective_id": "O-04",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-014"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-08",
+        "title": "Support owner-led rebuilding",
+        "description": null,
+        "objective_id": "O-04",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-017",
+          "T-020"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-09",
+        "title": "Coordinated residential debris removal program",
+        "description": null,
+        "objective_id": "O-05",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-015"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-10",
+        "title": "Lot hazard mitigation and security",
+        "description": null,
+        "objective_id": "O-05",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-016",
+          "T-018"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-11",
+        "title": "Early warning and precautionary evacuation",
+        "description": null,
+        "objective_id": "O-06",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-021"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-12",
+        "title": "Single-window recovery support centre",
+        "description": null,
+        "objective_id": "O-07",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-022"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-13",
+        "title": "Temporary bridge and detour",
+        "description": null,
+        "objective_id": "O-08",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-023"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-14",
+        "title": "Business reopening support",
+        "description": null,
+        "objective_id": "O-10",
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "owner": null,
+        "tactic_ids": [
+          "T-024"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "S-Q-W03",
+        "title": "Precautionary measures until verified",
+        "description": null,
+        "objective_id": "O-Q-W03",
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "RULE",
+        "source_label": "rules_engine",
+        "owner": null,
+        "tactic_ids": [
+          "T-Q-W03-SAFE"
+        ],
+        "ai_proposal_id": null,
+        "created_at": "2026-11-18T17:20:00.000Z",
+        "updated_at": "2026-11-18T17:20:00.000Z"
+      }
+    ],
+    "tactics": [
+      {
+        "id": "T-001",
+        "title": "Hazard tree assessment along work corridors",
+        "description": null,
+        "strategy_id": "S-01",
+        "objective_id": "O-01",
+        "problem_ids": [
+          "P-01"
+        ],
+        "primary_priority_id": "PR-1",
+        "secondary_priority_ids": [],
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "owner": "M. Chen",
+        "missing_owner": false,
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": false,
+        "five_w1h": {
+          "who": {
+            "accountable_person": "M. Chen",
+            "team": "Infrastructure Team"
+          },
+          "what": {
+            "action": "Assess and flag hazard trees along 12 km of work corridors",
+            "deliverable": "Corridor hazard map"
+          },
+          "when": {
+            "start": "2026-10-10",
+            "end": "2026-10-17",
+            "horizon": "IMMEDIATE"
+          },
+          "where": {
+            "location": "Clearwater Ridge access roads"
+          },
+          "why": {
+            "objective_id": "O-01",
+            "rationale": "Crews cannot enter until trees are assessed"
+          },
+          "how": {
+            "approach": "Certified danger-tree assessors with fallers on standby",
+            "delivery_method": "CONTRACTOR"
+          }
+        },
+        "success_measure": "All corridors cleared before crew entry",
+        "incomplete": false,
+        "incomplete_warnings": [],
+        "finance": {
+          "current_cost_entry_id": "C-T-001-2026-10-09",
+          "current_cost_stage": "CLASS_D",
+          "current_cost_amount_sample": 85000,
+          "cost_state": "FINALIZED",
+          "cost_history_entry_ids": [
+            "C-T-001-2026-10-09"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-014",
+        "title": "Install interim modular housing on 42 destroyed lots",
+        "description": null,
+        "strategy_id": "S-07",
+        "objective_id": "O-04",
+        "problem_ids": [
+          "P-02"
+        ],
+        "primary_priority_id": "PR-6",
+        "secondary_priority_ids": [
+          "PR-3"
+        ],
+        "sector": "HOUSING",
+        "owner": "L. Tremblay",
+        "missing_owner": false,
+        "status": "IN_REVIEW",
+        "record_state": "awaiting_review",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": false,
+        "five_w1h": {
+          "who": {
+            "accountable_person": "L. Tremblay",
+            "team": "Regional Housing Taskforce"
+          },
+          "what": {
+            "action": "Prepare pads, connect utilities and set modular units",
+            "deliverable": "42 serviced, occupied units"
+          },
+          "when": {
+            "start": "2026-10-12",
+            "end": "2026-11-02",
+            "horizon": "IMMEDIATE"
+          },
+          "where": {
+            "location": "Clearwater Ridge subdivision",
+            "parcel_ids": [
+              "42 destroyed parcels"
+            ]
+          },
+          "why": {
+            "objective_id": "O-04",
+            "rationale": "Displaced households need safe interim housing"
+          },
+          "how": {
+            "approach": "Contracted site works; modular delivery via highway corridor",
+            "delivery_method": "CONTRACTOR"
+          }
+        },
+        "success_measure": "42 units occupied by Nov 30",
+        "incomplete": false,
+        "incomplete_warnings": [],
+        "finance": {
+          "current_cost_entry_id": "C-T-014-2026-10-15",
+          "current_cost_stage": "CLASS_D",
+          "current_cost_amount_sample": 2122900,
+          "cost_state": "DRAFT",
+          "cost_history_entry_ids": [
+            "C-T-014-2026-10-09",
+            "C-T-014-2026-10-12",
+            "C-T-014-2026-10-15"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-015",
+        "title": "Residential lot debris and ash removal",
+        "description": null,
+        "strategy_id": "S-09",
+        "objective_id": "O-05",
+        "problem_ids": [
+          "P-03",
+          "P-04"
+        ],
+        "primary_priority_id": "PR-6",
+        "secondary_priority_ids": [],
+        "sector": "HOUSING",
+        "owner": "M. Chen",
+        "missing_owner": false,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "IMMEDIATE"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": "C-T-015-2026-10-13",
+          "current_cost_stage": "CLASS_D",
+          "current_cost_amount_sample": 612000,
+          "cost_state": "DRAFT",
+          "cost_history_entry_ids": [
+            "C-T-015-2026-10-13"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-016",
+        "title": "Temporary fencing and lot security",
+        "description": null,
+        "strategy_id": "S-10",
+        "objective_id": "O-05",
+        "problem_ids": [
+          "P-03",
+          "P-04"
+        ],
+        "primary_priority_id": "PR-6",
+        "secondary_priority_ids": [],
+        "sector": "HOUSING",
+        "owner": "M. Chen",
+        "missing_owner": false,
+        "status": "APPROVED",
+        "record_state": "approved",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "IMMEDIATE"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": "C-T-016-2026-10-14",
+          "current_cost_stage": "CLASS_D",
+          "current_cost_amount_sample": 96400,
+          "cost_state": "FINALIZED",
+          "cost_history_entry_ids": [
+            "C-T-016-2026-10-09",
+            "C-T-016-2026-10-14"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-017",
+        "title": "Open owner rebuild and permit navigation desk",
+        "description": null,
+        "strategy_id": "S-08",
+        "objective_id": "O-04",
+        "problem_ids": [
+          "P-02"
+        ],
+        "primary_priority_id": "PR-6",
+        "secondary_priority_ids": [],
+        "sector": "HOUSING",
+        "owner": "L. Tremblay",
+        "missing_owner": false,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "MID_TERM",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "MID_TERM"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": "C-T-017-2026-10-10",
+          "current_cost_stage": "ALLOWANCE",
+          "current_cost_amount_sample": 118700,
+          "cost_state": "DRAFT",
+          "cost_history_entry_ids": [
+            "C-T-017-2026-10-10"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-018",
+        "title": "Hazard tree removal near homes",
+        "description": null,
+        "strategy_id": "S-10",
+        "objective_id": "O-05",
+        "problem_ids": [
+          "P-03",
+          "P-04"
+        ],
+        "primary_priority_id": "PR-6",
+        "secondary_priority_ids": [],
+        "sector": "HOUSING",
+        "owner": "M. Chen",
+        "missing_owner": false,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "MID_TERM",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "MID_TERM"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": "C-T-018-2026-10-13",
+          "current_cost_stage": "CLASS_D",
+          "current_cost_amount_sample": 104000,
+          "cost_state": "DRAFT",
+          "cost_history_entry_ids": [
+            "C-T-018-2026-10-13"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-020",
+        "title": "Insurance and damage documentation support",
+        "description": null,
+        "strategy_id": "S-08",
+        "objective_id": "O-04",
+        "problem_ids": [
+          "P-02"
+        ],
+        "primary_priority_id": "PR-6",
+        "secondary_priority_ids": [],
+        "sector": "HOUSING",
+        "owner": null,
+        "missing_owner": true,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "IMMEDIATE"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "who",
+            "message": "Accountable person is required"
+          },
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": null,
+          "current_cost_stage": null,
+          "current_cost_amount_sample": null,
+          "cost_state": "NEEDS_ESTIMATE",
+          "cost_history_entry_ids": [],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-021",
+        "title": "Install rain gauges and debris-flow alert system",
+        "description": null,
+        "strategy_id": "S-11",
+        "objective_id": "O-06",
+        "problem_ids": [
+          "P-06"
+        ],
+        "primary_priority_id": "PR-2",
+        "secondary_priority_ids": [],
+        "sector": "HOUSING",
+        "owner": "A. Singh",
+        "missing_owner": false,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "IMMEDIATE"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": "C-T-021-2026-10-11",
+          "current_cost_stage": "ALLOWANCE",
+          "current_cost_amount_sample": 240000,
+          "cost_state": "DRAFT",
+          "cost_history_entry_ids": [
+            "C-T-021-2026-10-11"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-022",
+        "title": "Open recovery support centre",
+        "description": null,
+        "strategy_id": "S-12",
+        "objective_id": "O-07",
+        "problem_ids": [
+          "P-07"
+        ],
+        "primary_priority_id": "PR-3",
+        "secondary_priority_ids": [],
+        "sector": "HUMAN_WELLNESS",
+        "owner": null,
+        "missing_owner": true,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "IMMEDIATE"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "who",
+            "message": "Accountable person is required"
+          },
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": null,
+          "current_cost_stage": null,
+          "current_cost_amount_sample": null,
+          "cost_state": "NEEDS_ESTIMATE",
+          "cost_history_entry_ids": [],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-023",
+        "title": "Install temporary modular bridge",
+        "description": null,
+        "strategy_id": "S-13",
+        "objective_id": "O-08",
+        "problem_ids": [
+          "P-08"
+        ],
+        "primary_priority_id": "PR-5",
+        "secondary_priority_ids": [],
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "owner": "M. Chen",
+        "missing_owner": false,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "MID_TERM",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "MID_TERM"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": "C-T-023-2026-10-16",
+          "current_cost_stage": "CLASS_D",
+          "current_cost_amount_sample": 1850000,
+          "cost_state": "DRAFT",
+          "cost_history_entry_ids": [
+            "C-T-023-2026-10-16"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-024",
+        "title": "Small business reopening grants desk",
+        "description": null,
+        "strategy_id": "S-14",
+        "objective_id": "O-10",
+        "problem_ids": [
+          "P-10"
+        ],
+        "primary_priority_id": "PR-8",
+        "secondary_priority_ids": [],
+        "sector": "ECONOMY",
+        "owner": "R. Okafor",
+        "missing_owner": false,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "HUMAN_DECISION",
+        "source_label": "user",
+        "horizon": "MID_TERM",
+        "safety_precaution": false,
+        "five_w1h": {
+          "when": {
+            "horizon": "MID_TERM"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "why",
+            "message": "Link to an objective is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": "C-T-024-2026-10-12",
+          "current_cost_stage": "ALLOWANCE",
+          "current_cost_amount_sample": 300000,
+          "cost_state": "DRAFT",
+          "cost_history_entry_ids": [
+            "C-T-024-2026-10-12"
+          ],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-10-08T09:00:00.000Z",
+        "updated_at": "2026-10-08T09:00:00.000Z"
+      },
+      {
+        "id": "T-Q-W03-SAFE",
+        "title": "Issue precautionary boil-water advisory review",
+        "description": null,
+        "strategy_id": "S-Q-W03",
+        "objective_id": "O-Q-W03",
+        "problem_ids": [
+          "P-05"
+        ],
+        "primary_priority_id": "PR-4",
+        "secondary_priority_ids": [],
+        "sector": "CRITICAL_INFRASTRUCTURE",
+        "owner": null,
+        "missing_owner": true,
+        "status": "DRAFT",
+        "record_state": "draft",
+        "source": "RULE",
+        "source_label": "rules_engine",
+        "horizon": "IMMEDIATE",
+        "safety_precaution": true,
+        "five_w1h": {
+          "why": {
+            "rationale": "Precaution: Q-W03 answered UNKNOWN",
+            "objective_id": "O-Q-W03"
+          },
+          "when": {
+            "horizon": "IMMEDIATE"
+          }
+        },
+        "success_measure": null,
+        "incomplete": true,
+        "incomplete_warnings": [
+          {
+            "field": "who",
+            "message": "Accountable person is required"
+          },
+          {
+            "field": "what",
+            "message": "Action description is required"
+          },
+          {
+            "field": "when",
+            "message": "Start and end dates are required"
+          },
+          {
+            "field": "where",
+            "message": "Location is required"
+          },
+          {
+            "field": "how",
+            "message": "Implementation approach is required"
+          },
+          {
+            "field": "successMeasure",
+            "message": "Success measure is required"
+          }
+        ],
+        "finance": {
+          "current_cost_entry_id": null,
+          "current_cost_stage": null,
+          "current_cost_amount_sample": null,
+          "cost_state": "NEEDS_ESTIMATE",
+          "cost_history_entry_ids": [],
+          "class_d_estimate_id": null,
+          "class_d_link_status": "pending_integration"
+        },
+        "ai_proposal_id": null,
+        "created_at": "2026-11-18T17:20:00.000Z",
+        "updated_at": "2026-11-18T17:20:00.000Z"
+      }
+    ],
+    "verification_tasks": [
+      {
+        "id": "VT-Q-W03",
+        "question_id": "Q-W03",
+        "title": "Field-verify water intake and distribution",
+        "assigned_role": "Infrastructure Lead",
+        "due_in_hours": 48,
+        "status": "OPEN",
+        "disaster_id": "EV-2026-014"
+      },
+      {
+        "id": "VT-Q-F02",
+        "question_id": "Q-F02",
+        "title": "Confirm funding application status",
+        "assigned_role": "Finance Section Chief",
+        "due_in_hours": 72,
+        "status": "OPEN",
+        "disaster_id": "EV-2026-014"
+      }
+    ],
+    "cost_entries": [
+      {
+        "id": "C-T-001-2026-10-09",
+        "tactic_id": "T-001",
+        "amount_sample": 85000,
+        "stage": "CLASS_D",
+        "status": "approved",
+        "revision": "v1.0",
+        "reason": "Assessor crew 6 days + fallers on standby",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-09T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-014-2026-10-09",
+        "tactic_id": "T-014",
+        "amount_sample": 1500000,
+        "stage": "ALLOWANCE",
+        "status": "draft",
+        "revision": null,
+        "reason": "Initial allowance: 42 units at about $35k each",
+        "entered_by": "L. Tremblay",
+        "at": "2026-10-09T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-014-2026-10-12",
+        "tactic_id": "T-014",
+        "amount_sample": 1704000,
+        "stage": "CLASS_D",
+        "status": "draft",
+        "revision": "v1.0",
+        "reason": "Base $1.42M + 20% contingency",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-12T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-014-2026-10-15",
+        "tactic_id": "T-014",
+        "amount_sample": 2122900,
+        "stage": "CLASS_D",
+        "status": "in_review",
+        "revision": "v1.1",
+        "reason": "Remote surge 1.15 applied; contingency raised to 30% because 6 site-condition assessments are UNKNOWN",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-15T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-015-2026-10-13",
+        "tactic_id": "T-015",
+        "amount_sample": 612000,
+        "stage": "CLASS_D",
+        "status": "draft",
+        "revision": "v1.0",
+        "reason": "42 lots, ash and debris haul to licensed landfill",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-13T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-016-2026-10-09",
+        "tactic_id": "T-016",
+        "amount_sample": 120000,
+        "stage": "ALLOWANCE",
+        "status": "draft",
+        "revision": null,
+        "reason": "Fencing allowance before quotes",
+        "entered_by": "M. Chen",
+        "at": "2026-10-09T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-016-2026-10-14",
+        "tactic_id": "T-016",
+        "amount_sample": 96400,
+        "stage": "CLASS_D",
+        "status": "approved",
+        "revision": "v1.0",
+        "reason": "Two local quotes received — lower than allowance",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-14T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-017-2026-10-10",
+        "tactic_id": "T-017",
+        "amount_sample": 118700,
+        "stage": "ALLOWANCE",
+        "status": "draft",
+        "revision": null,
+        "reason": "2 staff for 6 months + office",
+        "entered_by": "L. Tremblay",
+        "at": "2026-10-10T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-018-2026-10-13",
+        "tactic_id": "T-018",
+        "amount_sample": 104000,
+        "stage": "CLASS_D",
+        "status": "draft",
+        "revision": "v1.0",
+        "reason": "Hazard trees near 42 lots",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-13T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-021-2026-10-11",
+        "tactic_id": "T-021",
+        "amount_sample": 240000,
+        "stage": "ALLOWANCE",
+        "status": "draft",
+        "revision": null,
+        "reason": "Gauges, telemetry and alerting",
+        "entered_by": "A. Singh",
+        "at": "2026-10-11T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-023-2026-10-16",
+        "tactic_id": "T-023",
+        "amount_sample": 1850000,
+        "stage": "CLASS_D",
+        "status": "in_review",
+        "revision": "v1.0",
+        "reason": "Temporary modular bridge incl. abutments",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-16T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      },
+      {
+        "id": "C-T-024-2026-10-12",
+        "tactic_id": "T-024",
+        "amount_sample": 300000,
+        "stage": "ALLOWANCE",
+        "status": "draft",
+        "revision": null,
+        "reason": "Grant desk staffing and small grants pool",
+        "entered_by": "R. Okafor",
+        "at": "2026-10-12T16:00:00.000Z",
+        "source": "SYNTHETIC"
+      }
+    ],
+    "cost_entries_note": "Append-only cost history per tactic (never edited). All amounts are SYNTHETIC sample values, not authoritative estimates. The latest entry is the tactic's current cost.",
+    "integrations": {
+      "finance": {
+        "status": "partly_connected",
+        "connection_point": "packages/web/src/ppost/financeBridge.ts (getEstimateScopes, getCostHistory, getCostRollup, recordClassDEstimate)",
+        "class_d_estimate_ids": "pending — the Class D Estimator (Daniel) does not store PPOST tactic ids yet, so class_d_estimate_id is null"
+      },
+      "ai": {
+        "status": "pending_integration",
+        "connection_point": "packages/web/src/ppost/aiSuggestions.ts + aiServiceAdapter.ts (routes /ai/objective-proposals, /ai/assessment-insights)",
+        "ai_proposal_ids": "null until the AI service is connected; AI suggestions are never added automatically"
+      }
+    }
+  }
+}

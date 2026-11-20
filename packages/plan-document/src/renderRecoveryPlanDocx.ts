@@ -42,6 +42,8 @@ const COLOR = {
 };
 const MONO = 'Courier New';
 
+const PAGE_BREAK_BEFORE = new Set<PlanSection['key']>(['PPOST_CHAINS', 'COSTS_AND_FUNDING', 'SOURCE_PROVENANCE', 'SOURCE_RECORD_INDEX']);
+
 const ORIGIN_LABEL: Record<PlanSection['origin'], string> = {
   SOURCE_DATA: 'Supplied data',
   AI_RECOMMENDATION: 'AI recommendation',
@@ -170,7 +172,7 @@ function renderSection(section: PlanSection): (Paragraph | Table)[] {
   const out: (Paragraph | Table)[] = [
     new Paragraph({
       heading: HeadingLevel.HEADING_1,
-      pageBreakBefore: section.key === 'PPOST_CHAINS' || section.key === 'SOURCE_RECORD_INDEX',
+      pageBreakBefore: PAGE_BREAK_BEFORE.has(section.key),
       children: [new TextRun(section.title)],
     }),
     new Paragraph({
