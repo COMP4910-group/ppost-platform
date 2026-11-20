@@ -8,7 +8,7 @@ A web-based disaster recovery planning platform built for local governments, Ind
 
 ## Demo Video
 
-[Insert video link here]
+https://onetru-my.sharepoint.com/:v:/g/personal/t00713596_mytru_ca/IQATDBRW_Z9ATbDZM4XySQ4oAaxP7hiOSNRg3G4YbheR93k
 
 ---
 
